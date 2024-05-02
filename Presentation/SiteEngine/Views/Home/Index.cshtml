@@ -1,8 +1,31 @@
-﻿@{
+﻿@using ModelsEntity
+@model IEnumerable<ModelsEntity.Service>
+@{
     ViewData["Title"] = "Home Page";
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <a asp-controller="Home" asp-action="Create">Новая услуга</a>
 </div>
+
+<div class="text-center">
+        @foreach(Service item in Model)
+        {
+            <div>
+                @item.Id
+                |
+                <a asp-controller="Home" asp-action="Details" asp-route-id="@item.Id">
+                    @item.NameOfService
+                </a>
+                |
+                <a asp-controller="Home" asp-action="Update" asp-route-id="@item.Id">
+                    Редактировать
+                </a>
+                |
+                <form method="post" asp-controller="Home" asp-action="Delete">
+                    <input type="hidden" name="id" value="@item.Id" />
+                    <input type="submit" value="Удалить" />
+                </form>
+            </div>
+        }
+    </div>

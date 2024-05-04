@@ -2,7 +2,10 @@ using ApplicationDbContext;
 using ApplicationDbContext.Interfaces;
 using ApplicationDbContext.Repositories;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using ModelsEntity;
 
 namespace SiteEngine
 {
@@ -15,7 +18,28 @@ namespace SiteEngine
             // Add services to the container.
             builder.Services.AddDbContext<AppDbContext>();
             builder.Services.AddControllersWithViews();
-            builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
+            builder.Services.AddTransient<IServiceRepository, ServiceRepository>();
+            //builder.Services.AddTransient<DataManager>();
+
+            builder.Services.Configure<IdentityOptions>(options =>
+            {
+                options.User.RequireUniqueEmail = true;
+                options.Password.RequiredLength = 6;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireDigit = false;
+            });
+
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.Cookie.Name = "SiteAuth";
+                options.Cookie.HttpOnly = true;
+                options.ExpireTimeSpan = TimeSpan.FromDays(1);
+                options.LoginPath = "/account/login";
+                options.AccessDeniedPath = "/account/accessdenied";
+                options.SlidingExpiration = true;
+            });
 
             var app = builder.Build();
 
@@ -32,6 +56,8 @@ namespace SiteEngine
 
             app.UseRouting();
 
+            app.UseCookiePolicy();
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(

@@ -1,12 +1,21 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using ModelsEntity;
+using Microsoft.AspNetCore.Identity;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace ApplicationDbContext
 {
     public class AppDbContext : DbContext
     {
-        public AppDbContext()
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
             Database.EnsureCreated();
         }
@@ -21,10 +30,15 @@ namespace ApplicationDbContext
             optionsBuilder.UseSqlServer(config.GetConnectionString("DefaultDatabaseConnection"));
         }
 
+        public DbSet<User> Users { get; set; }
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<UserRoleMapping> UserRoleMappings { get; set; }
         public DbSet<Service> Services { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Profession> Professions { get; set; }
         public DbSet<ServiceCategoryMapping> ServiceCategoryMappings { get; set; }
         public DbSet<CategoryProfessionMapping> CategoryProfessionMappings { get; set; }
+        public DbSet<Customer> Customers { get; set; }
+        public DbSet<Performer> Performsers { get; set; }
     }
 }

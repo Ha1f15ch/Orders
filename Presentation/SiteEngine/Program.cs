@@ -1,4 +1,6 @@
 using ApplicationDbContext;
+using ApplicationDbContext.Interfaces;
+using ApplicationDbContext.Repositories;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,6 +15,7 @@ namespace SiteEngine
             // Add services to the container.
             builder.Services.AddDbContext<AppDbContext>();
             builder.Services.AddControllersWithViews();
+            builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
 
             var app = builder.Build();
 

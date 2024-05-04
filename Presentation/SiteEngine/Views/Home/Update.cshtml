@@ -1,0 +1,34 @@
+﻿@model ModelsEntity.Service
+
+@{
+    ViewData["Title"] = "Update";
+}
+
+<h1>Редактирование записи услуги - @Model.NameOfService</h1>
+
+<h4>Услуга</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post" asp-controller="Home" asp-action="Update">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="NameOfService" class="control-label">Название услуги</label>
+                <input asp-for="NameOfService" class="form-control" />
+                <span asp-validation-for="NameOfService" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Сохранить" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Список услуг</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

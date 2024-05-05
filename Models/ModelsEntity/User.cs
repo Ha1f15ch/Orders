@@ -11,6 +11,21 @@ namespace ModelsEntity
     {
         public int Id {  get; set; }
         public string UserName { get; set; }
+        public DateTime DateOfBirth { get; set; }
+        public int GenderId { get; set; }
+        public Gender Gender { get; set; }
+        public int Age
+        {
+            get
+            {
+                DateTime today = DateTime.Today;
+                int age = today.Year - DateOfBirth.Year;
+
+                if (DateOfBirth.Date > today.AddYears(-age)) age--;
+
+                return age;
+            }
+        }
         public string NormalizedUserName
         {
             get

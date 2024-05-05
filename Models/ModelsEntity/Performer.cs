@@ -14,23 +14,12 @@ namespace ModelsEntity
         [Required] public string FirstName { get; set; }
         public string? MiddleName { get; set; }
         public string PhoneNumber { get; set; }
-        public DateTime DateOfBirth { get; set; }
-        public int Age
-        {
-            get
-            {
-                DateTime today = DateTime.Today;
-                int age = today.Year - DateOfBirth.Year;
-
-                if (DateOfBirth.Date > today.AddYears(-age)) age--;
-
-                return age;
-            }
-        }
         public string Experience { get; set; }
         public string Education { get; set; }
         public string Description { get; set; }
         public double AverageRating { get; set; }
-
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public int UserId { get; set; } 
+        public User User { get; set; }
     }
 }

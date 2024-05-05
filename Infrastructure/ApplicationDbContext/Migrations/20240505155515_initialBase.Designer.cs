@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ApplicationDbContext.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240504215657_addAuthModels")]
-    partial class addAuthModels
+    [Migration("20240505155515_initialBase")]
+    partial class initialBase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -80,6 +80,9 @@ namespace ApplicationDbContext.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -91,7 +94,16 @@ namespace ApplicationDbContext.Migrations
                     b.Property<string>("MiddleName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("Customers");
                 });
@@ -107,7 +119,7 @@ namespace ApplicationDbContext.Migrations
                     b.Property<double>("AverageRating")
                         .HasColumnType("float");
 
-                    b.Property<DateTime>("DateOfBirth")
+                    b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
@@ -137,7 +149,13 @@ namespace ApplicationDbContext.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("Performsers");
                 });
@@ -227,8 +245,8 @@ namespace ApplicationDbContext.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CustomerId")
-                        .HasColumnType("int");
+                    b.Property<DateTime>("DateOfBirth")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -250,9 +268,6 @@ namespace ApplicationDbContext.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("PerformerId")
-                        .HasColumnType("int");
-
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
@@ -267,10 +282,6 @@ namespace ApplicationDbContext.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CustomerId");
-
-                    b.HasIndex("PerformerId");
 
                     b.ToTable("Users");
                 });
@@ -317,6 +328,28 @@ namespace ApplicationDbContext.Migrations
                     b.Navigation("Profession");
                 });
 
+            modelBuilder.Entity("ModelsEntity.Customer", b =>
+                {
+                    b.HasOne("ModelsEntity.User", "User")
+                        .WithOne("Customer")
+                        .HasForeignKey("ModelsEntity.Customer", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ModelsEntity.Performer", b =>
+                {
+                    b.HasOne("ModelsEntity.User", "User")
+                        .WithOne("Performer")
+                        .HasForeignKey("ModelsEntity.Performer", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("ModelsEntity.ServiceCategoryMapping", b =>
                 {
                     b.HasOne("ModelsEntity.Category", "Category")
@@ -336,25 +369,6 @@ namespace ApplicationDbContext.Migrations
                     b.Navigation("Service");
                 });
 
-            modelBuilder.Entity("ModelsEntity.User", b =>
-                {
-                    b.HasOne("ModelsEntity.Customer", "Customer")
-                        .WithMany()
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ModelsEntity.Performer", "Performer")
-                        .WithMany()
-                        .HasForeignKey("PerformerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Customer");
-
-                    b.Navigation("Performer");
-                });
-
             modelBuilder.Entity("ModelsEntity.UserRoleMapping", b =>
                 {
                     b.HasOne("ModelsEntity.Role", "Role")
@@ -372,6 +386,15 @@ namespace ApplicationDbContext.Migrations
                     b.Navigation("Role");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ModelsEntity.User", b =>
+                {
+                    b.Navigation("Customer")
+                        .IsRequired();
+
+                    b.Navigation("Performer")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

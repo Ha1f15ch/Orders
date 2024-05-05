@@ -64,6 +64,8 @@ namespace SiteEngine
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
+            app.Map("/users/list", () => "LIST with Users");
+
             app.Run();
         }
     }

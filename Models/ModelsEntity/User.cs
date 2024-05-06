@@ -12,8 +12,7 @@ namespace ModelsEntity
 
         public int Id {  get; set; }
         public string UserName { get; set; }
-        [AllowNull, MaybeNull] public DateTime DateOfBirth { get; set; }
-        public int Age
+        private int Age
         {
             get
             {
@@ -32,7 +31,8 @@ namespace ModelsEntity
                 return this.UserName.ToUpper();
             }
         }
-        [AllowNull, MaybeNull] public string? Email { get; set; } = string.Empty;
+        [AllowNull, MaybeNull] 
+        public string? Email { get; set; } = string.Empty;
         [AllowNull, MaybeNull]
         public string? NormalizedEmail
         {
@@ -48,17 +48,23 @@ namespace ModelsEntity
                 }
             }
         }
-        [AllowNull, MaybeNull] public bool? EmailConfirmed { get; set; }
-        [AllowNull, MaybeNull] public string? PasswordHash { get; set; }
-        [AllowNull, MaybeNull] public string? PhoneNumber { get; set; }
-        [AllowNull, MaybeNull] public bool? PhoneNumberConfirmed { get; set; }
-        [AllowNull, MaybeNull] public bool? TwoFactorEnabled { get; set; }
+        [AllowNull, MaybeNull] 
+        public bool? EmailConfirmed { get; set; }
+        [AllowNull, MaybeNull] 
+        public string? PasswordHash { get; set; }
+        [AllowNull, MaybeNull] 
+        public string? PhoneNumber { get; set; }
+        [AllowNull, MaybeNull] 
+        public bool? PhoneNumberConfirmed { get; set; }
+        [AllowNull, MaybeNull] 
+        public bool? TwoFactorEnabled { get; set; }
         public bool IsActiv { get; set; } = true;
         public bool IsCustomer { get; set; } = false;
         public bool IsPerformer { get; set; } = false;
         public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public DateTime DateOfBirth { get; set; } = DateTime.Now;
         public Customer Customer { get; set; }
         public Performer Performer { get; set; }
-        public Gender Gender { get; set; }
+        public Gender Gender { get; set; } = new Gender("default value");
     }
 }

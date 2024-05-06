@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ApplicationDbContext.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240506133309_correct2")]
-    partial class correct2
+    [Migration("20240506194610_migration2")]
+    partial class migration2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -269,10 +269,9 @@ namespace ApplicationDbContext.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("EmailConfirmed")
+                    b.Property<bool?>("EmailConfirmed")
                         .HasColumnType("bit");
 
                     b.Property<int>("GenderId")
@@ -288,17 +287,15 @@ namespace ApplicationDbContext.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("PasswordHash")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("PhoneNumberConfirmed")
+                    b.Property<bool?>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("TwoFactorEnabled")
+                    b.Property<bool?>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
                     b.Property<string>("UserName")

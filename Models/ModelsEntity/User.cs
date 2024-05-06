@@ -1,4 +1,6 @@
-﻿namespace ModelsEntity
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace ModelsEntity
 {
     public class User
     {
@@ -10,9 +12,7 @@
 
         public int Id {  get; set; }
         public string UserName { get; set; }
-        public DateTime DateOfBirth { get; set; }
-        public int GenderId { get; set; }
-        public Gender Gender { get; set; }
+        [AllowNull, MaybeNull] public DateTime DateOfBirth { get; set; }
         public int Age
         {
             get
@@ -32,24 +32,33 @@
                 return this.UserName.ToUpper();
             }
         }
-        public string? Email { get; set; }
-        public string NormalizedEmail
+        [AllowNull, MaybeNull] public string? Email { get; set; } = string.Empty;
+        [AllowNull, MaybeNull]
+        public string? NormalizedEmail
         {
             get
             {
-                return this?.Email.ToUpper();
+                if(this.Email != null)
+                {
+                    return this.Email.ToUpper();
+                }
+                else
+                {
+                    return string.Empty;
+                }
             }
         }
-        public bool? EmailConfirmed { get; set; }
-        public string PasswordHash { get; set; }
-        public string? PhoneNumber { get; set; }
-        public bool? PhoneNumberConfirmed { get; set; }
-        public bool? TwoFactorEnabled { get; set; }
+        [AllowNull, MaybeNull] public bool? EmailConfirmed { get; set; }
+        [AllowNull, MaybeNull] public string? PasswordHash { get; set; }
+        [AllowNull, MaybeNull] public string? PhoneNumber { get; set; }
+        [AllowNull, MaybeNull] public bool? PhoneNumberConfirmed { get; set; }
+        [AllowNull, MaybeNull] public bool? TwoFactorEnabled { get; set; }
         public bool IsActiv { get; set; } = true;
         public bool IsCustomer { get; set; } = false;
         public bool IsPerformer { get; set; } = false;
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public Customer Customer { get; set; }
         public Performer Performer { get; set; }
+        public Gender Gender { get; set; }
     }
 }

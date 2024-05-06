@@ -1,5 +1,4 @@
 using ApplicationDbContext.Interfaces;
-using ApplicationDbContext.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using ModelsEntity;
 using SiteEngine.Models;
@@ -7,7 +6,7 @@ using System.Diagnostics;
 
 namespace SiteEngine.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
         private readonly ILogger<HomeController> _logger;
 

@@ -1,4 +1,5 @@
 using ApplicationDbContext.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModelsEntity;
 using SiteEngine.Models;
@@ -6,6 +7,7 @@ using System.Diagnostics;
 
 namespace SiteEngine.Controllers
 {
+    [Authorize]
     public class HomeController : BaseController
     {
         private readonly ILogger<HomeController> _logger;

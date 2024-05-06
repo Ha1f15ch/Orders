@@ -17,8 +17,8 @@ namespace SiteEngine
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            builder.Services.AddDbContext<AppDbContext>();
             builder.Services.AddControllersWithViews();
+            builder.Services.AddDbContext<AppDbContext>();
             builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
             builder.Services.AddTransient<IServiceRepository, ServiceRepository>();
             //builder.Services.AddTransient<DataManager>();

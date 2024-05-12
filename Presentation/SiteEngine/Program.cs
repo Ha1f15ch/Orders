@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ModelsEntity;
+using SiteEngine.Controllers;
 
 namespace SiteEngine
 {
@@ -57,10 +58,20 @@ namespace SiteEngine
             app.UseAuthorization();
 
             app.MapControllerRoute(
-                name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                name: "/",
+                pattern: "{controller=MainPage}/{action=Index}"
+            );
+            app.MapControllerRoute(
+                name: "/Home",
+                pattern: "{controller=Home}/{action=Index}/{id?}"
+            );
+            app.MapControllerRoute(
+                name: "/account",
+                pattern: "{controller=Account}/{action=Index}"
+            );
 
             app.Map("/users/list", () => "LIST with Users");
+            
 
             app.Run();
         }

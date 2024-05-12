@@ -23,6 +23,11 @@ namespace SiteEngine.Controllers
             return View();
         }
 
+        public async Task<IActionResult> LoginAsyncGet()
+        {
+            return View();
+        }
+
         public async Task<IActionResult> LoginAsync([Bind(Prefix = "l")] LoginViewModel model)
         {
             if(!ModelState.IsValid)

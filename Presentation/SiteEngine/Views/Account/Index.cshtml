@@ -31,8 +31,7 @@
                     <div class="card-body ps-5 pe-4">
                         <ul class="nav nav-pills nav-justified mb-3" id="ex1" role="tablist">
                             <li class="nav-item" role="presentation">
-                                <button
-                                    class="btn nav-link @(!isVisibleRegisterTab ? "active" : "")"
+                                <button class="btnToLogin btn nav-link @(!isVisibleRegisterTab ? "active" : "")"
                                     id="tab-login"
                                     data-bs-toggle="pill"
                                     data-bs-target="#pills-login"
@@ -43,8 +42,7 @@
                                 </button>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <button 
-                                    class="btn nav-link @(isVisibleRegisterTab ? "active" : "")"
+                                <button class="btnToRegistration btn nav-link @(isVisibleRegisterTab ? "active" : "")"
                                     id="tab-register"
                                     data-bs-toggle="pill"
                                     data-bs-target="#pills-register"
@@ -78,5 +76,22 @@
             </main>
         </div>
     </body>
+    <script @* src="./js/site.js" *@>
+            var href = window.location.href;
+
+            var btnToLogin = document.querySelector(".btnToLogin")
+            btnToLogin.addEventListener("click", () => {
+                href = document.location.href + "account/Login"
+                document.location = href
+                href = window.location.origin
+            });
+
+            var btnToRegistration = document.querySelector(".btnToRegistration")
+            btnToRegistration.addEventListener("click", () => {
+                href = document.location.href + "account/Register"
+                document.location = href
+                href = window.location.origin
+            })
+    </script>
 </html>
 

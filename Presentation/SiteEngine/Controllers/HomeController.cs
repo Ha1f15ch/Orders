@@ -7,7 +7,6 @@ using System.Diagnostics;
 
 namespace SiteEngine.Controllers
 {
-    [Authorize]
     public class HomeController : BaseController
     {
         private readonly ILogger<HomeController> _logger;
@@ -31,12 +30,14 @@ namespace SiteEngine.Controllers
             return View(serviceModel);
         }
 
+        [Authorize]
         [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
+        [Authorize]
         [HttpPost]
         public IActionResult Create(Service service)
         {
@@ -54,6 +55,7 @@ namespace SiteEngine.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet]
         public IActionResult Update(int id)
         {
@@ -62,6 +64,7 @@ namespace SiteEngine.Controllers
             return View(itemForUpdate);
         }
 
+        [Authorize]
         [HttpPost]
         public IActionResult Update(Service service)
         {
@@ -81,8 +84,7 @@ namespace SiteEngine.Controllers
             }
         }
 
-
-
+        [Authorize]
         [HttpPost]
         public IActionResult Delete(int id)
         {

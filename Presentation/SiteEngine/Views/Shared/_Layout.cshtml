@@ -1,50 +1,57 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - SiteEngine</title>
-    <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css"/>
+    <title>Главная страница</title>
+
+    <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/SiteEngine.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <div class="container-fluid" style="min-height: 100vh;">
-        <div class="row w-100 align-items-center flex-column pt-lg-5" style="min-height: 100vh;">
-            <div class="col-8">
-                <main role="main" class="w-100">
-                    <header class="d-flex align-items-center justify-content-between">
-                        <div></div>
-                        <h1 class="text-primary fw-bold text-center" style="font-size: 38px">
-                            <i class="fa-solid fa-clipboard-list"></i>Уже не главная страница
-                        </h1>
-                        @if (User.Identity.IsAuthenticated)
-                        {
-                            <a href="account/Logout" class="btn">
-                                Выйти
-                            </a>
-                        }
-                        else
-                        {
-                            <div></div>
-                        }
-                    </header>
-                    <div class="container">
-                        @RenderBody()
+    <header class="p-3 bg-dark text-white">
+        <div class="container">
+            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+                <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+                    <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap"><use xlink:href="#bootstrap"></use></svg>
+                </a>
+
+                <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                    <li><a href="/" class="nav-link px-2 text-secondary">Главная страница 1</a></li>
+                    <li><a href="#" class="nav-link px-2 text-white">Новости 2</a></li>
+                    <li><a href="#" class="nav-link px-2 text-white">Блог 3</a></li>
+                    <li><a href="#" class="nav-link px-2 text-white">Наша контактная информация 4</a></li>
+                </ul>
+
+                <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3">
+                    <input type="search" class="form-control form-control-dark" placeholder="Искать..." aria-label="Поиск">
+                </form>
+
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <a href="account/Logout" class="btn text-white">
+                        Выйти/мой аккаунт
+                    </a>
+                }
+                else
+                {
+                    <div class="text-end">
+                        <button type="button" class="btn btn-outline-light me-2 btnToLogin">Войти</button>
+                        <button type="button" class="btn btn-warning btnToRegistration">Зарегистрироваться</button>
                     </div>
-                </main>
+                }
+
             </div>
         </div>
-    </div>
-    <footer class="border-top footer text-muted">
+    </header>
+    <main>
         <div class="container">
-            &copy; 2024 - SiteEngine - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            @RenderBody()
         </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+    </main>
 </body>
+<script src="/js/site.js"></script>
 </html>
+

@@ -1,0 +1,51 @@
+﻿@using SiteEngine.Models.Account
+@model AccountViewModel
+
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Авторизация</title>
+
+        <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css" />
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+        <link rel="stylesheet" href="~/SiteEngine.styles.css" asp-append-version="true" />
+    </head>
+    <body>
+        <div class="container-fluid d-flex align-items-center justify-content-center flex-column" style="min-height: 100hv;">
+            <main role="main" style="width: 400px" class="mt-5">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-center">
+                        <span class="text-primary fw-bold" style="font-size: 25px">
+                            <i class="fa-solid fa-clipboard-list"></i> Сайт заказов ee
+                        </span>
+                    </div>
+                </div>
+
+                <footer class="footer text-end mt-3">
+                    &copy; 2024 - сайт заказов
+                </footer>
+            </main>
+        </div>
+    </body>
+    <script @* src="./js/site.js" *@>
+        var href = window.location.origin;
+
+        var btnToLogin = document.querySelector(".btnToLogin")
+        btnToLogin.addEventListener("click", () => {
+            href += "/account/Login"
+            document.location = href
+            href = window.location.origin
+        });
+
+        var btnToRegistration = document.querySelector(".btnToRegistration")
+        btnToRegistration.addEventListener("click", () => {
+            href += "account/Register"
+            document.location = href
+            href = window.location.origin
+        })
+    </script>
+</html>
+

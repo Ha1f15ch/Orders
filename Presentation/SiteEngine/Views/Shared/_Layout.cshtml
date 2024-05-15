@@ -38,11 +38,19 @@
                 else
                 {
                     <div class="text-end">
-                        <button type="button" class="btn btn-outline-light me-2 btnToLogin">Войти</button>
-                        <button type="button" class="btn btn-warning btnToRegistration">Зарегистрироваться</button>
+                        <div class="btn-group" role="group" aria-label="Группа кнопок с вложенным раскрывающимся списком">
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Аккаунт меню
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><button type="button" class="btn btn-outline-light me-2 dropdown-item btnToLogin">Войти</button></li>
+                                    <li><button type="button" class="btn btn-warning dropdown-item btnToRegistration">Зарегистрироваться</button></li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 }
-
             </div>
         </div>
     </header>
@@ -52,6 +60,8 @@
         </div>
     </main>
 </body>
-<script src="/js/site.js"></script>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js"></script>
 </html>
 

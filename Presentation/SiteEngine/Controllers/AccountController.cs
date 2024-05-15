@@ -9,19 +9,13 @@ using System.Security.Claims;
 
 namespace SiteEngine.Controllers
 {
-    public class UserAccountController : BaseController
+    public class AccountController : BaseController
     {
         private readonly AppDbContext context;
 
-        public UserAccountController(AppDbContext appDbContext)
+        public AccountController(AppDbContext appDbContext)
         {
             context = appDbContext;
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Index()
-        {
-            return View();
         }
 
         //Превью страницы для регистрации
@@ -64,10 +58,7 @@ namespace SiteEngine.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View("Index", new AccountViewModel
-                {
-                    LoginViewModel = model
-                });
+                return View("Login", model);
             }
 
             var user = await context.Users.FirstOrDefaultAsync(u => u.UserName == model.UserName && u.PasswordHash == model.PasswordHash);
@@ -75,10 +66,7 @@ namespace SiteEngine.Controllers
             if (user is null)
             {
                 ViewBag.Error = "Некорректно введен логин или пароль !!!";
-                return View("Index", new AccountViewModel
-                {
-                    LoginViewModel = model
-                });
+                return View("Login", model);
             }
 
             await AuthenticateAsync(user);
@@ -87,24 +75,18 @@ namespace SiteEngine.Controllers
 
         //Дейсвие Register POST
         [HttpPost]
-        public async Task<IActionResult> RegisterAsync(RegisterViewModel model)
+        public async Task<IActionResult> RegistrationAsync(RegisterViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                return View("Index", new AccountViewModel
-                {
-                    RegisterViewModel = model
-                });
+                return View("Registration", model);
             }
 
             var user = await context.Users.FirstOrDefaultAsync(u => u.UserName == model.UserName);
             if (user is not null)
             {
                 ViewBag.RegisterError = "Пользователь с таким логином уже существует !!!";
-                return View("Index", new AccountViewModel
-                {
-                    RegisterViewModel = model,
-                });
+                return View("Registration", model);
             }
 
             user = new User(model.UserName, model.PasswordHash);

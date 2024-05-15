@@ -12,6 +12,11 @@ namespace ModelsEntity
         {
             this.Name = name;
         }
+
+        public static int GetGenderIdForDefault()
+        {
+            return 1;
+        }
         public int Id { get; set; }
         public string Name { get; set; }
     }

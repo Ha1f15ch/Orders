@@ -8,6 +8,7 @@ namespace ModelsEntity
         {
             UserName = userName;
             PasswordHash = passwordHash;
+            GenderId = Gender.GetGenderIdForDefault();
         }
 
         public int Id {  get; set; }
@@ -65,6 +66,6 @@ namespace ModelsEntity
         public DateTime DateOfBirth { get; set; } = DateTime.Now;
         public Customer Customer { get; set; }
         public Performer Performer { get; set; }
-        public Gender Gender { get; set; } = new Gender("default value");
+        public int GenderId { get; set; }
     }
 }

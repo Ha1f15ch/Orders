@@ -17,6 +17,12 @@ namespace ModelsEntity
         {
             return 1;
         }
+
+        public static int GetGenderById(int id)
+        {
+            return id;
+        }
+
         public int Id { get; set; }
         public string Name { get; set; }
     }

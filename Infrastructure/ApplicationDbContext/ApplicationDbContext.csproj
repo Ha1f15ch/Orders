@@ -30,8 +30,4 @@
     <ProjectReference Include="..\..\Models\ModelsEntity\ModelsEntity.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Migrations\" />
-  </ItemGroup>
-
 </Project>

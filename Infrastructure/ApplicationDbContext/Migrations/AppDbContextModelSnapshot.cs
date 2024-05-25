@@ -105,6 +105,23 @@ namespace ApplicationDbContext.Migrations
                     b.ToTable("Customers");
                 });
 
+            modelBuilder.Entity("ModelsEntity.Gender", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Gender");
+                });
+
             modelBuilder.Entity("ModelsEntity.Performer", b =>
                 {
                     b.Property<int>("Id")
@@ -280,6 +297,8 @@ namespace ApplicationDbContext.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("GenderId");
+
                     b.ToTable("Users");
                 });
 
@@ -364,6 +383,17 @@ namespace ApplicationDbContext.Migrations
                     b.Navigation("Category");
 
                     b.Navigation("Service");
+                });
+
+            modelBuilder.Entity("ModelsEntity.User", b =>
+                {
+                    b.HasOne("ModelsEntity.Gender", "Gender")
+                        .WithMany()
+                        .HasForeignKey("GenderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Gender");
                 });
 
             modelBuilder.Entity("ModelsEntity.UserRoleMapping", b =>

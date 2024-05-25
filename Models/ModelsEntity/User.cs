@@ -67,5 +67,6 @@ namespace ModelsEntity
         public Customer Customer { get; set; }
         public Performer Performer { get; set; }
         public int GenderId { get; set; }
+        public Gender Gender { get; set; }
     }
 }

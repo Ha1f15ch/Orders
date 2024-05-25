@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ApplicationDbContext.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240506193502_migration1")]
+    [Migration("20240518164156_migration-1")]
     partial class migration1
     {
         /// <inheritdoc />
@@ -140,15 +140,12 @@ namespace ApplicationDbContext.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Education")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Experience")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FirstName")
@@ -163,7 +160,6 @@ namespace ApplicationDbContext.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("UserId")

@@ -31,9 +31,19 @@
 
                 @if (User.Identity.IsAuthenticated)
                 {
-                    <a href="account/Logout" class="btn text-white">
-                        Выйти/мой аккаунт
-                    </a>
+                    <div class="text-end">
+                        <div class="btn-group" role="group" aria-label="Группа кнопок с вложенным раскрывающимся списком">
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Аккаунт меню
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><button type="button" class="btn btn-outline-light me-2 dropdown-item" onclick="window.location = window.origin+'/amplua/Index'">Войти как ...</button></li>
+                                    <li><button class="btn btn-outline-light me-2 dropdown-item" onclick="window.location = window.origin+'/account/Logout'">Logout</button></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                 }
                 else
                 {

@@ -69,6 +69,10 @@ namespace SiteEngine
                 name: "/account",
                 pattern: "{controller=Account}/{action=Index}"
             );
+            app.MapControllerRoute(
+                name: "/amplua",
+                pattern: "{controller=Amplua}/{action=Index}"
+            );
 
             app.Map("/users/list", () => "LIST with Users");
             

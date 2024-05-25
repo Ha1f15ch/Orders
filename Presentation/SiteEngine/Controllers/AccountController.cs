@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
 using ModelsEntity;
 using SiteEngine.Models.Account;
 using System.Security.Claims;
@@ -16,6 +17,19 @@ namespace SiteEngine.Controllers
         public AccountController(AppDbContext appDbContext)
         {
             context = appDbContext;
+        }
+
+        private int GetUserIdFromCookie()
+        {
+            if (Request.Cookies.TryGetValue("userID", out string userIDString))
+            {
+                if (int.TryParse(userIDString, out int userID))
+                {
+                    return userID;
+                }
+            }
+
+            return 0;
         }
 
         //Превью страницы для регистрации
@@ -35,6 +49,8 @@ namespace SiteEngine.Controllers
         //Дейсвие выхода 
         public async Task <IActionResult> LogoutAsync()
         {
+            Response.Cookies.Delete("userID");
+
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Index", "MainPage");
         }
@@ -70,6 +86,12 @@ namespace SiteEngine.Controllers
             }
 
             await AuthenticateAsync(user);
+
+            Response.Cookies.Append("userID", user.Id.ToString(), new CookieOptions
+            {
+                Expires = DateTimeOffset.Now.AddHours(48)
+            });
+            
             return RedirectToAction("Index", "MainPage");
         }
 

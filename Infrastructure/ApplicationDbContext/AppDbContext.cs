@@ -6,7 +6,7 @@ namespace ApplicationDbContext
 {
     public class AppDbContext : DbContext
     {
-        public AppDbContext()
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
             Database.EnsureCreated();
         }
@@ -21,10 +21,15 @@ namespace ApplicationDbContext
             optionsBuilder.UseSqlServer(config.GetConnectionString("DefaultDatabaseConnection"));
         }
 
+        public DbSet<User> Users { get; set; }
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<UserRoleMapping> UserRoleMappings { get; set; }
         public DbSet<Service> Services { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Profession> Professions { get; set; }
         public DbSet<ServiceCategoryMapping> ServiceCategoryMappings { get; set; }
         public DbSet<CategoryProfessionMapping> CategoryProfessionMappings { get; set; }
+        public DbSet<Customer> Customers { get; set; }
+        public DbSet<Performer> Performsers { get; set; }
     }
 }

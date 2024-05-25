@@ -1,4 +1,17 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿document.addEventListener("DOMContentLoaded", () => {
+    var href = window.location.href;
 
-// Write your JavaScript code.
+    var btnToLogin = document.querySelector(".btnToLogin")
+    btnToLogin.addEventListener("click", () => {
+        href = document.location.origin + "/account/Login"
+        document.location = href
+        href = window.location.origin
+    });
+
+    var btnToRegistration = document.querySelector(".btnToRegistration")
+    btnToRegistration.addEventListener("click", () => {
+        href = document.location.origin + "/account/Registration"
+        document.location = href
+        href = window.location.origin
+    })
+});

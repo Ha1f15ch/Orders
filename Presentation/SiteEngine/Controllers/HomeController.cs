@@ -1,5 +1,5 @@
 using ApplicationDbContext.Interfaces;
-using ApplicationDbContext.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModelsEntity;
 using SiteEngine.Models;
@@ -7,7 +7,7 @@ using System.Diagnostics;
 
 namespace SiteEngine.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
         private readonly ILogger<HomeController> _logger;
 
@@ -30,12 +30,14 @@ namespace SiteEngine.Controllers
             return View(serviceModel);
         }
 
+        [Authorize]
         [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
+        [Authorize]
         [HttpPost]
         public IActionResult Create(Service service)
         {
@@ -53,6 +55,7 @@ namespace SiteEngine.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet]
         public IActionResult Update(int id)
         {
@@ -61,6 +64,7 @@ namespace SiteEngine.Controllers
             return View(itemForUpdate);
         }
 
+        [Authorize]
         [HttpPost]
         public IActionResult Update(Service service)
         {
@@ -80,8 +84,7 @@ namespace SiteEngine.Controllers
             }
         }
 
-
-
+        [Authorize]
         [HttpPost]
         public IActionResult Delete(int id)
         {
@@ -108,6 +111,13 @@ namespace SiteEngine.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        [AllowAnonymous]
+        [Route("/NotFound")]
+        public IActionResult PageNotFound()
+        {
+            return View();
         }
     }
 }

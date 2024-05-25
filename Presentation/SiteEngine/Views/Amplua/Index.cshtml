@@ -1,0 +1,99 @@
+﻿@using SiteEngine.Models.Amplua
+
+Нужно прокинуть контекст таблицы user, для определения есть ли у профиля пользователя связь с профилем исполнителя и заказчика
+<div class="container">
+    <div class="position-absolute top-50 start-50 translate-middle">
+        <div class="row align-items-center">
+            <div class="vstack gap-3">
+                <div class="p-2 btn-group dropend">
+                    <button type="button" class="btn btn-secondary">
+                        Профиль заказчика
+                    </button>
+                    <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="visually-hidden">Переключатель выпадающего списка Заказчика</span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        @if (!Model.IsCustomer)
+                        {
+                            <li>
+                                <div class="dropdown-item">
+                                    <button type="button" class="btn btn-success">
+                                        Создать профиль
+                                    </button>
+                                </div>
+                            </li>
+                        }
+                        else
+                        {
+                            <li>
+                                <div class="dropdown-item">
+                                    <button type="button" class="dropdown-item btn btn-success">
+                                        Войти
+                                    </button>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="dropdown-item">
+                                    <button type="button" class="btn btn-warning">
+                                        Изменить
+                                    </button>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="dropdown-item">
+                                    <button type="button" class="btn btn-danger">
+                                        Удалить профиль
+                                    </button>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                </div>
+                <div class="p-2 btn-group dropend">
+                    <button type="button" class="btn btn-secondary">
+                        Профиль исполнителя
+                    </button>
+                    <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="visually-hidden">Переключатель выпадающего списка Исполнителя</span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        @if (!Model.IsPerformer)
+                        {
+                            <li>
+                                <div class="dropdown-item">
+                                    <button type="button" class="btn btn-success">
+                                        Создать профиль
+                                    </button>
+                                </div>
+                            </li>
+                        }
+                        else
+                        {
+                            <li>
+                                <div class="dropdown-item">
+                                    <button type="button" class="btn btn-success">
+                                        Войти
+                                    </button>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="dropdown-item">
+                                    <button type="button" class="btn btn-warning">
+                                        Изменить
+                                    </button>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="dropdown-item">
+                                    <button type="button" class="btn btn-danger">
+                                        Удалить профиль
+                                    </button>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

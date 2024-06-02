@@ -4,6 +4,7 @@ using ApplicationDbContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ApplicationDbContext.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240601192239_correct-UserAndGenderModels")]
+    partial class correctUserAndGenderModels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -106,6 +109,23 @@ namespace ApplicationDbContext.Migrations
                         .IsUnique();
 
                     b.ToTable("Customers");
+                });
+
+            modelBuilder.Entity("ModelsEntity.Gender", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Gender");
                 });
 
             modelBuilder.Entity("ModelsEntity.Performer", b =>
@@ -277,11 +297,16 @@ namespace ApplicationDbContext.Migrations
                     b.Property<bool?>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
+                    b.Property<int>("UserGenderId")
+                        .HasColumnType("int");
+
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("GenderId");
 
                     b.ToTable("Users");
                 });
@@ -330,11 +355,13 @@ namespace ApplicationDbContext.Migrations
 
             modelBuilder.Entity("ModelsEntity.Customer", b =>
                 {
-                    b.HasOne("ModelsEntity.User", null)
+                    b.HasOne("ModelsEntity.User", "User")
                         .WithOne("Customer")
                         .HasForeignKey("ModelsEntity.Customer", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ModelsEntity.Performer", b =>
@@ -365,6 +392,17 @@ namespace ApplicationDbContext.Migrations
                     b.Navigation("Category");
 
                     b.Navigation("Service");
+                });
+
+            modelBuilder.Entity("ModelsEntity.User", b =>
+                {
+                    b.HasOne("ModelsEntity.Gender", "Gender")
+                        .WithMany()
+                        .HasForeignKey("GenderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Gender");
                 });
 
             modelBuilder.Entity("ModelsEntity.UserRoleMapping", b =>

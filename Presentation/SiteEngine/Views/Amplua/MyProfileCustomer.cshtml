@@ -1,0 +1,124 @@
+﻿@using ModelsEntity
+@model Customer
+
+@{
+    ViewData["Title"] = "Мой профиль (Заказчик)";
+}
+
+<div class="container">
+    <div class="row row-gap-3 align-items-center">
+        <h3>Профиль заказчика - @Model.LastName @Model.FirstName @Model.MiddleName</h3>
+        <div class="col p-3"></div>
+        <div class="col-6 p-3">
+            <div class="d-flex justify-content-center">
+                <ul class="list-group list-group-flush fa-pull-left">
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-5">
+                                <h5>Имя:    </h5>
+                            </div>
+                            <div class="col">
+                                <h7>@Model.FirstName</h7>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-5">
+                                <h5>Фамилия:    </h5>
+                            </div>
+                            <div class="col">
+                                <h7>@Model.LastName</h7>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-5">
+                                <h5>Отчетсво: </h5>
+                            </div>
+                            <div class="col">
+                                <h7>@Model.MiddleName</h7>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-5">
+                                <h5>Почта: </h5>
+                            </div>
+                            <div class="col">
+                                <h7>@Model.Email</h7>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-5">
+                                <h5>Номер телефона: </h5>
+                            </div>
+                            <div class="col">
+                                <h7>@Model.PhoneNumber</h7>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-5">
+                                <h5>Город: </h5>
+                            </div>
+                            <div class="col">
+                                <h7>@Model.City</h7>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-5">
+                                <h5>Адрес: </h5>
+                            </div>
+                            <div class="col">
+                                <h7>@Model.Adress</h7>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col p-3"></div>
+    </div>
+
+    <div class="container">
+        <div class="d-flex justify-content-center">
+            <div class="d-grid gap-2 col-6 mx-auto">
+                <button class="btn btn-outline-primary" type="button" onclick="window.location = window.origin+'/amplua/EditMyProfileCustomer'">
+                    Изменить
+                </button>
+                <button class="btn btn-outline-danger" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    Удалить
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Вы уверены, что хотите удалить свой профиль Заказчика ?</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <h3>Профиль заказчика - @Model.LastName @Model.FirstName @Model.MiddleName</h3>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">Отменить</button>
+                    <form method="post" asp-controller="Amplua" asp-action="RemoveProfileCustomer">
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <input class="btn btn-danger" type="submit" value="Удалить" />
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,4 +1,5 @@
 using ApplicationDbContext;
+using ApplicationDbContext.ContextRepositories;
 using ApplicationDbContext.Interfaces;
 using ApplicationDbContext.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -22,6 +23,7 @@ namespace SiteEngine
             builder.Services.AddDbContext<AppDbContext>();
             builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
             builder.Services.AddTransient<IServiceRepository, ServiceRepository>();
+            builder.Services.AddTransient<IProfileCustomerRepositories, ProfileCustomerRepositories>();
             //builder.Services.AddTransient<DataManager>();
 
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

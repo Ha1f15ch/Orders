@@ -1,9 +1,13 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 
 namespace ModelsEntity
 {
     public class User
     {
+        public User() { }
+
         public User(string userName, string passwordHash)
         {
             UserName = userName;
@@ -11,6 +15,7 @@ namespace ModelsEntity
             GenderId = Gender.GetGenderIdForDefault();
         }
 
+        [Key]
         public int Id {  get; set; }
         public string UserName { get; set; }
         private int Age
@@ -55,8 +60,10 @@ namespace ModelsEntity
         public string? PasswordHash { get; set; }
         [AllowNull, MaybeNull] 
         public string? PhoneNumber { get; set; }
-        [AllowNull, MaybeNull] 
+        [AllowNull, MaybeNull]
         public bool? PhoneNumberConfirmed { get; set; }
+        [ForeignKey("Gender")]
+        public int GenderId { get; set; }
         [AllowNull, MaybeNull] 
         public bool? TwoFactorEnabled { get; set; }
         public bool IsActiv { get; set; } = true;
@@ -66,7 +73,5 @@ namespace ModelsEntity
         public DateTime DateOfBirth { get; set; } = DateTime.Now;
         public Customer Customer { get; set; }
         public Performer Performer { get; set; }
-        public int GenderId { get; set; }
-        public Gender Gender { get; set; }
     }
 }

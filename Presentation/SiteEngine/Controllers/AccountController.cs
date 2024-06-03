@@ -116,6 +116,14 @@ namespace SiteEngine.Controllers
             await context.SaveChangesAsync();
 
             await AuthenticateAsync(user);
+
+            Response.Cookies.Delete("userID");
+
+            Response.Cookies.Append("userID", user.Id.ToString(), new CookieOptions
+            {
+                Expires = DateTimeOffset.Now.AddHours(48)
+            });
+
             return RedirectToAction("Index", "MainPage");
         }
     }

@@ -30,15 +30,13 @@ namespace SiteEngine.Controllers
             return View(serviceModel);
         }
 
-        [Authorize]
-        [HttpGet]
+        [Authorize, HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
-        [Authorize]
-        [HttpPost]
+        [Authorize, HttpPost]
         public IActionResult Create(Service service)
         {
             if(ModelState.IsValid)
@@ -55,8 +53,7 @@ namespace SiteEngine.Controllers
             }
         }
 
-        [Authorize]
-        [HttpGet]
+        [Authorize, HttpGet]
         public IActionResult Update(int id)
         {
             var itemForUpdate = serviceRepository.GetServiceById(id);
@@ -64,8 +61,7 @@ namespace SiteEngine.Controllers
             return View(itemForUpdate);
         }
 
-        [Authorize]
-        [HttpPost]
+        [Authorize, HttpPost]
         public IActionResult Update(Service service)
         {
             var serviceModel = serviceRepository.GetServiceById(service.Id);
@@ -84,8 +80,7 @@ namespace SiteEngine.Controllers
             }
         }
 
-        [Authorize]
-        [HttpPost]
+        [Authorize, HttpPost]
         public IActionResult Delete(int id)
         {
             var serviceModelForDelete = serviceRepository.GetServiceById(id);

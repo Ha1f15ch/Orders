@@ -1,0 +1,289 @@
+﻿@using ModelsEntity
+@model (Performer, List<PerformerServiceMapping>, List<Service>)
+
+@{
+    ViewData["Title"] = "Мой профиль (Исполнитель)";
+}
+
+<div class="container">
+    <div class="row row-gap-3 align-items-center">
+        <h3>Профиль исполнителя - @Model.Item1.LastName @Model.Item1.FirstName @Model.Item1.MiddleName</h3>
+        <div class="col p-3"></div>
+        <div class="col-6 p-3">
+            <div class="d-flex justify-content-center">
+                <ul class="list-group list-group-flush fa-pull-left">
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-5">
+                                <h5>Имя: </h5>
+                            </div>
+                            <div class="col">
+                                <h7>@Model.Item1.FirstName</h7>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-5">
+                                <h5>Фамилия: </h5>
+                            </div>
+                            <div class="col">
+                                <h7>@Model.Item1.LastName</h7>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-5">
+                                <h5>Отчетсво: </h5>
+                            </div>
+                            <div class="col">
+                                <h7>@Model.Item1.MiddleName</h7>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-5">
+                                <h5>Номер телефона: </h5>
+                            </div>
+                            <div class="col">
+                                <h7>@Model.Item1.PhoneNumber</h7>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-5">
+                                <h5>Email: </h5>
+                            </div>
+                            <div class="col">
+                                <h7>@Model.Item1.Email</h7>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-5">
+                                <h5>Город: </h5>
+                            </div>
+                            <div class="col">
+                                <h7>@Model.Item1.City</h7>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-5">
+                                <h5>Опыт: </h5>
+                            </div>
+                            <div class="col">
+                                <h7>@Model.Item1.Experience</h7>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-5">
+                                <h5>Образование: </h5>
+                            </div>
+                            <div class="col">
+                                <h7>@Model.Item1.Education</h7>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-5">
+                                <h5>Подробнее: </h5>
+                            </div>
+                            <div class="col">
+                                <h7>@Model.Item1.Description</h7>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-5">
+                                <h5>Средний рейтинг: </h5>
+                            </div>
+                            <div class="col">
+                                <h7>@Model.Item1.AverageRating</h7>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-5">
+                                <h5>Дата создания профиля: </h5>
+                            </div>
+                            <div class="col">
+                                <h7>@Model.Item1.CreatedDate</h7>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        
+            <div class="container">
+                <div class="">
+                    <h7>
+                        <p>Список оказываемых услуг/профессиональных навыков</p>
+                    </h7>
+                    <table class="table table-success table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Название</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.Item2.ToArray().Length != 0)
+                            {
+                                if(Model.Item3.ToArray().Length != 0)
+                                {
+                                    int i = 1;
+                                    foreach (PerformerServiceMapping item in Model.Item2.ToList())
+                                    {
+                                        foreach (Service itemService in Model.Item3.ToList())
+                                        {
+                                            if (item.ServiceId == itemService.Id)
+                                            {
+                                                <tr>
+                                                    <th scope="row">@(i++)</th>
+                                                    <td scope="col"><p>@itemService.NameOfService</p></td>
+                                                </tr>
+                                            }
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    int i = 1;
+                                    <tr>
+                                        <th scope="row">@i</th>
+                                        <td scope="col">В справочнике нет услуг, отображение привязки неозможно !</td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                int i = 1;
+                                <tr>
+                                    <th scope="row">@i</th>
+                                    <td scope="col">У данного профиля нет привязанных услуг !</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        
+        </div>
+        <div class="col p-3"></div>
+    </div>
+    
+
+    <div class="container">
+        <div class="d-flex justify-content-center">
+            <div class="d-grid gap-2 col-6 mx-auto">
+                <button class="btn btn-outline-primary" type="button" onclick="window.location = window.origin+'/amplua/EditMyProfilePerformer'">
+                    Изменить
+                </button>
+                <button class="btn btn-outline-danger" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    Удалить
+                </button>
+                <button class="btn btn-outline-secondary" type="button" data-bs-toggle="modal" data-bs-target="#modalWithService">
+                    Меню услуг
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Вы уверены, что хотите удалить свой профиль Исполнителя ?</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <h3>Профиль исполнителя - @Model.Item1.LastName @Model.Item1.FirstName @Model.Item1.MiddleName</h3>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">Отменить</button>
+                    <form method="post" asp-controller="Amplua" asp-action="RemoveProfilePerformer">
+                        <input type="hidden" name="id" value="@Model.Item1.Id" />
+                        <input class="btn btn-danger" type="submit" value="Удалить" />
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalWithService" tabindex="-1" aria-labelledby="modalWithServiceLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="modalWithServiceLabel">Список оказываемых услуг</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="justify-content-center">
+                            @{
+                                //Performer, List<PerformerServiceMapping>, List<Service> - данные
+                                var servicesId = from sID in Model.Item3 select sID.Id; // список услуг по id
+                                var perfServiceMapping = from psmID in Model.Item2 where psmID.PerformerId == Model.Item1.Id select psmID.ServiceId; // выбор услуг пользователя
+                                var resDiff = servicesId.Except(perfServiceMapping); //Услуги которых нет у пользователя
+                                var resCompl = servicesId.Intersect(perfServiceMapping).ToArray(); //Пересечение услуг
+                            }
+
+                            <div class="justify-content-center">
+                                <div class="row">
+                                    <form class="form-inline" method="get">
+                                        <input class="form-control searchServices" type="text" name="search" placeholder="Поиск услуги по названию" />
+                                    </form>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="scroll-content">
+                                <ul class="list-group">
+                                    @{
+                                        foreach(Service service in Model.Item3.ToList())
+                                        {
+                                            if (resCompl.ToArray().Length > 0 && resCompl.Contains(service.Id))
+                                            {
+                                                <li class="list-group-item serviceItem">
+                                                    <input class="form-check-input me-1" type="checkbox" value="" id="@service.Id" checked="checked">
+                                                    <label class="form-check-label stretched-link" for="@service.Id">@service.NameOfService</label>
+                                                </li>
+                                            }
+                                            else
+                                            {
+                                                <li class="list-group-item serviceItem">
+                                                    <input class="form-check-input me-1" type="checkbox" value="" id="@service.Id">
+                                                    <label class="form-check-label stretched-link" for="@service.Id">@service.NameOfService</label>
+                                                </li>
+                                            }
+                                        }
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Отменить</button>
+                    <form method="post" asp-controller="Amplua" asp-action="CRUDServicePerformerMapping">
+                        <input type="hidden" name="selectedServices" id="selectedServices" value="" />
+                        <input type="hidden" name="performerId" id="performerId" value="@Model.Item1.Id"/>
+                        <button class="btn btn-primary" type="submit">Отправить</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/performerScripts.js"></script>

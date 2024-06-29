@@ -34,10 +34,10 @@ namespace ApplicationDbContext.ContextRepositories
         {
             User user = await FindUserById(userId);
 
-            if(user is not null && user.IsCustomer != true)
+            if(user is not null && user.IsPerformer != true)
             {
-                context.Performsers.Add(performer);
-                user.IsCustomer = true;
+                context.Performers.Add(performer);
+                user.IsPerformer = true;
                 context.SaveChanges();
             }
             else
@@ -46,24 +46,82 @@ namespace ApplicationDbContext.ContextRepositories
             }
         }
 
-        public void DeleteProfilePerformerByPerformerId(int idperformerId)
+        public async void DeleteProfilePerformerByPerformerId(int performerId)
         {
-            throw new NotImplementedException();
+            Performer performer = await GetProfilePerformerByPerformerId(performerId);
+            if (performer != null)
+            {
+                User user = await FindUserById(performer.UserId);
+
+                if(user  != null && user.IsPerformer == true)
+                {
+                    user.IsPerformer = false;
+                    context.Performers.Remove(performer);
+                    context.SaveChanges();
+                }
+                else
+                {
+                    throw new InvalidOperationException("Ошибка при удалении, не был найден пользователь по id профиля исполнителя");
+                }
+            }
+            else
+            {
+                throw new InvalidOperationException("Ошибкак при удалении, не был найден профиль исполнителя");
+            }
+            
         }
 
-        public Task<Performer> GetProfilePerformer(int userId)
+        public async Task<Performer> GetProfilePerformer(int userId)
         {
-            throw new NotImplementedException();
+            if (userId == 0)
+            {
+                throw new InvalidOperationException("Ошибка при поиске профиля, передан 0");
+            }
+            else
+            {
+                return context.Performers.Single(el => el.UserId == userId);
+            }
         }
 
-        public Task<Performer> GetProfilePerformerByPerformerId(int performerId)
+        public async Task<Performer> GetProfilePerformerByPerformerId(int performerId)
         {
-            throw new NotImplementedException();
+            Performer performer = context.Performers.Single(el => el.Id == performerId);
+
+            if(performer != null)
+            {
+                return performer;
+            }
+            else
+            {
+                throw new InvalidOperationException("Ошибка при поиске профиля по id профиля исполнителя");
+            }
         }
 
-        public void UpdateProfilePerformer(Performer performer)
+        public async void UpdateProfilePerformer(Performer performer)
         {
-            throw new NotImplementedException();
+            var updatedItem = await GetProfilePerformerByPerformerId(performer.Id);
+
+            if (updatedItem != null) 
+            {
+                updatedItem.FirstName = performer.FirstName;
+                updatedItem.LastName = performer.LastName;
+                updatedItem.MiddleName = performer.MiddleName;
+                updatedItem.Email = performer.Email;
+                updatedItem.PhoneNumber = performer.PhoneNumber;
+                updatedItem.City = performer.City;
+                updatedItem.Experience = performer.Experience;
+                updatedItem.Education = performer.Education;
+                updatedItem.Description = performer.Description;
+                updatedItem.AverageRating = performer.AverageRating;
+                updatedItem.CreatedDate = performer.CreatedDate;
+                updatedItem.UserId = performer.UserId;
+
+                context.SaveChanges();
+            }
+            else
+            {
+                throw new InvalidOperationException("Профиля исполнителя с указанным id не найдено !");
+            }
         }
     }
 }

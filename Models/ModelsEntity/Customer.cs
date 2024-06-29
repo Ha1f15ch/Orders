@@ -21,7 +21,6 @@ namespace ModelsEntity
             PhoneNumber = phone;
             City = city;
             Adress = adress;
-            /*UserId = userId;*/
         }
 
         [Key]

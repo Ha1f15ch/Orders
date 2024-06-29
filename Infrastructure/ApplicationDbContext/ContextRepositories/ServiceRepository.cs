@@ -29,6 +29,11 @@ namespace ApplicationDbContext.Repositories
             return context.Services.ToList();
         }
 
+        public List<Service> GetAllServiceByList()
+        {
+            return context.Services.ToList();
+        }
+
         public Service GetServiceById(int id)
         {
             return context.Services.Single(item => item.Id == id);

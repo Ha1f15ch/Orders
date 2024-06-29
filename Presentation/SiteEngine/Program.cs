@@ -24,6 +24,9 @@ namespace SiteEngine
             builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
             builder.Services.AddTransient<IServiceRepository, ServiceRepository>();
             builder.Services.AddTransient<IProfileCustomerRepositories, ProfileCustomerRepositories>();
+            builder.Services.AddTransient<IProfilePerformerRepositories, ProfilePerformerRepositories>();
+            builder.Services.AddTransient<IPerformerServiceMappingRepositories, PerformerServiceMappingRepositories>();
+            //builder.Services.AddTransient<>
             //builder.Services.AddTransient<DataManager>();
 
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

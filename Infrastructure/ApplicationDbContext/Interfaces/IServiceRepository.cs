@@ -9,8 +9,9 @@ namespace ApplicationDbContext.Interfaces
 {
     public interface IServiceRepository
     {
-        void AddNewService(Service service);
+        public void AddNewService(Service service);
         public IEnumerable<Service> GetAllService();
+        public List<Service> GetAllServiceByList();
         public Service GetServiceById(int id);
         public void UpdateServiceByModel(Service service);
         public void DeleteServiceById(int id);

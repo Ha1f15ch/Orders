@@ -19,17 +19,14 @@
                 <input asp-for="NameOfService" class="form-control" />
                 <span asp-validation-for="NameOfService" class="text-danger"></span>
             </div>
+            <br />
             <div class="form-group">
                 <input type="submit" value="Создать" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
-
+<br />
 <div>
     <a asp-action="Index">Список услуг</a>
 </div>
-
-@* @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-} *@

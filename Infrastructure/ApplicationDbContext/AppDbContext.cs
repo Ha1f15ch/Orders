@@ -30,6 +30,8 @@ namespace ApplicationDbContext
         public DbSet<ServiceCategoryMapping> ServiceCategoryMappings { get; set; }
         public DbSet<CategoryProfessionMapping> CategoryProfessionMappings { get; set; }
         public DbSet<Customer> Customers { get; set; }
-        public DbSet<Performer> Performsers { get; set; }
+        public DbSet<Performer> Performers { get; set; }
+        public DbSet<PerformerServiceMapping> PerformerServicesMapping { get; set; }
+        public DbSet<Gender> Genders { get; set; }
     }
 }

@@ -122,7 +122,7 @@ namespace ApplicationDbContext.ContextRepositories
             }
             else
             {
-                throw new InvalidOperationException("Услуга с указанным id не найдена");
+                throw new InvalidOperationException("Профиля заказчика с указанным id не найдео !");
             }
         }
 

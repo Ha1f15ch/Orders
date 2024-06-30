@@ -17,17 +17,22 @@ namespace SiteEngine
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            var config = new ConfigurationBuilder()
+                .SetBasePath(builder.Environment.ContentRootPath)
+                .AddJsonFile("appsettings.json")
+                .Build();
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
-            builder.Services.AddDbContext<AppDbContext>();
+            builder.Services.AddSingleton<IConfiguration>(config);
+            AddDatabaseContext(builder.Services, config);
+
             builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
             builder.Services.AddTransient<IServiceRepository, ServiceRepository>();
             builder.Services.AddTransient<IProfileCustomerRepositories, ProfileCustomerRepositories>();
             builder.Services.AddTransient<IProfilePerformerRepositories, ProfilePerformerRepositories>();
             builder.Services.AddTransient<IPerformerServiceMappingRepositories, PerformerServiceMappingRepositories>();
-            //builder.Services.AddTransient<>
-            //builder.Services.AddTransient<DataManager>();
+            
 
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                     .AddCookie(options => options.LoginPath = "/account");
@@ -84,5 +89,18 @@ namespace SiteEngine
 
             app.Run();
         }
+
+        private static void AddDatabaseContext(IServiceCollection services, IConfiguration config)
+        {
+            var excelDataFilePath = config.GetConnectionString("ExcelDataPath");
+
+            var dbContextOptions = new DbContextOptionsBuilder<AppDbContext>()
+                .UseSqlServer(config.GetConnectionString("DefaultDatabaseConnection"))
+                .Options;
+
+            var appDbContext = new AppDbContext(dbContextOptions, excelDataFilePath);
+            services.AddSingleton<AppDbContext>(appDbContext);
+        }
+
     }
 }

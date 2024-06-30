@@ -8,14 +8,14 @@ using System.Threading.Tasks;
 
 namespace ModelsEntity
 {
-    public class CategoryProfessionMapping
+    public class ProfessionServiceMapping
     {
-        public CategoryProfessionMapping() { }
+        public ProfessionServiceMapping() { }
 
         [Key]
         public int Id { get; set; }
-        [ForeignKey("Category")]
-        public int CategoryId { get; set; }
+        [ForeignKey("Service")]
+        public int ServiceId { get; set; }
         [ForeignKey("Profession")]
         public int ProfessionId { get; set; }
     }

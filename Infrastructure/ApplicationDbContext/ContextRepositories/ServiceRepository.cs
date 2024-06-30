@@ -61,9 +61,9 @@ namespace ApplicationDbContext.Repositories
 
             if(serviceForDelete is not null)
             {
-                var serviceCategoryMapping = context.ServiceCategoryMappings.Where(item => item.ServiceId == id);
+                var serviceCategoryMapping = context.ProfessionServiceMappings.Where(item => item.ServiceId == id);
 
-                context.ServiceCategoryMappings.RemoveRange(serviceCategoryMapping);
+                context.ProfessionServiceMappings.RemoveRange(serviceCategoryMapping);
 
                 context.Services.Remove(serviceForDelete);
                 context.SaveChanges();

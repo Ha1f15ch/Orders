@@ -14,7 +14,7 @@ namespace SiteEngine.Helpers
                 return new[]
                 {
                     "/Views/PerformerBoard/{1}/{0}.cshtml",
-                    "/Views/PerformerBoard/Layout.cshtml"
+                    "/Views/PerformerBoard/_PerformerLayout.cshtml"
                 };
             }
 
@@ -23,7 +23,7 @@ namespace SiteEngine.Helpers
                 return new[]
                 {
                     "/Views/CustomerBoard/{1}/{0}.cshtml",
-                    "/Views/CustomerBoard/Layout.cshtml"
+                    "/Views/Shared/_CustomerLayout.cshtml"
                 };
             }
 

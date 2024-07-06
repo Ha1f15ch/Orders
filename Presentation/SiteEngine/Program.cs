@@ -35,10 +35,10 @@ namespace SiteEngine
             builder.Services.AddTransient<IProfilePerformerRepositories, ProfilePerformerRepositories>();
             builder.Services.AddTransient<IPerformerServiceMappingRepositories, PerformerServiceMappingRepositories>();
 
-            builder.Services.Configure<RazorViewEngineOptions>(options =>
+            /*builder.Services.Configure<RazorViewEngineOptions>(options =>
             {
                 options.ViewLocationExpanders.Add(new CustomViewLocationExpander());
-            });
+            });*/
 
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                     .AddCookie(options => options.LoginPath = "/account");
@@ -88,6 +88,14 @@ namespace SiteEngine
             app.MapControllerRoute(
                 name: "/amplua",
                 pattern: "{controller=Amplua}/{action=Index}"
+            );
+            app.MapControllerRoute(
+                name: "CustomerBoard",
+                pattern: "{controller=CustomerBoard}/{action=Index}"
+            );
+            app.MapControllerRoute(
+                name: "PerformerBoard",
+                pattern: "{controller=Performer}/{action=Index}"
             );
 
             app.Map("/users/list", () => "LIST with Users");

@@ -1,0 +1,42 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using SiteEngine.Models.Amplua
+
+@section PerformerLayout {
+    <header>
+        <div class="container">
+            <ul class="nav justify-content-center">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Чаты</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Заказы</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#">Мои Завершенные</a></li>
+                        <li><a class="dropdown-item" href="#">Мои Незавершенные</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Профиль</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#">Мой профиль</a></li>
+                        <li><a class="dropdown-item" href="#">Моя анкета</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </header>
+    <main>
+        @RenderBody()
+    </main>
+    
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="./js/performerBoardLayout.js"></script>
+}
+
+
+
+

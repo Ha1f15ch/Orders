@@ -95,7 +95,7 @@ namespace SiteEngine
             );
             app.MapControllerRoute(
                 name: "PerformerBoard",
-                pattern: "{controller=Performer}/{action=Index}"
+                pattern: "{controller=PerformerBoard}/{action=Index}"
             );
 
             app.Map("/users/list", () => "LIST with Users");

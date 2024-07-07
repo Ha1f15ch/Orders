@@ -1,8 +1,9 @@
-﻿@using SiteEngine.Models.Amplua
-@model CustomerProfileFullViewModel
+﻿@using ModelsEntity
+@using SiteEngine.Models.Amplua
+@model PerformerProfileFullViewModel
 
 @{
-    Layout = "~/Views/Shared/mainContent.cshtml";
+    Layout = "~/Views/Shared/PerformerLayout.cshtml";
 }
 
 <div class="container">
@@ -10,7 +11,7 @@
         <div class="col p-3"></div>
         <div class="col-6 p-3">
             <div class="d-flex justify-content-center">
-                <form method="post" asp-action="EditMyProfileCustomer" asp-controller="Amplua">
+                <form method="post" asp-action="EditMyProfilePerformer" asp-controller="PerformerBoard">
                     <div class="row g-3">
                         <div class="col-sm flex-fill visually-hidden">
                             <div class="mb-3">
@@ -62,15 +63,24 @@
                     </div>
                     <div class="col-sm flex-fill">
                         <div class="mb-3">
-                            <label asp-for="Adress" class="form-label">Адрес</label>
-                            <input asp-for="Adress" type="text" class="form-control" id="" placeholder="Россия, Московская область, г. Москва ул. Можайская 15/22">
+                            <label asp-for="Experience" class="form-label">Опыт</label>
+                            <input asp-for="Experience" type="text" class="form-control" id="" placeholder="3 года на заводе . . .">
                         </div>
-                        <span class="text-danger" asp-validation-for="Adress"></span>
+                        <span class="text-danger" asp-validation-for="Experience"></span>
                     </div>
-                    <div class="col-sm flex-fill visually-hidden">
+                    <div class="col-sm flex-fill">
                         <div class="mb-3">
-                            <input asp-for="UserId" type="text" class="form-control">
+                            <label asp-for="Education" class="form-label">Образование</label>
+                            <input asp-for="Education" type="text" class="form-control" id="" placeholder="МГУ магистратура кафетдра высшей математики . . .">
                         </div>
+                        <span class="text-danger" asp-validation-for="Education"></span>
+                    </div>
+                    <div class="col-sm flex-fill">
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label">Прочее</label>
+                            <input asp-for="Description" type="text" class="form-control" id="" placeholder="Кратко о себе">
+                        </div>
+                        <span class="text-danger" asp-validation-for="Description"></span>
                     </div>
                     <div class="text-danger mb-2">@ViewBag.RegisterError</div>
                     <div class="p-2 flex-fill d-grid gap-2">

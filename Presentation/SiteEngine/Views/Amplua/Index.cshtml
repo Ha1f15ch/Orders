@@ -5,115 +5,69 @@
 }
 
 <div class="container">
-    <div class="position-absolute top-50 start-50 translate-middle">
-        <div class="row align-items-center">
-            <div class="vstack gap-3">
-                <div class="p-2 btn-group dropend">
-                    @if (!Model.IsCustomer)
-                    {
-                        <button type="button" class="btn btn-secondary" onclick="window.location = window.origin+'/amplua/CreateProfileCustomer'">
-                            Профиль заказчика
+    <div class="row">
+        <div class="col-sm-6 mb-3 mb-sm-0">
+            <div class="card">
+                @if (!Model.IsCustomer)
+                {
+                    <div class="card-body">
+                        <h5 class="card-title">Профиль Заказчика</h5>
+                        <p class="card-text">Нет созданного профиля Заказчика</p>
+                        <button type="button" class="btn btn-outline-secondary" onclick="window.location = window.origin+'/amplua/CreateProfileCustomer'">
+                            Создать профиль Заказчика
                         </button>
-                    }
-                    else
-                    {
-                        <button type="button" class="btn btn-secondary" onclick="window.location = window.origin+'/CustomerBoard/MyProfileCustomer'">
-                            Профиль заказчика
-                        </button> 
-                    }
-                    <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
-                        <span class="visually-hidden">Переключатель выпадающего списка Заказчика</span>
-                    </button>
-                    <ul class="dropdown-menu">
-                        @if (!Model.IsCustomer)
-                        {
-                            <li>
-                                <div class="dropdown-item">
-                                    <button type="button" class="btn btn-success" onclick="window.location = window.origin+'/amplua/CreateProfileCustomer'">
-                                        Создать профиль
-                                    </button>
-                                </div>
-                            </li>
-                        }
-                        else
-                        {
-                            <li>
-                                <div class="dropdown-item">
-                                    <button type="button" class="dropdown-item btn btn-success" onclick="window.location = window.origin+'/CustomerBoard/MyProfileCustomer'">
-                                        Войти
-                                    </button>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="dropdown-item">
-                                    <button type="button" class="btn btn-warning" onclick="window.location = window.origin+'/CustomerBoard/EditMyProfileCustomer'">
-                                        Изменить
-                                    </button>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="dropdown-item">
-                                    <button type="button" class="btn btn-danger">
-                                        Удалить профиль
-                                    </button>
-                                </div>
-                            </li>
-                        }
-                    </ul>
-                </div>
-                <div class="p-2 btn-group dropend">
-                    @if (!Model.IsPerformer)
-                    {
-                        <button type="button" class="btn btn-secondary" onclick="window.location = window.origin+'/amplua/CreateProfilePerformer'">
-                            Профиль исполнителя
+                    </div>
+                } 
+                else
+                {
+                    <div class="card-body">
+                        <h5 class="card-title">Профиль Заказчика</h5>
+                        <p class="card-text">Доступные варианты действия: </p>
+                        <div class="row">
+                            <button type="button" class="col btn btn-outline-success" onclick="window.location = window.origin+'/CustomerBoard/MyProfileCustomer'">
+                                Войти
+                            </button>
+                            <button type="button" class="col btn btn-outline-warning" onclick="window.location = window.origin+'/CustomerBoard/EditMyProfileCustomer'">
+                                Изменить
+                            </button>
+                            <button type="button" class="col btn btn-outline-danger" onclick="window.location = windo.origin+'/CustomerBoard/RemoveProfileCustomer'">
+                                Удалить профиль
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="card">
+                @if (!Model.IsPerformer)
+                {
+                    <div class="card-body">
+                        <h5 class="card-title">Профиль Исполнителя</h5>
+                        <p class="card-text">Нет созданного профиля Исполнителя</p>
+                        <button type="button" class="btn btn-outline-secondary" onclick="window.location = window.origin+'/amplua/CreateProfilePerformer'">
+                            Создать профиль Исполнителя
                         </button>
-                    }
-                    else
-                    {
-                        <button type="button" class="btn btn-secondary" onclick="window.location = window.origin+'/PerformerBoard/MyProfilePerformer'">
-                            Профиль исполнителя
-                        </button>
-                    }
-                    <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
-                        <span class="visually-hidden">Переключатель выпадающего списка Исполнителя</span>
-                    </button>
-                    <ul class="dropdown-menu">
-                        @if (!Model.IsPerformer)
-                        {
-                            <li>
-                                <div class="dropdown-item">
-                                    <button type="button" class="btn btn-success" onclick="window.location = window.origin+'/amplua/CreateProfilePerformer'">
-                                        Создать профиль
-                                    </button>
-                                </div>
-                            </li>
-                        }
-                        else
-                        {
-                            <li>
-                                <div class="dropdown-item">
-                                    <button type="button" class="btn btn-success" onclick="window.location = window.origin+'/PerformerBoard/MyProfilePerformer'">
-                                        Войти
-                                    </button>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="dropdown-item">
-                                    <button type="button" class="btn btn-warning" onclick="window.location = windo.origin+'/PerformerBoard/EditMyProfilePerformer'">
-                                        Изменить
-                                    </button>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="dropdown-item">
-                                    <button type="button" class="btn btn-danger" onclick="window.location = windo.origin+'/PerformerBoard/RemoveProfilePerformer'">
-                                        Удалить профиль
-                                    </button>
-                                </div>
-                            </li>
-                        }
-                    </ul>
-                </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="card-body">
+                        <h5 class="card-title">Профиль Исполнителя</h5>
+                        <p class="card-text">Доступные варианты действия: </p>
+                        <div class="row">
+                            <button type="button" class="col btn btn-outline-success" onclick="window.location = window.origin+'/PerformerBoard/MyProfilePerformer'">
+                                Войти
+                            </button>
+                            <button type="button" class="col btn btn-outline-warning" onclick="window.location = windo.origin+'/PerformerBoard/EditMyProfilePerformer'">
+                                Изменить
+                            </button>
+                            <button type="button" class="col btn btn-outline-danger" onclick="window.location = windo.origin+'/PerformerBoard/RemoveProfilePerformer'">
+                                Удалить профиль
+                            </button>
+                        </div>
+                    </div>
+                }
             </div>
         </div>
     </div>

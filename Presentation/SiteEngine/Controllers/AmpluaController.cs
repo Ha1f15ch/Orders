@@ -82,7 +82,7 @@ namespace SiteEngine.Controllers
 
                 profileCustomerRepositories.CreateProfileCustomer(entityCustomer, GetUserIdFromCookie());
 
-                return RedirectToAction("MyProfileCustomer");
+                return RedirectToAction("MyProfileCustomer", "CustomerBoard");
             }
             else
             {
@@ -114,7 +114,7 @@ namespace SiteEngine.Controllers
 
                 profilePerformerRepositories.CreateProfilePerformer(newPerformer, GetUserIdFromCookie());
 
-                return RedirectToAction("MyProfilePerformer");
+                return RedirectToAction("MyProfilePerformer", "PerformerBoard");
             }
             else
             {

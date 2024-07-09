@@ -2,7 +2,7 @@
 @model Customer
 
 @{
-    Layout = "~/Views/Shared/mainContent.cshtml";
+    Layout = "~/Views/Shared/CustomerLayout.cshtml";
 }
 
 @{
@@ -95,7 +95,7 @@
     <div class="container">
         <div class="d-flex justify-content-center">
             <div class="d-grid gap-2 col-6 mx-auto">
-                <button class="btn btn-outline-primary" type="button" onclick="window.location = window.origin+'/amplua/EditMyProfileCustomer'">
+                <button class="btn btn-outline-primary" type="button" onclick="window.location = window.origin+'/CustomerBoard/EditMyProfileCustomer'">
                     Изменить
                 </button>
                 <button class="btn btn-outline-danger" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">
@@ -117,7 +117,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-success" data-bs-dismiss="modal">Отменить</button>
-                    <form method="post" asp-controller="Amplua" asp-action="RemoveProfileCustomer">
+                    <form method="post" asp-controller="CustomerBoard" asp-action="RemoveProfileCustomer">
                         <input type="hidden" name="id" value="@Model.Id" />
                         <input class="btn btn-danger" type="submit" value="Удалить" />
                     </form>

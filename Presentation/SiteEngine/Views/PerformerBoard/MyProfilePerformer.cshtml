@@ -2,7 +2,7 @@
 @model (Performer, List<PerformerServiceMapping>, List<Service>)
 
 @{
-    Layout = "~/Views/Shared/mainContent.cshtml";
+    Layout = "~/Views/Shared/PerformerLayout.cshtml";
 }
 
 @{
@@ -191,7 +191,7 @@
     <div class="container">
         <div class="d-flex justify-content-center">
             <div class="d-grid gap-2 col-6 mx-auto">
-                <button class="btn btn-outline-primary" type="button" onclick="window.location = window.origin+'/amplua/EditMyProfilePerformer'">
+                <button class="btn btn-outline-primary" type="button" onclick="window.location = window.origin+'/PerformerBoard/EditMyProfilePerformer'">
                     Изменить
                 </button>
                 <button class="btn btn-outline-danger" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">
@@ -216,7 +216,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-success" data-bs-dismiss="modal">Отменить</button>
-                    <form method="post" asp-controller="Amplua" asp-action="RemoveProfilePerformer">
+                    <form method="post" asp-controller="PerformerBoard" asp-action="RemoveProfilePerformer">
                         <input type="hidden" name="id" value="@Model.Item1.Id" />
                         <input class="btn btn-danger" type="submit" value="Удалить" />
                     </form>
@@ -279,7 +279,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Отменить</button>
-                    <form method="post" asp-controller="Amplua" asp-action="CRUDServicePerformerMapping">
+                    <form method="post" asp-controller="PerformerBoard" asp-action="CRUDServicePerformerMapping">
                         <input type="hidden" name="selectedServices" id="selectedServices" value="" />
                         <input type="hidden" name="performerId" id="performerId" value="@Model.Item1.Id"/>
                         <button class="btn btn-primary" type="submit">Отправить</button>

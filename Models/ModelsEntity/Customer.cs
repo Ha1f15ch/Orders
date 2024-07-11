@@ -9,6 +9,7 @@ using ModelsEntity;
 
 namespace ModelsEntity
 {
+    [Table("Customer", Schema = "dbo")]
     public class Customer
     {
         public Customer() { }

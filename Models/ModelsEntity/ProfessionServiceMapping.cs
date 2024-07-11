@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace ModelsEntity
 {
+    [Table("ProfessionServiceMapping", Schema = "dbo")]
     public class ProfessionServiceMapping
     {
         public ProfessionServiceMapping() { }

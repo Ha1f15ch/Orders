@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace ModelsEntity
 {
+    [Table("CategoryProfessionMapping", Schema = "dict")]
     public class CategoryProfessionMapping
     {
         public CategoryProfessionMapping() { }

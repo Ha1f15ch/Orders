@@ -97,5 +97,8 @@ namespace ApplicationDbContext
         public DbSet<Performer> Performers { get; set; }
         public DbSet<PerformerServiceMapping> PerformerServicesMapping { get; set; }
         public DbSet<Gender> Genders { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderStatus> OrderStatuses { get; set; }
+        public DbSet<OrderPriority> OrderPriority { get; set; }
     }
 }

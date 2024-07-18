@@ -34,6 +34,7 @@ namespace SiteEngine
             builder.Services.AddTransient<IProfileCustomerRepositories, ProfileCustomerRepositories>();
             builder.Services.AddTransient<IProfilePerformerRepositories, ProfilePerformerRepositories>();
             builder.Services.AddTransient<IPerformerServiceMappingRepositories, PerformerServiceMappingRepositories>();
+            builder.Services.AddTransient<IOrderRepositories, OrderRepositories>();
 
             /*builder.Services.Configure<RazorViewEngineOptions>(options =>
             {

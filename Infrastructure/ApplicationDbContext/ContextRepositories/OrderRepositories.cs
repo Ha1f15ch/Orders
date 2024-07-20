@@ -35,7 +35,7 @@ namespace ApplicationDbContext.ContextRepositories
 
             if(order != null)
             {
-                context.Orders.Remove(order);
+                
                 context.SaveChanges();
             }
             else

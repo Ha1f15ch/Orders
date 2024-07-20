@@ -10,7 +10,10 @@ namespace ModelsEntity
     [Table("OrderStatus", Schema = "meta")]
     public class OrderStatus
     {
+        public OrderStatus() { }
+
         public int Id { get; set; }
         public string Name { get; set; }
+        public string? ShortName { get; set; }
     }
 }

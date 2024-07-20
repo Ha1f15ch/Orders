@@ -2,31 +2,54 @@
 using Microsoft.Extensions.Configuration;
 using ModelsEntity;
 using OfficeOpenXml;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 
 namespace ApplicationDbContext
 {
     public class AppDbContext : DbContext
     {
+        private readonly string _excelDataFilePath;
+
         public AppDbContext(DbContextOptions<AppDbContext> options, string excelDataFilePath) : base(options)
         {
+            _excelDataFilePath = excelDataFilePath;
             Database.EnsureCreated();
-            initializeCategoriesFromExcel(excelDataFilePath);
-            initializeProfessionsFromExcel(excelDataFilePath);
+            InitializeDataFromExcel();
         }
 
-        private void initializeCategoriesFromExcel(string excelDataFilePath)
+        private void InitializeDataFromExcel()
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-            FileInfo fi = new FileInfo(excelDataFilePath);
 
-            var excelPackage = new ExcelPackage(fi);
-            var worksheet1 = excelPackage.Workbook.Worksheets["1"];
-
-            List<string> excelCategories = new List<string>();
-            for (int row = 2; row <= worksheet1.Dimension.End.Row; row++)
+            try
             {
-                excelCategories.Add(worksheet1.Cells[row, 1].Value.ToString());
+                using (var excelPackage = new ExcelPackage(new FileInfo(_excelDataFilePath)))
+                {
+                    InitializeCategoriesFromExcel(excelPackage.Workbook.Worksheets["1"]);
+                    InitializeProfessionsFromExcel(excelPackage.Workbook.Worksheets["2"]);
+                    InitializeOrderStatusFromExcel(excelPackage.Workbook.Worksheets["3"]);
+                }
+            }
+            catch (FileNotFoundException ex)
+            {
+                throw new Exception($"Файл Excel не найден по пути - {_excelDataFilePath}", ex);
+            }
+            catch (Exception ex) 
+            {
+                throw new Exception("Произошла ошибка при обработке данных из файле Excel", ex);
+            }
+        }
+
+        private void InitializeCategoriesFromExcel(ExcelWorksheet worksheet)
+        {
+            List<string> excelCategories = new List<string>();
+            for (int row = 2; row <= worksheet.Dimension.End.Row; row++)
+            {
+                if (worksheet.Cells[row, 1].Value != null)
+                {
+                    excelCategories.Add(worksheet.Cells[row, 1].Value.ToString());
+                }
             }
 
             var existingCategories = Categories.Where(c => excelCategories.Contains(c.NameOfCategory)).ToList();
@@ -44,18 +67,15 @@ namespace ApplicationDbContext
             SaveChanges();
         }
 
-        private void initializeProfessionsFromExcel(string excelDataFilePath)
+        private void InitializeProfessionsFromExcel(ExcelWorksheet worksheet)
         {
-            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-            FileInfo fi = new FileInfo(excelDataFilePath);
-
-            var excelPackage = new ExcelPackage(fi);
-            var worksheet2 = excelPackage.Workbook.Worksheets["2"];
-
             List<string> excelProfessions = new List<string>();
-            for (int row = 2; row <= worksheet2.Dimension.End.Row; row++)
+            for (int row = 2; row <= worksheet.Dimension.End.Row; row++)
             {
-                excelProfessions.Add(worksheet2.Cells[row, 1].Value.ToString());
+                if (worksheet.Cells[row, 1].Value != null)
+                {
+                    excelProfessions.Add(worksheet.Cells[row, 1].Value.ToString());
+                }
             }
 
             var existingProfessions = Professions.Where(c => excelProfessions.Contains(c.NameOfProfession)).ToList();
@@ -73,6 +93,32 @@ namespace ApplicationDbContext
             SaveChanges();
         }
 
+        private void InitializeOrderStatusFromExcel(ExcelWorksheet worksheet)
+        {
+            List<string> excelOrderStatuses = new List<string>();
+            for (int row = 2; row <= worksheet.Dimension.End.Row; row++)
+            {
+                if (worksheet.Cells[row, 1].Value != null)
+                {
+                    excelOrderStatuses.Add(worksheet.Cells[row, 1].Value.ToString());
+                }
+            }
+
+            var existingOrderStatuses = OrderStatuses.Where(c => excelOrderStatuses.Contains(c.Name)).ToList();
+
+            foreach (var existingOrderStatus in existingOrderStatuses)
+            {
+                excelOrderStatuses.Remove(existingOrderStatus.Name);
+            }
+
+            foreach (var orderStatusName in excelOrderStatuses)
+            {
+                var orderStatus = new OrderStatus { Name = orderStatusName };
+                OrderStatuses.Add(orderStatus);
+            }
+            SaveChanges();
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             var config = new ConfigurationBuilder()
@@ -80,8 +126,6 @@ namespace ApplicationDbContext
                             .AddJsonFile("appsettings.json")
                             .Build();
 
-            string excelDataFilePath = config.GetConnectionString("ExcelDataPath");
-            FileInfo fi = new FileInfo(excelDataFilePath);
             optionsBuilder.UseSqlServer(config.GetConnectionString("DefaultDatabaseConnection"));
         }
 

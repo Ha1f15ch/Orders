@@ -29,6 +29,7 @@ namespace ApplicationDbContext
                     InitializeCategoriesFromExcel(excelPackage.Workbook.Worksheets["1"]);
                     InitializeProfessionsFromExcel(excelPackage.Workbook.Worksheets["2"]);
                     InitializeOrderStatusFromExcel(excelPackage.Workbook.Worksheets["3"]);
+                    InitializeOrderPriorityFromExcel(excelPackage.Workbook.Worksheets["4"]);
                 }
             }
             catch (FileNotFoundException ex)
@@ -95,28 +96,104 @@ namespace ApplicationDbContext
 
         private void InitializeOrderStatusFromExcel(ExcelWorksheet worksheet)
         {
-            List<string> excelOrderStatuses = new List<string>();
+            HashSet<string> excelOrderStatuses = new HashSet<string>();
+            Dictionary<string, string?> statusDescriptions = new Dictionary<string, string?>();
+
             for (int row = 2; row <= worksheet.Dimension.End.Row; row++)
             {
-                if (worksheet.Cells[row, 1].Value != null)
+                if (worksheet.Cells[row, 1].Value != null) // Считываем первый столбец (статус)
                 {
-                    excelOrderStatuses.Add(worksheet.Cells[row, 1].Value.ToString());
+                    var statusName = worksheet.Cells[row, 1].Value.ToString();
+                    excelOrderStatuses.Add(statusName);
+
+                    if (worksheet.Cells[row, 2].Value != null) // Считываем второй столбец (описание)
+                    {
+                        var statusDescription = worksheet.Cells[row, 2].Value.ToString();
+                        statusDescriptions[statusName] = statusDescription;
+                    }
+                    else
+                    {
+                        statusDescriptions[statusName] = null; // Если описание отсутствует
+                    }
                 }
             }
 
-            var existingOrderStatuses = OrderStatuses.Where(c => excelOrderStatuses.Contains(c.Name)).ToList();
+            var existingOrderStatuses = OrderStatuses.ToDictionary(c => c.Name, c => c);
 
-            foreach (var existingOrderStatus in existingOrderStatuses)
+            foreach (var status in excelOrderStatuses)
             {
-                excelOrderStatuses.Remove(existingOrderStatus.Name);
+                if (!existingOrderStatuses.ContainsKey(status))
+                {
+                    var orderStatus = new OrderStatus // Добавляем новый статус
+                    {
+                        Name = status,
+                        Description = statusDescriptions.ContainsKey(status) ? statusDescriptions[status] : null
+                    };
+                    OrderStatuses.Add(orderStatus);
+                }
+                else
+                {
+                    var existingStatus = existingOrderStatuses[status]; // Обновляем описание существующего статуса, если оно было передано
+                    if (statusDescriptions.ContainsKey(status))
+                    {
+                        existingStatus.Description = statusDescriptions[status];
+                    }
+                }
             }
 
-            foreach (var orderStatusName in excelOrderStatuses)
-            {
-                var orderStatus = new OrderStatus { Name = orderStatusName };
-                OrderStatuses.Add(orderStatus);
-            }
             SaveChanges();
+        }
+
+        private void InitializeOrderPriorityFromExcel(ExcelWorksheet worksheet)
+        {
+            {
+                HashSet<string> excelPriorityes = new HashSet<string>();
+                Dictionary<string, string?> priorityDescriptions = new Dictionary<string, string?>();
+
+                for (int row = 2; row <= worksheet.Dimension.End.Row; row++)
+                {
+                    if (worksheet.Cells[row, 1].Value != null) // Считываем первый столбец (статус)
+                    {
+                        var priorityName = worksheet.Cells[row, 1].Value.ToString();
+                        excelPriorityes.Add(priorityName);
+
+                        if (worksheet.Cells[row, 2].Value != null) // Считываем второй столбец (описание)
+                        {
+                            var priorityDescription = worksheet.Cells[row, 2].Value.ToString();
+                            priorityDescriptions[priorityName] = priorityDescription;
+                        }
+                        else
+                        {
+                            priorityDescriptions[priorityName] = null; // Если описание отсутствует
+                        }
+                    }
+                }
+
+                var existingOrderPriorityes = OrderPriority.ToDictionary(c => c.Name, c => c);
+
+                foreach (var priority in excelPriorityes)
+                {
+                    if (!existingOrderPriorityes.ContainsKey(priority))
+                    {
+                        var orderPriority = new OrderPriority // Добавляем новый статус
+                        {
+                            Name = priority,
+                            Description = priorityDescriptions.ContainsKey(priority) ? priorityDescriptions[priority] : null
+                        };
+                        OrderPriority.Add(orderPriority);
+                    }
+                    else
+                    {
+                        var existingStatus = existingOrderPriorityes[priority]; // Обновляем описание существующего статуса, если оно было передано
+                        if (priorityDescriptions.ContainsKey(priority))
+                        {
+                            existingStatus.Description = priorityDescriptions[priority];
+                        }
+                    }
+                }
+
+                SaveChanges();
+            }
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

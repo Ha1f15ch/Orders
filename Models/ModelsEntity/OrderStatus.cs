@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -11,9 +12,8 @@ namespace ModelsEntity
     public class OrderStatus
     {
         public OrderStatus() { }
-
-        public int Id { get; set; }
+        [Key]
         public string Name { get; set; }
-        public string? ShortName { get; set; }
+        public string? Description { get; set; }
     }
 }

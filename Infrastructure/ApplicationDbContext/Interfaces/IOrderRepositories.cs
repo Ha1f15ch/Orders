@@ -10,13 +10,11 @@ namespace ApplicationDbContext.Interfaces
     public interface IOrderRepositories
     {
         public void CreateNewOrder(Order order);
-        public void UpdateStatusOrder(Order order, int statusId);
-        public void DeleteOrderById(int orderId);//будем ставить статус отмены и дату удаления
-        public void UpdatePerformer(Order order, int performerId);
-        public void UpdatePriorityOrder(Order order, int priorityId);
-        public Task<List<Order>> GetOrderByDate(DateOnly date);
-        public Task<List<Order>> GetOrderByPriorityId(int priorityId);
-        public Task<List<Order>> GetOrderByStatusId(int statusId);
+        public void UpdateStatusOrder(int orderId, string statusId, int userId, bool isCustomer, bool isPerformer);
+        public void DeleteOrderById(int orderId, int userId, bool isCustomer, bool isPerformer);
+        public void UpdatePerformer(int orderId, int performerId);
+        public void UpdatePriorityOrder(int orderId, string priorityId, int userId, bool isCustomer, bool isPerformer);
+        public Task<List<Order>> GetOrderByCustomFilter(DateOnly? dateCreateStart, DateOnly? dateCreateEnd, DateOnly? dateCancaledStart, DateOnly? dateCanceledEnd, string? statusId, string? priorityId, int userId, bool isCustomer, bool isPerformer);
         public Task<Order> GetOrderById(int orderId);
     }
 }

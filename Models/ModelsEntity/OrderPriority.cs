@@ -11,10 +11,10 @@ namespace ModelsEntity
     [Table("OrderPriority", Schema = "meta")]
     public class OrderPriority
     {
-        OrderPriority() { }
+        public OrderPriority() { }
 
         [Key]
-        public int Id { get; set; }
         public string Name { get; set; }
+        public string? Description { get; set; }
     }
 }

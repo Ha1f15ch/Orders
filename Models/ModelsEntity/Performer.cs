@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace ModelsEntity
 {
+    [Table("Performer", Schema = "dbo")]
     public class Performer
     {
         public Performer() { }

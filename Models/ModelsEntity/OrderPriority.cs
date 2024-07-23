@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace ModelsEntity
 {
-    [Table("Profession", Schema = "dict")]
-    public class Profession
+    [Table("OrderPriority", Schema = "meta")]
+    public class OrderPriority
     {
-        public Profession() { }
+        public OrderPriority() { }
 
         [Key]
-        public int Id { get; set; }
-        public string NameOfProfession { get; set; }
+        public string Name { get; set; }
+        public string? Description { get; set; }
     }
 }

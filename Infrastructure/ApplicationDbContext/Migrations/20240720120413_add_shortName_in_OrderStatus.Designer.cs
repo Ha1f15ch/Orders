@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ApplicationDbContext.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240601191638_correct-CustomerModel")]
-    partial class correctCustomerModel
+    [Migration("20240720120413_add_shortName_in_OrderStatus")]
+    partial class add_shortName_in_OrderStatus
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -39,7 +39,7 @@ namespace ApplicationDbContext.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Category", "dict");
                 });
 
             modelBuilder.Entity("ModelsEntity.CategoryProfessionMapping", b =>
@@ -58,11 +58,7 @@ namespace ApplicationDbContext.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId");
-
-                    b.HasIndex("ProfessionId");
-
-                    b.ToTable("CategoryProfessionMappings");
+                    b.ToTable("CategoryProfessionMapping", "dict");
                 });
 
             modelBuilder.Entity("ModelsEntity.Customer", b =>
@@ -108,7 +104,7 @@ namespace ApplicationDbContext.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Customers");
+                    b.ToTable("Customer", "dbo");
                 });
 
             modelBuilder.Entity("ModelsEntity.Gender", b =>
@@ -125,7 +121,97 @@ namespace ApplicationDbContext.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Gender");
+                    b.ToTable("Gender", "dict");
+                });
+
+            modelBuilder.Entity("ModelsEntity.Order", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ActivTime")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Adress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DeletedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("OrderPriorityId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OrderStatusId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PerformerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TitleName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Order", "dbo");
+                });
+
+            modelBuilder.Entity("ModelsEntity.OrderPriority", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OrderPriority", "meta");
+                });
+
+            modelBuilder.Entity("ModelsEntity.OrderStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ShortName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OrderStatus", "meta");
                 });
 
             modelBuilder.Entity("ModelsEntity.Performer", b =>
@@ -136,8 +222,12 @@ namespace ApplicationDbContext.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<double>("AverageRating")
+                    b.Property<double?>("AverageRating")
                         .HasColumnType("float");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
@@ -146,6 +236,9 @@ namespace ApplicationDbContext.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Education")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Experience")
@@ -160,9 +253,11 @@ namespace ApplicationDbContext.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MiddleName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("UserId")
@@ -173,7 +268,30 @@ namespace ApplicationDbContext.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Performsers");
+                    b.ToTable("Performer", "dbo");
+                });
+
+            modelBuilder.Entity("ModelsEntity.PerformerServiceMapping", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("PerformerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ServiceId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PerformerId");
+
+                    b.HasIndex("ServiceId");
+
+                    b.ToTable("PerformerServiceMapping", "dbo");
                 });
 
             modelBuilder.Entity("ModelsEntity.Profession", b =>
@@ -190,7 +308,26 @@ namespace ApplicationDbContext.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Professions");
+                    b.ToTable("Profession", "dict");
+                });
+
+            modelBuilder.Entity("ModelsEntity.ProfessionServiceMapping", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ProfessionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ServiceId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ProfessionServiceMapping", "dbo");
                 });
 
             modelBuilder.Entity("ModelsEntity.Role", b =>
@@ -210,7 +347,7 @@ namespace ApplicationDbContext.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles");
+                    b.ToTable("Role", "dict");
                 });
 
             modelBuilder.Entity("ModelsEntity.Service", b =>
@@ -227,30 +364,7 @@ namespace ApplicationDbContext.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Services");
-                });
-
-            modelBuilder.Entity("ModelsEntity.ServiceCategoryMapping", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ServiceId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
-
-                    b.HasIndex("ServiceId");
-
-                    b.ToTable("ServiceCategoryMappings");
+                    b.ToTable("Service", "dict");
                 });
 
             modelBuilder.Entity("ModelsEntity.User", b =>
@@ -303,9 +417,7 @@ namespace ApplicationDbContext.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("GenderId");
-
-                    b.ToTable("Users");
+                    b.ToTable("User", "dbo");
                 });
 
             modelBuilder.Entity("ModelsEntity.UserRoleMapping", b =>
@@ -328,55 +440,32 @@ namespace ApplicationDbContext.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserRoleMappings");
-                });
-
-            modelBuilder.Entity("ModelsEntity.CategoryProfessionMapping", b =>
-                {
-                    b.HasOne("ModelsEntity.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ModelsEntity.Profession", "Profession")
-                        .WithMany()
-                        .HasForeignKey("ProfessionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
-
-                    b.Navigation("Profession");
+                    b.ToTable("UserRoleMapping", "dbo");
                 });
 
             modelBuilder.Entity("ModelsEntity.Customer", b =>
                 {
-                    b.HasOne("ModelsEntity.User", "User")
+                    b.HasOne("ModelsEntity.User", null)
                         .WithOne("Customer")
                         .HasForeignKey("ModelsEntity.Customer", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ModelsEntity.Performer", b =>
                 {
-                    b.HasOne("ModelsEntity.User", "User")
+                    b.HasOne("ModelsEntity.User", null)
                         .WithOne("Performer")
                         .HasForeignKey("ModelsEntity.Performer", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ModelsEntity.ServiceCategoryMapping", b =>
+            modelBuilder.Entity("ModelsEntity.PerformerServiceMapping", b =>
                 {
-                    b.HasOne("ModelsEntity.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
+                    b.HasOne("ModelsEntity.Performer", "Performer")
+                        .WithMany("PerformerServices")
+                        .HasForeignKey("PerformerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -386,20 +475,9 @@ namespace ApplicationDbContext.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Category");
+                    b.Navigation("Performer");
 
                     b.Navigation("Service");
-                });
-
-            modelBuilder.Entity("ModelsEntity.User", b =>
-                {
-                    b.HasOne("ModelsEntity.Gender", "Gender")
-                        .WithMany()
-                        .HasForeignKey("GenderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Gender");
                 });
 
             modelBuilder.Entity("ModelsEntity.UserRoleMapping", b =>
@@ -419,6 +497,11 @@ namespace ApplicationDbContext.Migrations
                     b.Navigation("Role");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ModelsEntity.Performer", b =>
+                {
+                    b.Navigation("PerformerServices");
                 });
 
             modelBuilder.Entity("ModelsEntity.User", b =>

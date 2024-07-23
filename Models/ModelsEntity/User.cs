@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace ModelsEntity
 {
+    [Table("User", Schema = "dbo")]
     public class User
     {
         public User() { }

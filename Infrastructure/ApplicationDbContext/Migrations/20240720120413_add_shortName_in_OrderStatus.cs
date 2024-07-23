@@ -5,25 +5,26 @@
 namespace ApplicationDbContext.Migrations
 {
     /// <inheritdoc />
-    public partial class correctUserAndGenderModels : Migration
+    public partial class add_shortName_in_OrderStatus : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<int>(
-                name: "UserGenderId",
-                table: "Users",
-                type: "int",
-                nullable: false,
-                defaultValue: 0);
+            migrationBuilder.AddColumn<string>(
+                name: "ShortName",
+                schema: "meta",
+                table: "OrderStatus",
+                type: "nvarchar(max)",
+                nullable: true);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "UserGenderId",
-                table: "Users");
+                name: "ShortName",
+                schema: "meta",
+                table: "OrderStatus");
         }
     }
 }

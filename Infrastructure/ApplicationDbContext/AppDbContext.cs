@@ -2,31 +2,55 @@
 using Microsoft.Extensions.Configuration;
 using ModelsEntity;
 using OfficeOpenXml;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 
 namespace ApplicationDbContext
 {
     public class AppDbContext : DbContext
     {
+        private readonly string _excelDataFilePath;
+
         public AppDbContext(DbContextOptions<AppDbContext> options, string excelDataFilePath) : base(options)
         {
+            _excelDataFilePath = excelDataFilePath;
             Database.EnsureCreated();
-            initializeCategoriesFromExcel(excelDataFilePath);
-            initializeProfessionsFromExcel(excelDataFilePath);
+            InitializeDataFromExcel();
         }
 
-        private void initializeCategoriesFromExcel(string excelDataFilePath)
+        private void InitializeDataFromExcel()
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-            FileInfo fi = new FileInfo(excelDataFilePath);
 
-            var excelPackage = new ExcelPackage(fi);
-            var worksheet1 = excelPackage.Workbook.Worksheets["1"];
-
-            List<string> excelCategories = new List<string>();
-            for (int row = 2; row <= worksheet1.Dimension.End.Row; row++)
+            try
             {
-                excelCategories.Add(worksheet1.Cells[row, 1].Value.ToString());
+                using (var excelPackage = new ExcelPackage(new FileInfo(_excelDataFilePath)))
+                {
+                    InitializeCategoriesFromExcel(excelPackage.Workbook.Worksheets["1"]);
+                    InitializeProfessionsFromExcel(excelPackage.Workbook.Worksheets["2"]);
+                    InitializeOrderStatusFromExcel(excelPackage.Workbook.Worksheets["3"]);
+                    InitializeOrderPriorityFromExcel(excelPackage.Workbook.Worksheets["4"]);
+                }
+            }
+            catch (FileNotFoundException ex)
+            {
+                throw new Exception($"Файл Excel не найден по пути - {_excelDataFilePath}", ex);
+            }
+            catch (Exception ex) 
+            {
+                throw new Exception("Произошла ошибка при обработке данных из файле Excel", ex);
+            }
+        }
+
+        private void InitializeCategoriesFromExcel(ExcelWorksheet worksheet)
+        {
+            List<string> excelCategories = new List<string>();
+            for (int row = 2; row <= worksheet.Dimension.End.Row; row++)
+            {
+                if (worksheet.Cells[row, 1].Value != null)
+                {
+                    excelCategories.Add(worksheet.Cells[row, 1].Value.ToString());
+                }
             }
 
             var existingCategories = Categories.Where(c => excelCategories.Contains(c.NameOfCategory)).ToList();
@@ -44,18 +68,15 @@ namespace ApplicationDbContext
             SaveChanges();
         }
 
-        private void initializeProfessionsFromExcel(string excelDataFilePath)
+        private void InitializeProfessionsFromExcel(ExcelWorksheet worksheet)
         {
-            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-            FileInfo fi = new FileInfo(excelDataFilePath);
-
-            var excelPackage = new ExcelPackage(fi);
-            var worksheet2 = excelPackage.Workbook.Worksheets["2"];
-
             List<string> excelProfessions = new List<string>();
-            for (int row = 2; row <= worksheet2.Dimension.End.Row; row++)
+            for (int row = 2; row <= worksheet.Dimension.End.Row; row++)
             {
-                excelProfessions.Add(worksheet2.Cells[row, 1].Value.ToString());
+                if (worksheet.Cells[row, 1].Value != null)
+                {
+                    excelProfessions.Add(worksheet.Cells[row, 1].Value.ToString());
+                }
             }
 
             var existingProfessions = Professions.Where(c => excelProfessions.Contains(c.NameOfProfession)).ToList();
@@ -73,6 +94,108 @@ namespace ApplicationDbContext
             SaveChanges();
         }
 
+        private void InitializeOrderStatusFromExcel(ExcelWorksheet worksheet)
+        {
+            HashSet<string> excelOrderStatuses = new HashSet<string>();
+            Dictionary<string, string?> statusDescriptions = new Dictionary<string, string?>();
+
+            for (int row = 2; row <= worksheet.Dimension.End.Row; row++)
+            {
+                if (worksheet.Cells[row, 1].Value != null) // Считываем первый столбец (статус)
+                {
+                    var statusName = worksheet.Cells[row, 1].Value.ToString();
+                    excelOrderStatuses.Add(statusName);
+
+                    if (worksheet.Cells[row, 2].Value != null) // Считываем второй столбец (описание)
+                    {
+                        var statusDescription = worksheet.Cells[row, 2].Value.ToString();
+                        statusDescriptions[statusName] = statusDescription;
+                    }
+                    else
+                    {
+                        statusDescriptions[statusName] = null; // Если описание отсутствует
+                    }
+                }
+            }
+
+            var existingOrderStatuses = OrderStatuses.ToDictionary(c => c.Name, c => c);
+
+            foreach (var status in excelOrderStatuses)
+            {
+                if (!existingOrderStatuses.ContainsKey(status))
+                {
+                    var orderStatus = new OrderStatus // Добавляем новый статус
+                    {
+                        Name = status,
+                        Description = statusDescriptions.ContainsKey(status) ? statusDescriptions[status] : null
+                    };
+                    OrderStatuses.Add(orderStatus);
+                }
+                else
+                {
+                    var existingStatus = existingOrderStatuses[status]; // Обновляем описание существующего статуса, если оно было передано
+                    if (statusDescriptions.ContainsKey(status))
+                    {
+                        existingStatus.Description = statusDescriptions[status];
+                    }
+                }
+            }
+
+            SaveChanges();
+        }
+
+        private void InitializeOrderPriorityFromExcel(ExcelWorksheet worksheet)
+        {
+            {
+                HashSet<string> excelPriorityes = new HashSet<string>();
+                Dictionary<string, string?> priorityDescriptions = new Dictionary<string, string?>();
+
+                for (int row = 2; row <= worksheet.Dimension.End.Row; row++)
+                {
+                    if (worksheet.Cells[row, 1].Value != null) // Считываем первый столбец (статус)
+                    {
+                        var priorityName = worksheet.Cells[row, 1].Value.ToString();
+                        excelPriorityes.Add(priorityName);
+
+                        if (worksheet.Cells[row, 2].Value != null) // Считываем второй столбец (описание)
+                        {
+                            var priorityDescription = worksheet.Cells[row, 2].Value.ToString();
+                            priorityDescriptions[priorityName] = priorityDescription;
+                        }
+                        else
+                        {
+                            priorityDescriptions[priorityName] = null; // Если описание отсутствует
+                        }
+                    }
+                }
+
+                var existingOrderPriorityes = OrderPriority.ToDictionary(c => c.Name, c => c);
+
+                foreach (var priority in excelPriorityes)
+                {
+                    if (!existingOrderPriorityes.ContainsKey(priority))
+                    {
+                        var orderPriority = new OrderPriority // Добавляем новый статус
+                        {
+                            Name = priority,
+                            Description = priorityDescriptions.ContainsKey(priority) ? priorityDescriptions[priority] : null
+                        };
+                        OrderPriority.Add(orderPriority);
+                    }
+                    else
+                    {
+                        var existingStatus = existingOrderPriorityes[priority]; // Обновляем описание существующего статуса, если оно было передано
+                        if (priorityDescriptions.ContainsKey(priority))
+                        {
+                            existingStatus.Description = priorityDescriptions[priority];
+                        }
+                    }
+                }
+
+                SaveChanges();
+            }
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             var config = new ConfigurationBuilder()
@@ -80,8 +203,6 @@ namespace ApplicationDbContext
                             .AddJsonFile("appsettings.json")
                             .Build();
 
-            string excelDataFilePath = config.GetConnectionString("ExcelDataPath");
-            FileInfo fi = new FileInfo(excelDataFilePath);
             optionsBuilder.UseSqlServer(config.GetConnectionString("DefaultDatabaseConnection"));
         }
 
@@ -97,5 +218,8 @@ namespace ApplicationDbContext
         public DbSet<Performer> Performers { get; set; }
         public DbSet<PerformerServiceMapping> PerformerServicesMapping { get; set; }
         public DbSet<Gender> Genders { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderStatus> OrderStatuses { get; set; }
+        public DbSet<OrderPriority> OrderPriority { get; set; }
     }
 }

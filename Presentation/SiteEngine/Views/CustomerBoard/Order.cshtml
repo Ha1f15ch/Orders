@@ -1,0 +1,137 @@
+﻿@using ModelsEntity
+@model Order
+
+@{
+    Layout = "~/Views/Shared/CustomerLayout.cshtml";
+}
+
+<div class="container">
+    <div class="row row-gap-3 align-items-center">
+         <div class="col">
+
+         </div>
+         <div class="col-6 p-3">
+             <div class="container">
+                 <div class="justify-content-center">
+                    <h5>Заказ № @Model.Id</h5>
+                    
+                     <div class="row">
+                        <div class="col text-start">
+                            <h4 class="card-title">
+                                @Model.TitleName
+                            </h4>
+                        </div>
+                     </div>
+                    <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
+                    <div class="row">
+                        <div class="col text-start">
+                            Город
+                        </div>
+                        <div class="col text-center">
+                            <h10>@Model.City</h10>
+                        </div>
+                    </div>
+                    <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
+                    <div class="row">
+                        <div class="col text-start">
+                            Адрес
+                        </div>
+                        <div class="col text-start">
+                            <h10>@Model.Adress</h10>
+                        </div>
+                    </div>
+                    <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
+                    <div class="row">
+                        <div class="text-center">
+                            <h8>Краткое описание</h8>
+                        </div>
+                        <div class="text-start">
+                            <p class="fs-4">@Model.Description</p>
+                        </div>
+                    </div>
+                    <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="row">
+                                <div class="col text-start">
+                                    Время выполнения: 
+                                </div>
+                                <div class="col text-start">
+                                    <p class="fs-5">@Model.ActivTime</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="row">
+                                <div class="col text-start">
+                                    Исполнитель: 
+                                </div>
+                                @if(Model.PerformerId == null)
+                                {
+                                    <div class="col text-start">
+                                        <p class="fs-5">Не выбран</p>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="col text-start">
+                                        <p class="fs-4">@Model.PerformerId</p>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
+                    <div class="row">
+                        <div class="col text-start">
+                            Приоритет: 
+                        </div>
+                        <div class="col text-center">
+                            <h9>@Model.OrderPriority</h9>
+                        </div>
+                    </div>
+                    <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
+                    <div class="row">
+                        <div class="col text-start">
+                            Статус:
+                        </div>
+                        <div class="col text-center">
+                            <h9>@Model.OrderStatus</h9>
+                        </div>
+                    </div>
+                    <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
+                    <div class="row">
+                        <div class="col text-start">
+                            Дата создания:
+                        </div>
+                        <div class="col text-center">
+                            <h9>@Model.CreatedDate</h9>
+                        </div>
+                    </div>
+                    <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
+                    <div class="row">
+                        <div class="col text-start">
+                            Дата последнегор изменения:
+                        </div>
+                        <div class="col text-center">
+                            <h9>@Model.UpdatedDate</h9>
+                        </div>
+                    </div>
+                    <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
+                    <div class="row">
+                        <div class="col text-start">
+                            Дата отмены:
+                        </div>
+                        <div class="col text-center">
+                            <h9>@Model.DeletedDate</h9>
+                        </div>
+                    </div>
+                    <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
+                 </div>
+             </div>
+         </div>
+         <div class="col">
+
+         </div>
+    </div>
+</div>

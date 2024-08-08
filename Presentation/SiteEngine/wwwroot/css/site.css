@@ -33,3 +33,7 @@ body {
 .show {
     display: block;
 }
+
+.rounded-4 {
+    border-radius: 5%;
+}

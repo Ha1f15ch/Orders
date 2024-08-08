@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Authorization;
 using ModelsEntity;
 using Microsoft.AspNetCore.Mvc;
 using Azure.Core;
+using ApplicationDbContext.ContextRepositories;
+using SiteEngine.Models.Order;
 
 namespace SiteEngine.Controllers
 {
@@ -12,11 +14,22 @@ namespace SiteEngine.Controllers
     {
         private readonly AppDbContext context;
         private readonly IProfileCustomerRepositories profileCustomerRepositories;
+        private readonly IOrderRepositories orderRepositories;
+        private readonly IOrderPriorityRepositories orderPriorityRepositories;
+        private readonly IOrderStatusRepositories orderStatusRepositories;
 
-        public CustomerBoardController(AppDbContext context, IProfileCustomerRepositories profileCustomerRepositories)
+        public CustomerBoardController(AppDbContext context, 
+                                       IProfileCustomerRepositories profileCustomerRepository,                            
+                                       IOrderRepositories orderRepository,
+                                       IOrderPriorityRepositories orderPriorityRepository,
+                                       IOrderStatusRepositories orderStatusRepository
+        )
         {
             this.context = context;
-            this.profileCustomerRepositories = profileCustomerRepositories;
+            this.profileCustomerRepositories = profileCustomerRepository;
+            this.orderRepositories = orderRepository;
+            this.orderPriorityRepositories = orderPriorityRepository;
+            this.orderStatusRepositories = orderStatusRepository;
         }
 
         private int GetUserIdFromCookie()
@@ -38,6 +51,37 @@ namespace SiteEngine.Controllers
             var myProfileCustomerModel = await profileCustomerRepositories.GetProfileCustomer(GetUserIdFromCookie());
 
             return View(myProfileCustomerModel);
+        }
+
+        [Authorize, HttpGet]
+        public async Task<IActionResult> IndexOrderListAsync()
+        {
+            var getAllMyOrders = await orderRepositories.GetOrderByCustomFilter(null, null, null, null, null, null, GetUserIdFromCookie(), true, false);
+            var customerProfile = await profileCustomerRepositories.GetProfileCustomer(GetUserIdFromCookie());
+            var listOrdersPriority = await orderPriorityRepositories.GetOrderPrioritiesAsync();
+            var listOrderStatuses = await orderStatusRepositories.GetOrderStatusesAsync();
+
+            return View((getAllMyOrders, customerProfile, listOrdersPriority, listOrderStatuses));
+        }
+
+        [Authorize, HttpGet]
+        public async Task<IActionResult> IndexOrderListByFilterAsync(
+            DateOnly? dateCreateStart,
+            DateOnly? dateCreateEnd,
+            DateOnly? dateCanceledStart,
+            DateOnly? dateCanceledEnd,
+            string? statusId,
+            string? priorityId)
+        {
+            var userId = GetUserIdFromCookie();
+
+            var getAllMyOrders = await orderRepositories.GetOrderByCustomFilter(dateCreateStart, dateCreateEnd, dateCanceledStart, dateCanceledEnd, statusId, priorityId, userId, true, false);
+
+            var customerProfile = await profileCustomerRepositories.GetProfileCustomer(userId);
+            var listOrdersPriority = await orderPriorityRepositories.GetOrderPrioritiesAsync();
+            var listOrderStatuses = await orderStatusRepositories.GetOrderStatusesAsync();
+
+            return View("IndexOrderList", (getAllMyOrders, customerProfile, listOrdersPriority, listOrderStatuses));
         }
 
         //performer methods
@@ -106,6 +150,78 @@ namespace SiteEngine.Controllers
             else
             {
                 return View("MyProfileCustomer");
+            }
+        }
+
+        [Authorize, HttpGet]
+        public async Task<IActionResult> CreateOrderAsync()
+        {
+            var userId = GetUserIdFromCookie();
+
+            var customerProfile = await profileCustomerRepositories.GetProfileCustomer(userId);
+            var listOrdersPriority = await orderPriorityRepositories.GetOrderPrioritiesAsync();
+
+            var model = new CreateOrderViewModel
+            {
+                CustomerProfile = customerProfile,
+                OrderPriorities = listOrdersPriority,
+                Order = new OrderForCreateViewModel()
+            };
+
+            return View("CreateOrder", model);
+        }
+
+        [Authorize, HttpPost]
+        public async Task<IActionResult> CreateOrderAsync(CreateOrderViewModel model)
+        {
+            if(ModelState.IsValid)
+            {
+                var userId = GetUserIdFromCookie();
+
+                var customerProfile = await profileCustomerRepositories.GetProfileCustomer(userId);
+                var order = model.Order;
+
+                Order orderEntity = new Order
+                {
+                    TitleName = order.TitleName,
+                    City = customerProfile.City,
+                    Adress = order.Adress,
+                    Description = order.Description,
+                    ActivTime = order.ActivTime,
+                    CustomerId = order.CustomerId,
+                    PerformerId = null,
+                    OrderStatus = "N",
+                    OrderPriority = order.OrderPriority,
+                    CreatedDate = DateTime.Now,
+                    UpdatedDate = DateTime.Now,
+                    DeletedDate = null,
+                };
+
+                orderRepositories.CreateNewOrder(orderEntity);
+                return RedirectToAction("IndexOrderList");
+            }
+            else
+            {
+                var userId = GetUserIdFromCookie();
+                model.CustomerProfile = await profileCustomerRepositories.GetProfileCustomer(userId);
+                model.OrderPriorities = await orderPriorityRepositories.GetOrderPrioritiesAsync();
+
+                return View("CreateOrder", model);
+            }
+        }
+
+        [Authorize, HttpGet]
+        public async Task<IActionResult> OrderAsync(int id)
+        {
+            if (id == -1)
+            {
+                return View("Error");
+            }
+            else
+            {
+                var order = await orderRepositories.GetOrderById(id);
+
+                return View(order);
             }
         }
     }

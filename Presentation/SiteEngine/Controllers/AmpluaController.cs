@@ -48,7 +48,7 @@ namespace SiteEngine.Controllers
         public async Task<IActionResult> IndexAsync()
         {
 
-            User user = await this.context.Users.FindAsync(GetUserIdFromCookie());
+            User user = await context.Users.FindAsync(GetUserIdFromCookie());
             
             if (user == null)
             {

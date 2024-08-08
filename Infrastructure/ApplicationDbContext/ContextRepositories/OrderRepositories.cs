@@ -14,7 +14,6 @@ namespace ApplicationDbContext.ContextRepositories
     public class OrderRepositories : IOrderRepositories
     {
         private readonly AppDbContext context;
-        private readonly DateOnly minDate = new(2024, 1, 1);
 
         public OrderRepositories(AppDbContext context)
         {
@@ -70,8 +69,27 @@ namespace ApplicationDbContext.ContextRepositories
             }
         }
 
-        public Task<List<Order>> GetOrderByCustomFilter(DateOnly? dateCreateStart = null, DateOnly? dateCreateEnd = null, DateOnly? dateCancaledStart = null, DateOnly? dateCanceledEnd = null, string? statusId = null, string? priorityId = null, int userId = 0, bool isCustomer = false, bool isPerformer = false)
+        public Task<List<Order>> GetAllMyOrders(int userId, bool isCustomer, bool isPerformer)
         {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<Order>> GetAllMyCompletedOrders(int userId, bool isCustomer, bool isPerformer)
+        {
+            throw new NotImplementedException();
+        }
+        public Task<List<Order>> GetAllMyStartedOrders(int userId, bool isCustomer, bool isPerformer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<Order>> GetAllMyCanceledOrders(int userId, bool isCustomer, bool isPerformer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<List<Order>> GetOrderByCustomFilter(DateOnly? dateCreateStart = null, DateOnly? dateCreateEnd = null, DateOnly? dateCancaledStart = null, DateOnly? dateCanceledEnd = null, string? statusId = null, string? priorityId = null, int userId = 0, bool isCustomer = false, bool isPerformer = false)
+         {
             var customer = isCustomer ? context.Customers.SingleOrDefault(el => el.UserId == userId) : null;
             var performer = isPerformer ? context.Performers.SingleOrDefault(el => el.UserId == userId) : null;
 
@@ -93,6 +111,13 @@ namespace ApplicationDbContext.ContextRepositories
                     selectedOrders = from order in context.Orders
                                      where order.CustomerId == customer.Id &&
                                          DateOnly.FromDateTime(order.CreatedDate) >= dateCreateStart
+                                     select order;
+                }
+                else if (dateCreateEnd.HasValue)
+                {
+                    selectedOrders = from order in context.Orders
+                                     where order.CustomerId == customer.Id &&
+                                         DateOnly.FromDateTime(order.CreatedDate) <= dateCreateEnd
                                      select order;
                 }
                 else
@@ -121,13 +146,23 @@ namespace ApplicationDbContext.ContextRepositories
                                          orders.OrderStatus.Contains("X"))
                                      select orders;
                 }
+                else if (dateCanceledEnd.HasValue)
+                {
+                    selectedOrders = from orders in selectedOrders
+                                     where orders.CustomerId == customer.Id &&
+                                         DateOnly.FromDateTime((DateTime)orders.DeletedDate) <= dateCanceledEnd &&
+                                         (orders.OrderStatus.Contains("CC") ||
+                                         orders.OrderStatus.Contains("CP") ||
+                                         orders.OrderStatus.Contains("X"))
+                                     select orders;
+                }
                 else
                 {
                     selectedOrders = from orders in selectedOrders select orders;
                 }
 
                 if(!statusId.IsNullOrEmpty())
-                {
+                { //Нужно исправить, принимаемое знакчение может быть множественным
                     selectedOrders = from orders in selectedOrders
                                      where orders.CustomerId == customer.Id &&
                                            orders.OrderStatus == statusId
@@ -139,7 +174,7 @@ namespace ApplicationDbContext.ContextRepositories
                 }
 
                 if(!priorityId.IsNullOrEmpty())
-                {
+                { //Нужно исправить, принимаемое знакчение может быть множественным
                     selectedOrders = from orders in selectedOrders
                                      where orders.CustomerId == customer.Id &&
                                            orders.OrderPriority == priorityId
@@ -150,7 +185,7 @@ namespace ApplicationDbContext.ContextRepositories
                     selectedOrders = from orders in selectedOrders select orders;
                 }
 
-                return selectedOrders.ToListAsync();
+                return selectedOrders.ToList();
             }
             else if(!isCustomer && isPerformer && performer != null) //Исполнитель
             {
@@ -170,6 +205,13 @@ namespace ApplicationDbContext.ContextRepositories
                     selectedOrders = from order in context.Orders
                                      where order.PerformerId == performer.Id &&
                                          DateOnly.FromDateTime(order.CreatedDate) >= dateCreateStart
+                                     select order;
+                }
+                else if (dateCreateEnd.HasValue)
+                {
+                    selectedOrders = from order in context.Orders
+                                     where order.PerformerId == performer.Id &&
+                                         DateOnly.FromDateTime(order.CreatedDate) <= dateCreateEnd
                                      select order;
                 }
                 else
@@ -192,6 +234,15 @@ namespace ApplicationDbContext.ContextRepositories
                     selectedOrders = from orders in selectedOrders
                                      where orders.PerformerId == performer.Id &&
                                          DateOnly.FromDateTime((DateTime)orders.DeletedDate) >= dateCancaledStart &&
+                                         (orders.OrderStatus.Contains("CC") ||
+                                         orders.OrderStatus.Contains("CP"))
+                                     select orders;
+                }
+                else if (dateCanceledEnd.HasValue)
+                {
+                    selectedOrders = from orders in selectedOrders
+                                     where orders.PerformerId == performer.Id &&
+                                         DateOnly.FromDateTime((DateTime)orders.DeletedDate) <= dateCanceledEnd &&
                                          (orders.OrderStatus.Contains("CC") ||
                                          orders.OrderStatus.Contains("CP"))
                                      select orders;
@@ -226,7 +277,7 @@ namespace ApplicationDbContext.ContextRepositories
                     selectedOrders = from orders in selectedOrders select orders;
                 }
 
-                return selectedOrders.ToListAsync();
+                return selectedOrders.ToList();
             }
             else //Любой другой (администратор)
             {
@@ -303,7 +354,7 @@ namespace ApplicationDbContext.ContextRepositories
                     selectedOrders = from orders in selectedOrders select orders;
                 }
 
-                return selectedOrders.ToListAsync();
+                return selectedOrders.ToList();
             }
         }
 

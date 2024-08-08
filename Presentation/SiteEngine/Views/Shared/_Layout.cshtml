@@ -17,6 +17,11 @@
         @RenderSection("CustomerLayout", required: false)
         @RenderSection("PerformerLayout", required: false)
         @RenderBody()
+        @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+    }
     </body>
 </html>
 

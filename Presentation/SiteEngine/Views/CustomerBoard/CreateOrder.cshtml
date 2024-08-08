@@ -1,0 +1,77 @@
+﻿@using ModelsEntity
+@using SiteEngine.Models.Order
+@model CreateOrderViewModel
+
+@{
+    Layout = "~/Views/Shared/CustomerLayout.cshtml";
+}
+<div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
+<div class="container">
+    <div class="row">
+        <div class="col-3">
+        </div>
+        <div class="col">
+            <div class="container">
+                <div class="justify-content-center">
+                    <form asp-action="CreateOrder" asp-controller="CustomerBoard" method="post">
+                        <div class="row mb-3">
+                            <div class="justify-content-start">
+                                <label class="form-label" for="TitleName">Титульное название</label>
+                                <input class="form-control" type="text" name="Order.TitleName" id="TitleName" />
+                            </div>
+                            <span class="text-danger" asp-validation-for="Order.TitleName"></span>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col mb-3">
+                                <div class="justify-content-center">
+                                    <label class="form-label" for="OrderPriority">Приоритет:</label>
+                                    <select id="OrderPriority" name="Order.OrderPriority" class="form-select">
+                                        <option value="M">Средний</option>
+                                        @foreach (var priority in Model.OrderPriorities)
+                                        {
+                                            if (priority.Name == "M")
+                                            {
+                                                <option selected value=@priority.Name>@priority.Description</option>
+                                            }
+                                            else
+                                            {
+                                                <option value=@priority.Name>@priority.Description</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col mb-3">
+                                <label class="form-label" for="ActivTime">Время на выполнение задачи</label>
+                                <input class="form-control" type="number" name="Order.ActivTime" id="ActivTime" />
+                            </div>
+                            <span class="text-danger" asp-validation-for="Order.ActivTime"></span>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="justify-content-start">
+                                <label class="form-label" for="Adress">Адрес</label>
+                                <input class="form-control" type="text" name="Order.Adress" id="Adress" />
+                            </div>
+                            <span class="text-danger" asp-validation-for="Order.Adress"></span>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="justify-content-start">
+                                <label class="form-label" for="Description">Краткое описание</label>
+                                <textarea class="form-control" rows="5" name="Order.Description" id="Description"></textarea>
+                            </div>
+                        </div>
+                        <div class="row hidden">
+                            <input class="form-control" type="number" name="Order.CustomerId" id="CustomerId" value="@Model.CustomerProfile.Id" />
+                        </div>
+                        <div class="row hidden">
+                            <input class="form-control" type="number" name="Order.PerformerId" id="PerformerId" value="" />
+                        </div>
+                        <button type="submit" class="btn btn-primary">Создать заказ</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-3">
+        </div>
+    </div>
+</div>

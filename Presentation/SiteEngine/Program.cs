@@ -35,6 +35,8 @@ namespace SiteEngine
             builder.Services.AddTransient<IProfilePerformerRepositories, ProfilePerformerRepositories>();
             builder.Services.AddTransient<IPerformerServiceMappingRepositories, PerformerServiceMappingRepositories>();
             builder.Services.AddTransient<IOrderRepositories, OrderRepositories>();
+            builder.Services.AddTransient<IOrderPriorityRepositories, OrderPriorityRepositories>();
+            builder.Services.AddTransient<IOrderStatusRepositories, OrderStatusRepositories>();
 
             /*builder.Services.Configure<RazorViewEngineOptions>(options =>
             {
@@ -92,7 +94,7 @@ namespace SiteEngine
             );
             app.MapControllerRoute(
                 name: "CustomerBoard",
-                pattern: "{controller=CustomerBoard}/{action=Index}"
+                pattern: "{controller=CustomerBoard}/{action=Index}/{id?}"
             );
             app.MapControllerRoute(
                 name: "PerformerBoard",

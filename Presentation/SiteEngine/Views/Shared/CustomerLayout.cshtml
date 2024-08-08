@@ -7,16 +7,20 @@
 @section CustomerLayout {
     <header>
         <div class="container">
-            <ul class="nav justify-content-center">
+            <ul class="nav justify-content-center mb-2">
+                <form method="get" asp-action="CreateOrder" asp-controller="CustomerBoard">
+                    <button class="btn btn-outline-success">Новый заказ</button>
+                </form>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Чаты</a>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Мои заказы</a>
+                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false">Заказы</a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">Завершенные</a></li>
-                        <li><a class="dropdown-item" href="#">Незавершенные</a></li>
-                        <li><a class="dropdown-item" href="#">Отмененные</a></li>
+                        <li><a class="dropdown-item" asp-action="IndexOrderList" asp-controller="CustomerBoard">Все закзы</a></li>
+                        <li><a class="dropdown-item" href="#">Мои Завершенные</a></li>
+                        <li><a class="dropdown-item" href="#">Мои Незавершенные</a></li>
+                        <li><a class="dropdown-item" href="#">Мои Отмененные</a></li>
                     </ul>
                 </li>
                 <li class="nav-item">

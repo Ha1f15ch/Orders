@@ -1,6 +1,7 @@
 ﻿using ApplicationDbContext;
 using ApplicationDbContext.ContextRepositories;
 using ApplicationDbContext.Interfaces;
+using ApplicationDbContext.Interfaces.ServicesInterfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Client;
@@ -17,38 +18,28 @@ namespace SiteEngine.Controllers
         private readonly IProfilePerformerRepositories profilePerformerRepositories;
         private readonly IPerformerServiceMappingRepositories performerServiceMappingRepositories;
         private readonly IServiceRepository serviceRepository;
+        private readonly IServiceInterfaceGetCookieData cookieDataService;
 
         public AmpluaController(IProfileCustomerRepositories profileCustomerRepositories, 
                                 IProfilePerformerRepositories profilePerformerRepositories, 
                                 IPerformerServiceMappingRepositories performerServiceMappingRepositories,
                                 IServiceRepository serviceRepository,
+                                IServiceInterfaceGetCookieData cookieDataService,
                                 AppDbContext context)
         {
             this.profileCustomerRepositories = profileCustomerRepositories;
             this.profilePerformerRepositories = profilePerformerRepositories;
             this.performerServiceMappingRepositories = performerServiceMappingRepositories;
             this.serviceRepository = serviceRepository;
+            this.cookieDataService = cookieDataService;
             this.context = context;
-        }
-
-        private int GetUserIdFromCookie()
-        {
-            if(Request.Cookies.TryGetValue("userID", out string userIDString))
-            {
-                if(int.TryParse(userIDString, out int userID))
-                {
-                    return userID;
-                }
-            }
-
-            return 0;
         }
 
         [Authorize, HttpGet]
         public async Task<IActionResult> IndexAsync()
         {
 
-            User user = await context.Users.FindAsync(GetUserIdFromCookie());
+            User user = await context.Users.FindAsync(cookieDataService.GetUserIdFromCookie());
             
             if (user == null)
             {
@@ -77,10 +68,10 @@ namespace SiteEngine.Controllers
                     PhoneNumber = customer.PhoneNumber,
                     City = customer.City,
                     Adress = customer.Adress,
-                    UserId = GetUserIdFromCookie(),
+                    UserId = cookieDataService.GetUserIdFromCookie(),
                 };
 
-                profileCustomerRepositories.CreateProfileCustomer(entityCustomer, GetUserIdFromCookie());
+                profileCustomerRepositories.CreateProfileCustomer(entityCustomer, cookieDataService.GetUserIdFromCookie());
 
                 return RedirectToAction("MyProfileCustomer", "CustomerBoard");
             }
@@ -108,11 +99,11 @@ namespace SiteEngine.Controllers
                     MiddleName = performer.MiddleName,
                     PhoneNumber = performer.PhoneNumber,
                     City = performer.City,
-                    UserId = GetUserIdFromCookie(),
+                    UserId = cookieDataService.GetUserIdFromCookie(),
                     AverageRating = 0
                 };
 
-                profilePerformerRepositories.CreateProfilePerformer(newPerformer, GetUserIdFromCookie());
+                profilePerformerRepositories.CreateProfilePerformer(newPerformer, cookieDataService.GetUserIdFromCookie());
 
                 return RedirectToAction("MyProfilePerformer", "PerformerBoard");
             }

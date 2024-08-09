@@ -1,13 +1,22 @@
 ﻿using ApplicationDbContext.Interfaces.ServicesInterfaces;
 using Azure.Core;
+using Microsoft.AspNetCore.Http;
 
 namespace ApplicationDbContext.ContextRepositories.Services
 {
     public class ServiceGetCookieData : IServiceInterfaceGetCookieData
     {
-        /*public int GetUserIdFromCookie()
+        private readonly IHttpContextAccessor httpContextAccessor;
+
+        public ServiceGetCookieData(IHttpContextAccessor httpContextAccessor)
         {
-            if (Request.Cookies.TryGetValue("userID", out string userIDString))
+            this.httpContextAccessor = httpContextAccessor;
+        }
+
+        public int GetUserIdFromCookie()
+        {
+            var context = httpContextAccessor.HttpContext;
+            if (context != null && context.Request.Cookies.TryGetValue("userID", out string userIDString))
             {
                 if (int.TryParse(userIDString, out int userID))
                 {
@@ -15,10 +24,6 @@ namespace ApplicationDbContext.ContextRepositories.Services
                 }
             }
             return 0;
-        }*/
-        public int GetUserIdFromCookie()
-        {
-            throw new NotImplementedException();
         }
     }
 }

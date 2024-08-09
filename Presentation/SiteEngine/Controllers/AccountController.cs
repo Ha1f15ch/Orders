@@ -1,4 +1,5 @@
 ﻿using ApplicationDbContext;
+using ApplicationDbContext.Interfaces.ServicesInterfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
@@ -13,23 +14,13 @@ namespace SiteEngine.Controllers
     public class AccountController : BaseController
     {
         private readonly AppDbContext context;
+        private readonly IServiceInterfaceGetCookieData cookieDataService;
 
-        public AccountController(AppDbContext appDbContext)
+        public AccountController(IServiceInterfaceGetCookieData cookieDataService, 
+                                 AppDbContext appDbContext)
         {
+            this.cookieDataService = cookieDataService;
             context = appDbContext;
-        }
-
-        private int GetUserIdFromCookie()
-        {
-            if (Request.Cookies.TryGetValue("userID", out string userIDString))
-            {
-                if (int.TryParse(userIDString, out int userID))
-                {
-                    return userID;
-                }
-            }
-
-            return 0;
         }
 
         //Превью страницы для регистрации
@@ -87,7 +78,7 @@ namespace SiteEngine.Controllers
 
             await AuthenticateAsync(user);
 
-            Response.Cookies.Append("userID", user.Id.ToString(), new CookieOptions
+            Response.Cookies.Append("userID", user.Id.ToString(), new Microsoft.AspNetCore.Http.CookieOptions
             {
                 Expires = DateTimeOffset.Now.AddHours(48)
             });
@@ -119,7 +110,7 @@ namespace SiteEngine.Controllers
 
             Response.Cookies.Delete("userID");
 
-            Response.Cookies.Append("userID", user.Id.ToString(), new CookieOptions
+            Response.Cookies.Append("userID", user.Id.ToString(), new Microsoft.AspNetCore.Http.CookieOptions
             {
                 Expires = DateTimeOffset.Now.AddHours(48)
             });

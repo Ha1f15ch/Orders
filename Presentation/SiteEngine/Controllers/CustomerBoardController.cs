@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Azure.Core;
 using ApplicationDbContext.ContextRepositories;
 using SiteEngine.Models.Order;
+using ApplicationDbContext.Interfaces.ServicesInterfaces;
 
 namespace SiteEngine.Controllers
 {
@@ -17,12 +18,14 @@ namespace SiteEngine.Controllers
         private readonly IOrderRepositories orderRepositories;
         private readonly IOrderPriorityRepositories orderPriorityRepositories;
         private readonly IOrderStatusRepositories orderStatusRepositories;
+        private readonly IServiceInterfaceGetCookieData cookieDataService;
 
         public CustomerBoardController(AppDbContext context, 
                                        IProfileCustomerRepositories profileCustomerRepository,                            
                                        IOrderRepositories orderRepository,
                                        IOrderPriorityRepositories orderPriorityRepository,
-                                       IOrderStatusRepositories orderStatusRepository
+                                       IOrderStatusRepositories orderStatusRepository,
+                                       IServiceInterfaceGetCookieData cookieDataService
         )
         {
             this.context = context;
@@ -30,25 +33,14 @@ namespace SiteEngine.Controllers
             this.orderRepositories = orderRepository;
             this.orderPriorityRepositories = orderPriorityRepository;
             this.orderStatusRepositories = orderStatusRepository;
-        }
-
-        private int GetUserIdFromCookie()
-        {
-            if (Request.Cookies.TryGetValue("userID", out string userIDString))
-            {
-                if (int.TryParse(userIDString, out int userID))
-                {
-                    return userID;
-                }
-            }
-            return 0;
+            this.cookieDataService = cookieDataService;
         }
 
         // title page customers metods 
         [Authorize, HttpGet]
         public async Task<IActionResult> IndexAsync()
         {
-            var myProfileCustomerModel = await profileCustomerRepositories.GetProfileCustomer(GetUserIdFromCookie());
+            var myProfileCustomerModel = await profileCustomerRepositories.GetProfileCustomer(cookieDataService.GetUserIdFromCookie());
 
             return View(myProfileCustomerModel);
         }
@@ -56,8 +48,8 @@ namespace SiteEngine.Controllers
         [Authorize, HttpGet]
         public async Task<IActionResult> IndexOrderListAsync()
         {
-            var getAllMyOrders = await orderRepositories.GetOrderByCustomFilter(null, null, null, null, null, null, GetUserIdFromCookie(), true, false);
-            var customerProfile = await profileCustomerRepositories.GetProfileCustomer(GetUserIdFromCookie());
+            var getAllMyOrders = await orderRepositories.GetOrderByCustomFilter(null, null, null, null, null, null, cookieDataService.GetUserIdFromCookie(), true, false);
+            var customerProfile = await profileCustomerRepositories.GetProfileCustomer(cookieDataService.GetUserIdFromCookie());
             var listOrdersPriority = await orderPriorityRepositories.GetOrderPrioritiesAsync();
             var listOrderStatuses = await orderStatusRepositories.GetOrderStatusesAsync();
 
@@ -73,7 +65,7 @@ namespace SiteEngine.Controllers
             string? statusId,
             string? priorityId)
         {
-            var userId = GetUserIdFromCookie();
+            var userId = cookieDataService.GetUserIdFromCookie();
 
             var getAllMyOrders = await orderRepositories.GetOrderByCustomFilter(dateCreateStart, dateCreateEnd, dateCanceledStart, dateCanceledEnd, statusId, priorityId, userId, true, false);
 
@@ -88,7 +80,7 @@ namespace SiteEngine.Controllers
         [Authorize, HttpGet]
         public async Task<IActionResult> MyProfileCustomerAsync()
         {
-            var myProfileCustomerModel = await profileCustomerRepositories.GetProfileCustomer(GetUserIdFromCookie());
+            var myProfileCustomerModel = await profileCustomerRepositories.GetProfileCustomer(cookieDataService.GetUserIdFromCookie());
 
             return View(myProfileCustomerModel);
         }
@@ -96,7 +88,7 @@ namespace SiteEngine.Controllers
         [Authorize, HttpGet]
         public async Task<IActionResult> EditMyProfileCustomerAsync()
         {
-            var myProfileCustomerModel = await profileCustomerRepositories.GetProfileCustomer(GetUserIdFromCookie());
+            var myProfileCustomerModel = await profileCustomerRepositories.GetProfileCustomer(cookieDataService.GetUserIdFromCookie());
 
             CustomerProfileFullViewModel customerProfileFullViewModel = new CustomerProfileFullViewModel
             {
@@ -156,7 +148,7 @@ namespace SiteEngine.Controllers
         [Authorize, HttpGet]
         public async Task<IActionResult> CreateOrderAsync()
         {
-            var userId = GetUserIdFromCookie();
+            var userId = cookieDataService.GetUserIdFromCookie();
 
             var customerProfile = await profileCustomerRepositories.GetProfileCustomer(userId);
             var listOrdersPriority = await orderPriorityRepositories.GetOrderPrioritiesAsync();
@@ -176,7 +168,7 @@ namespace SiteEngine.Controllers
         {
             if(ModelState.IsValid)
             {
-                var userId = GetUserIdFromCookie();
+                var userId = cookieDataService.GetUserIdFromCookie();
 
                 var customerProfile = await profileCustomerRepositories.GetProfileCustomer(userId);
                 var order = model.Order;
@@ -202,7 +194,7 @@ namespace SiteEngine.Controllers
             }
             else
             {
-                var userId = GetUserIdFromCookie();
+                var userId = cookieDataService.GetUserIdFromCookie();
                 model.CustomerProfile = await profileCustomerRepositories.GetProfileCustomer(userId);
                 model.OrderPriorities = await orderPriorityRepositories.GetOrderPrioritiesAsync();
 

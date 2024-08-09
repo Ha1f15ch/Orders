@@ -1,4 +1,5 @@
 using ApplicationDbContext.Interfaces;
+using ApplicationDbContext.Interfaces.ServicesInterfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModelsEntity;
@@ -10,12 +11,14 @@ namespace SiteEngine.Controllers
     public class HomeController : BaseController
     {
         private readonly ILogger<HomeController> _logger;
-
         private readonly IServiceRepository serviceRepository;
+        private readonly IServiceInterfaceGetCookieData cookieDataService;
 
-        public HomeController(IServiceRepository serviceRepository)
+        public HomeController(IServiceRepository serviceRepository,
+                              IServiceInterfaceGetCookieData cookieDataService)
         {
             this.serviceRepository = serviceRepository;
+            this.cookieDataService = cookieDataService;
         }
 
         public IActionResult Index()// show all items

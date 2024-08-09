@@ -1,6 +1,8 @@
 using ApplicationDbContext;
 using ApplicationDbContext.ContextRepositories;
+using ApplicationDbContext.ContextRepositories.Services;
 using ApplicationDbContext.Interfaces;
+using ApplicationDbContext.Interfaces.ServicesInterfaces;
 using ApplicationDbContext.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Hosting;
@@ -37,6 +39,8 @@ namespace SiteEngine
             builder.Services.AddTransient<IOrderRepositories, OrderRepositories>();
             builder.Services.AddTransient<IOrderPriorityRepositories, OrderPriorityRepositories>();
             builder.Services.AddTransient<IOrderStatusRepositories, OrderStatusRepositories>();
+            builder.Services.AddTransient<IServiceInterfaceGetCookieData, ServiceGetCookieData>();
+            builder.Services.AddHttpContextAccessor();
 
             /*builder.Services.Configure<RazorViewEngineOptions>(options =>
             {

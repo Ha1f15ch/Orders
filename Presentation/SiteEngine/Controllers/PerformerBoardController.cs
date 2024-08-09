@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using ModelsEntity;
 using Microsoft.AspNetCore.Mvc;
 using ApplicationDbContext.ContextRepositories;
+using ApplicationDbContext.Interfaces.ServicesInterfaces;
 
 namespace SiteEngine.Controllers
 {
@@ -14,35 +15,26 @@ namespace SiteEngine.Controllers
         private readonly IProfilePerformerRepositories profilePerformerRepositories;
         private readonly IPerformerServiceMappingRepositories performerServiceMappingRepositories;
         private readonly IServiceRepository serviceRepository;
+        private readonly IServiceInterfaceGetCookieData cookieDataService;
 
         public PerformerBoardController(AppDbContext context, 
                                         IProfilePerformerRepositories profilePerformerRepositories, 
                                         IPerformerServiceMappingRepositories performerServiceMappingRepositories, 
-                                        IServiceRepository serviceRepository)
+                                        IServiceRepository serviceRepository,
+                                        IServiceInterfaceGetCookieData cookieDataService)
         {
             this.context = context;
             this.profilePerformerRepositories = profilePerformerRepositories;
             this.performerServiceMappingRepositories = performerServiceMappingRepositories;
             this.serviceRepository = serviceRepository;
-        }
-
-        private int GetUserIdFromCookie()
-        {
-            if (Request.Cookies.TryGetValue("userID", out string userIDString))
-            {
-                if (int.TryParse(userIDString, out int userID))
-                {
-                    return userID;
-                }
-            }
-            return 0;
+            this.cookieDataService = cookieDataService;
         }
 
         // title page performers metods 
         [Authorize, HttpGet]
         public async Task<IActionResult> IndexAsync()
         {
-            var myProfilePerformerModel = await profilePerformerRepositories.GetProfilePerformer(GetUserIdFromCookie());
+            var myProfilePerformerModel = await profilePerformerRepositories.GetProfilePerformer(cookieDataService.GetUserIdFromCookie());
 
             return View(myProfilePerformerModel);
         }
@@ -51,7 +43,7 @@ namespace SiteEngine.Controllers
         [Authorize, HttpGet]
         public async Task<IActionResult> MyProfilePerformerAsync()
         {
-            var myProfilePerformerModel = await profilePerformerRepositories.GetProfilePerformer(GetUserIdFromCookie()); //Performer
+            var myProfilePerformerModel = await profilePerformerRepositories.GetProfilePerformer(cookieDataService.GetUserIdFromCookie()); //Performer
             var servicesPerformerMapping = await performerServiceMappingRepositories.GetAllPerformerServiceMappingByPerformerId(myProfilePerformerModel.Id);
             var services = serviceRepository.GetAllServiceByList();
 
@@ -61,7 +53,7 @@ namespace SiteEngine.Controllers
         [Authorize, HttpGet]
         public async Task<IActionResult> EditMyProfilePerformerAsync()
         {
-            var infoPerformer = await profilePerformerRepositories.GetProfilePerformer(GetUserIdFromCookie());
+            var infoPerformer = await profilePerformerRepositories.GetProfilePerformer(cookieDataService.GetUserIdFromCookie());
             var infoListService = serviceRepository.GetAllServiceByList();
             var infoPerformerServiceMapping = await performerServiceMappingRepositories.GetAllPerformerServiceMappingByPerformerId(infoPerformer.Id);
 
@@ -84,7 +76,7 @@ namespace SiteEngine.Controllers
                     Education = infoPerformer.Education,
                     Description = infoPerformer.Description,
                     AverageRating = infoPerformer.AverageRating,
-                    UserId = GetUserIdFromCookie(),
+                    UserId = cookieDataService.GetUserIdFromCookie(),
                 };
 
                 return View(tempInfoPerformer);

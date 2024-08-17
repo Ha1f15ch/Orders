@@ -73,49 +73,236 @@
                 {
                     @foreach(Order order in Model.Item1)
                     {
-                        <div class="border rounded-4 mb-3">
-                            <div class="p-3 mb-2 bg-light-subtle text-light-emphasis" onclick="window.location = window.origin+'/CustomerBoard/Order/@order.Id'">
-                                <div class="row">
-                                    <div class="col text-start">
-                                        <h4 class="card-title">
-                                            @order.TitleName
-                                        </h4>
+                        if (order.OrderStatus == "N")
+                        {
+                            <div class="border rounded-4 mb-3 newStyle">
+                                <div class="p-3 mb-2 bg-light-subtle text-light-emphasis" onclick="window.location = window.origin+'/CustomerBoard/Order/@order.Id'">
+                                    <div class="row">
+                                        <div class="col text-start">
+                                            <h4 class="card-title">
+                                                @order.TitleName
+                                            </h4>
+                                        </div>
+                                        <div class="col text-end">
+                                            <h6>
+                                                @Model.Item2.FirstName @Model.Item2.MiddleName
+                                            </h6>
+                                        </div>
                                     </div>
-                                    <div class="col text-end">
-                                        <h6>
-                                            @Model.Item2.FirstName @Model.Item2.MiddleName
-                                        </h6>
+                                    <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
+                                    <div class="row">
+                                        <div class="col text-start">
+                                            <h6>
+                                                @order.City
+                                            </h6>
+                                        </div>
+                                        @{
+                                            var orderPriorityItem = Model.Item3.SingleOrDefault(el => el.Name == order.OrderPriority);
+                                        }
+                                        <div class="col text-end">
+                                            <h6>@orderPriorityItem.Description</h6>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
-                                <div class="row">
-                                    <div class="col text-start">
-                                        <h6>
-                                            @order.City
-                                        </h6>
-                                    </div>
-                                    @{
-                                        var orderPriorityItem = Model.Item3.SingleOrDefault(el => el.Name == order.OrderPriority);
-                                    }
-                                    <div class="col text-end">
-                                        <h6>@orderPriorityItem.Description</h6>
-                                    </div>
-                                </div>
-                                <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
-                                <div class="row">
-                                    <div class="col text-start">
-                                        <h10>
-                                            Дата создания заказа
-                                        </h10>
-                                    </div>
-                                    <div class="col text-end">
-                                        <h9>
-                                            @order.CreatedDate
-                                        </h9>
+                                    <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
+                                    <div class="row">
+                                        <div class="col text-start">
+                                            <h10>
+                                                Дата создания заказа
+                                            </h10>
+                                        </div>
+                                        <div class="col text-end">
+                                            <h9>
+                                                @order.CreatedDate
+                                            </h9>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        }
+                        else if(order.OrderStatus == "S")
+                        {
+                            <div class="border rounded-4 mb-3 startStyle">
+                                <div class="p-3 mb-2 bg-light-subtle text-light-emphasis" onclick="window.location = window.origin+'/CustomerBoard/Order/@order.Id'">
+                                    <div class="row">
+                                        <div class="col text-start">
+                                            <h4 class="card-title">
+                                                @order.TitleName
+                                            </h4>
+                                        </div>
+                                        <div class="col text-end">
+                                            <h6>
+                                                @Model.Item2.FirstName @Model.Item2.MiddleName
+                                            </h6>
+                                        </div>
+                                    </div>
+                                    <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
+                                    <div class="row">
+                                        <div class="col text-start">
+                                            <h6>
+                                                @order.City
+                                            </h6>
+                                        </div>
+                                        @{
+                                            var orderPriorityItem = Model.Item3.SingleOrDefault(el => el.Name == order.OrderPriority);
+                                        }
+                                        <div class="col text-end">
+                                            <h6>@orderPriorityItem.Description</h6>
+                                        </div>
+                                    </div>
+                                    <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
+                                    <div class="row">
+                                        <div class="col text-start">
+                                            <h10>
+                                                Дата создания заказа
+                                            </h10>
+                                        </div>
+                                        <div class="col text-end">
+                                            <h9>
+                                                @order.CreatedDate
+                                            </h9>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        else if(order.OrderStatus == "D")
+                        {
+                            <div class="border rounded-4 mb-3 discussStyle">
+                                <div class="p-3 mb-2 bg-light-subtle text-light-emphasis" onclick="window.location = window.origin+'/CustomerBoard/Order/@order.Id'">
+                                    <div class="row">
+                                        <div class="col text-start">
+                                            <h4 class="card-title">
+                                                @order.TitleName
+                                            </h4>
+                                        </div>
+                                        <div class="col text-end">
+                                            <h6>
+                                                @Model.Item2.FirstName @Model.Item2.MiddleName
+                                            </h6>
+                                        </div>
+                                    </div>
+                                    <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
+                                    <div class="row">
+                                        <div class="col text-start">
+                                            <h6>
+                                                @order.City
+                                            </h6>
+                                        </div>
+                                        @{
+                                            var orderPriorityItem = Model.Item3.SingleOrDefault(el => el.Name == order.OrderPriority);
+                                        }
+                                        <div class="col text-end">
+                                            <h6>@orderPriorityItem.Description</h6>
+                                        </div>
+                                    </div>
+                                    <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
+                                    <div class="row">
+                                        <div class="col text-start">
+                                            <h10>
+                                                Дата создания заказа
+                                            </h10>
+                                        </div>
+                                        <div class="col text-end">
+                                            <h9>
+                                                @order.CreatedDate
+                                            </h9>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        else if(order.OrderStatus == "X")
+                        {
+                            <div class="border rounded-4 mb-3 deletedStyle">
+                                <div class="p-3 mb-2 bg-light-subtle text-light-emphasis" onclick="window.location = window.origin+'/CustomerBoard/Order/@order.Id'">
+                                    <div class="row">
+                                        <div class="col text-start">
+                                            <h4 class="card-title">
+                                                @order.TitleName
+                                            </h4>
+                                        </div>
+                                        <div class="col text-end">
+                                            <h6>
+                                                @Model.Item2.FirstName @Model.Item2.MiddleName
+                                            </h6>
+                                        </div>
+                                    </div>
+                                    <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
+                                    <div class="row">
+                                        <div class="col text-start">
+                                            <h6>
+                                                @order.City
+                                            </h6>
+                                        </div>
+                                        @{
+                                            var orderPriorityItem = Model.Item3.SingleOrDefault(el => el.Name == order.OrderPriority);
+                                        }
+                                        <div class="col text-end">
+                                            <h6>@orderPriorityItem.Description</h6>
+                                        </div>
+                                    </div>
+                                    <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
+                                    <div class="row">
+                                        <div class="col text-start">
+                                            <h10>
+                                                Дата создания заказа
+                                            </h10>
+                                        </div>
+                                        <div class="col text-end">
+                                            <h9>
+                                                @order.CreatedDate
+                                            </h9>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        else if (order.OrderStatus == "CP" || order.OrderStatus == "CC")
+                        {
+                            <div class="border rounded-4 mb-3 canceledStyle">
+                                <div class="p-3 mb-2 bg-light-subtle text-light-emphasis" onclick="window.location = window.origin+'/CustomerBoard/Order/@order.Id'">
+                                    <div class="row">
+                                        <div class="col text-start">
+                                            <h4 class="card-title">
+                                                @order.TitleName
+                                            </h4>
+                                        </div>
+                                        <div class="col text-end">
+                                            <h6>
+                                                @Model.Item2.FirstName @Model.Item2.MiddleName
+                                            </h6>
+                                        </div>
+                                    </div>
+                                    <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
+                                    <div class="row">
+                                        <div class="col text-start">
+                                            <h6>
+                                                @order.City
+                                            </h6>
+                                        </div>
+                                        @{
+                                            var orderPriorityItem = Model.Item3.SingleOrDefault(el => el.Name == order.OrderPriority);
+                                        }
+                                        <div class="col text-end">
+                                            <h6>@orderPriorityItem.Description</h6>
+                                        </div>
+                                    </div>
+                                    <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
+                                    <div class="row">
+                                        <div class="col text-start">
+                                            <h10>
+                                                Дата создания заказа
+                                            </h10>
+                                        </div>
+                                        <div class="col text-end">
+                                            <h9>
+                                                @order.CreatedDate
+                                            </h9>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
                     }
                 }
             </div>

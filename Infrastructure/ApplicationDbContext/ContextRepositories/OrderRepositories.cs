@@ -32,14 +32,13 @@ namespace ApplicationDbContext.ContextRepositories
             }
         }
 
-        public async void DeleteOrderById(int orderId, int userId, bool isCustomer, bool isPerformer)
+        public async void DeleteOrderById(int orderId)
         {
             Order order = await GetOrderById(orderId);
-            Customer customer = context.Customers.Single(el => el.UserId == userId);
 
             if (order != null)
             {
-                if(customer is not null && order.PerformerId is null) //у заказа еще нет исполнителя 
+                if(order.PerformerId is null) //у заказа еще нет исполнителя 
                 {
                     order.OrderStatus = "X";
                     order.DeletedDate = DateTime.Now;
@@ -57,9 +56,36 @@ namespace ApplicationDbContext.ContextRepositories
             }
         }
 
+        public async void UpdateOrder(Order order)
+        {
+            if(order is not null)
+            {
+                var updatedModel = await GetOrderById(order.Id);
+
+                updatedModel.TitleName = order.TitleName;
+                updatedModel.City = order.City;
+                updatedModel.Adress = order.Adress;
+                updatedModel.Description = order.Description;
+                updatedModel.ActivTime = order.ActivTime;
+                updatedModel.CustomerId = order.CustomerId;
+                updatedModel.PerformerId = order.PerformerId;
+                updatedModel.OrderStatus = order.OrderStatus;
+                updatedModel.OrderPriority = order.OrderPriority;
+                updatedModel.CreatedDate = order.CreatedDate;
+                updatedModel.UpdatedDate = DateTime.Now;
+                updatedModel.DeletedDate = order.DeletedDate;
+
+                context.SaveChanges();
+            }
+            else
+            {
+                throw new ArgumentNullException("Ошибка !!! Для обновления объекта передан null !!!");
+            }
+        }
+
         public async Task<Order> GetOrderById(int orderId)
         {
-            if (orderId != -1 && orderId != 0)
+            if (orderId > 0)
             {
                 return context.Orders.Single(el => el.Id == orderId);
             }
@@ -88,7 +114,7 @@ namespace ApplicationDbContext.ContextRepositories
             throw new NotImplementedException();
         }
 
-        public async Task<List<Order>> GetOrderByCustomFilter(DateOnly? dateCreateStart = null, DateOnly? dateCreateEnd = null, DateOnly? dateCancaledStart = null, DateOnly? dateCanceledEnd = null, string? statusId = null, string? priorityId = null, int userId = 0, bool isCustomer = false, bool isPerformer = false)
+        public async Task<List<Order>> GetOrderByCustomFilter(DateOnly? dateCreateStart = null, DateOnly? dateCreateEnd = null, DateOnly? dateCancaledStart = null, DateOnly? dateCanceledEnd = null, string? statusId = null, string? priorityId = null, int userId = 0, bool isCustomer = false, bool isPerformer = false) // для работы вкладок на view с другими фильтрами, нужно создать состояние фильтров, доработать данный метод/создать для параметров отдельный класс
          {
             var customer = isCustomer ? context.Customers.SingleOrDefault(el => el.UserId == userId) : null;
             var performer = isPerformer ? context.Performers.SingleOrDefault(el => el.UserId == userId) : null;
@@ -363,9 +389,19 @@ namespace ApplicationDbContext.ContextRepositories
             throw new NotImplementedException();
         }
 
-        public async void UpdatePriorityOrder(int orderId, string priorityId, int userId, bool isCustomer, bool isPerformer)
+        public async void UpdatePriorityOrder(int id, string name)
         {
-            throw new NotImplementedException();
+            var order = await GetOrderById(id);
+
+            if(order is not null)
+            {
+                order.OrderPriority = name;
+                context.SaveChanges();
+            }
+            else
+            {
+                throw new InvalidOperationException("Ошибка при изменении, не найдена запись изменения");
+            }
         }
 
         public async void UpdateStatusOrder(int orderId, string statusId, int userId, bool isCustomer, bool isPerformer)

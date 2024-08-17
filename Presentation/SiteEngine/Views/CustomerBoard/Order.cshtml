@@ -1,24 +1,44 @@
 ﻿@using ModelsEntity
-@model Order
+@using SiteEngine.Models.Order
+@model DetailOrderViewModel
 
 @{
     Layout = "~/Views/Shared/CustomerLayout.cshtml";
 }
 
 <div class="container">
-    <div class="row row-gap-3 align-items-center">
+    <div class="row row-gap-3">
          <div class="col">
-
+            <div class="sticky-top">
+                <div class="row mb-3">
+                    <div class="col-12 d-grid ">
+                        <form class="col-12 d-grid" method="get">
+                            <button class="btn btn-warning" asp-action="UpdateOrder" asp-controller="CustomerBoard">Изменить</button>
+                            <input class="hidden" value="@Model.Order.Id" name="Id" />
+                        </form>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col d-grid ">
+                        <button class="btn btn-secondary" type="button" data-bs-toggle="modal" data-bs-target="#ModalWindow">Изменить приоритет</button>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col d-grid ">
+                        <button class="btn btn-danger" type="button" data-bs-toggle="modal" data-bs-target="#ModalWindow2">Отменить </button>
+                    </div>
+                </div>
+            </div>
          </div>
          <div class="col-6 p-3">
              <div class="container">
                  <div class="justify-content-center">
-                    <h5>Заказ № @Model.Id</h5>
+                    <h5>Заказ № @Model.Order.Id</h5>
                     
                      <div class="row">
                         <div class="col text-start">
                             <h4 class="card-title">
-                                @Model.TitleName
+                                @Model.Order.TitleName
                             </h4>
                         </div>
                      </div>
@@ -28,7 +48,7 @@
                             Город
                         </div>
                         <div class="col text-center">
-                            <h10>@Model.City</h10>
+                            <h10>@Model.Order.City</h10>
                         </div>
                     </div>
                     <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
@@ -37,7 +57,7 @@
                             Адрес
                         </div>
                         <div class="col text-start">
-                            <h10>@Model.Adress</h10>
+                            <h10>@Model.Order.Adress</h10>
                         </div>
                     </div>
                     <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
@@ -46,7 +66,7 @@
                             <h8>Краткое описание</h8>
                         </div>
                         <div class="text-start">
-                            <p class="fs-4">@Model.Description</p>
+                            <p class="fs-4">@Model.Order.Description</p>
                         </div>
                     </div>
                     <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
@@ -57,7 +77,7 @@
                                     Время выполнения: 
                                 </div>
                                 <div class="col text-start">
-                                    <p class="fs-5">@Model.ActivTime</p>
+                                    <p class="fs-5">@Model.Order.ActivTime</p>
                                 </div>
                             </div>
                         </div>
@@ -66,7 +86,7 @@
                                 <div class="col text-start">
                                     Исполнитель: 
                                 </div>
-                                @if(Model.PerformerId == null)
+                                @if (!@Model.Order.PerformerId.HasValue)
                                 {
                                     <div class="col text-start">
                                         <p class="fs-5">Не выбран</p>
@@ -75,7 +95,7 @@
                                 else
                                 {
                                     <div class="col text-start">
-                                        <p class="fs-4">@Model.PerformerId</p>
+                                        <p class="fs-4">@Model.PerformerProfile.LastName @Model.PerformerProfile.FirstName</p>
                                     </div>
                                 }
                             </div>
@@ -87,7 +107,10 @@
                             Приоритет: 
                         </div>
                         <div class="col text-center">
-                            <h9>@Model.OrderPriority</h9>
+                            @{
+                                var itemPriority = Model.OrderPriorities.SingleOrDefault(el => el.Name == Model.Order.OrderPriority);
+                            }
+                            <h9>@itemPriority.Description</h9>
                         </div>
                     </div>
                     <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
@@ -96,7 +119,10 @@
                             Статус:
                         </div>
                         <div class="col text-center">
-                            <h9>@Model.OrderStatus</h9>
+                            @{
+                                var itemStatus = Model.OrderStatuses.SingleOrDefault(el => el.Name == Model.Order.OrderStatus);
+                            }
+                            <h9>@itemStatus.Description</h9>
                         </div>
                     </div>
                     <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
@@ -105,7 +131,7 @@
                             Дата создания:
                         </div>
                         <div class="col text-center">
-                            <h9>@Model.CreatedDate</h9>
+                            <h9>@Model.Order.CreatedDate</h9>
                         </div>
                     </div>
                     <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
@@ -114,7 +140,7 @@
                             Дата последнегор изменения:
                         </div>
                         <div class="col text-center">
-                            <h9>@Model.UpdatedDate</h9>
+                            <h9>@Model.Order.UpdatedDate</h9>
                         </div>
                     </div>
                     <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
@@ -123,7 +149,7 @@
                             Дата отмены:
                         </div>
                         <div class="col text-center">
-                            <h9>@Model.DeletedDate</h9>
+                            <h9>@Model.Order.DeletedDate</h9>
                         </div>
                     </div>
                     <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
@@ -133,5 +159,67 @@
          <div class="col">
 
          </div>
+        <div class="modal fade" id="ModalWindow" tabindex="-1" aria-labelledby="ModalWindowLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="ModalWindowLabel">Новый приоритет заказа</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="col mb-3">
+                            <form asp-action="UpdateOrderPriority" asp-controller="CustomerBoard" method="post">
+                                <div class="justify-content-center">
+                                    <div class="hidden">
+                                        <input type="number" asp-for="Order.Id" name="Id" value=@Model.Order.Id class="form-control">
+                                    </div>
+                                    <label class="form-label" for="OrderPriority">Новый Приоритет:</label>
+                                    <select id="OrderPriority" name="OrderPriority" class="form-select">
+                                        @foreach (var priority in Model.OrderPriorities)
+                                        {
+                                            if (priority.Name == Model.Order.OrderPriority)
+                                            {
+                                                <option selected value=@priority.Name>@priority.Description</option>
+                                            }
+                                            else
+                                            {
+                                                <option value=@priority.Name>@priority.Description</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                                <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="ModalWindow2" tabindex="-1" aria-labelledby="ModalWindow2Label" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="ModalWindowLabel">Удаление заказа</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="col mb-3">
+                            <h9>Уверены, что хотите удалить/отменить заказ ?</h9>
+                            <form asp-action="DeleteOrder" asp-controller="CustomerBoard" method="post">
+                                <div class="justify-content-center">
+                                    <div class="hidden">
+                                        <input type="number" asp-for="Order.Id" name="Id" value=@Model.Order.Id class="form-control">
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                                <button type="submit" class="btn btn-primary">Подтвердить удаление</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

@@ -1,0 +1,93 @@
+﻿@using SiteEngine.Models.Order
+@model UpdateOrderViewModel
+
+@{
+    Layout = "~/Views/Shared/CustomerLayout.cshtml";
+}
+
+<div class="container">
+    <div class="row row-gap-3 align-items-center">
+        <div class="col">
+            
+        </div>
+        <div class="col-6 p-3">
+            <div class="container">
+                <div class="justify-content-center">
+                    <form asp-action="UpdateOrder" asp-controller="CustomerBoard" method="post">
+                        <div class="row g-3">
+                            <div class="col-sm flex-fill visually-hidden">
+                                <div class="mb-3">
+                                    <input type="number" asp-for="Order.Id" name="Id" value=@Model.Order.Id class="form-control">
+                                    <input type="number" asp-for="Order.Id" name="Order.Id" value=@Model.Order.Id class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-sm flex-fill">
+                                <div class="col-sm">
+                                    <label asp-for="Order.TitleName" class="form-label">Заголовок</label>
+                                    <input asp-for="Order.TitleName" type="text" class="form-control" value=@Model.Order.TitleName placeholder="Заголовок заказа" aria-label="Order.TitleName">
+                                </div>
+                                <span class="text-danger" asp-validation-for="Order.TitleName"></span>
+                            </div>
+                            <div class="col-sm flex-fill hidden">
+                                <div class="col-sm">
+                                    <label asp-for="Order.City" class="form-label">Город</label>
+                                    <input asp-for="Order.City" type="text" class="form-control" value=@Model.Order.City placeholder="Москва" aria-label="Order.City">
+                                </div>
+                                <span class="text-danger" asp-validation-for="Order.City"></span>
+                            </div>
+                            <div class="col-sm flex-fill">
+                                <div class="col-sm">
+                                    <label asp-for="Order.Adress" class="form-label">Адрес</label>
+                                    <input asp-for="Order.Adress" type="text" class="form-control" value=@Model.Order.Adress placeholder="Москва ул. Пушкина 88" aria-label="Order.Adress">
+                                </div>
+                                <span class="text-danger" asp-validation-for="Order.City"></span>
+                            </div>
+                            <div class="col-sm flex-fill">
+                                <div class="justify-content-start">
+                                    <label class="form-label" for="Description">Краткое описание</label>
+                                    <textarea class="form-control" rows="5" name="Order.Description" id="Description">@Model.Order.Description</textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
+                        <div class="row mb-3">
+                            <div class="col mb-3">
+                                <div class="justify-content-center">
+                                    <label class="form-label" for="OrderPriority">Приоритет:</label>
+                                    <select id="OrderPriority" name="Order.OrderPriority" class="form-select">
+                                        @foreach (var priority in Model.OrderPriorities)
+                                        {
+                                            if (priority.Name == Model.Order.OrderPriority)
+                                            {
+                                                <option selected value=@priority.Name>@priority.Description</option>
+                                            }
+                                            else
+                                            {
+                                                <option value=@priority.Name>@priority.Description</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col mb-3">
+                                <label class="form-label" for="ActivTime">Время на выполнение задачи</label>
+                                <input class="form-control" type="number" name="Order.ActivTime" value=@Model.Order.ActivTime id="ActivTime" />
+                            </div>
+                            <span class="text-danger" asp-validation-for="Order.ActivTime"></span>
+                        </div>
+                        <div class="row g-3 hidden">
+                            <div class="col-sm">
+                                <label asp-for="Order.CustomerId" class="form-label">Id Заказчика</label>
+                                <input asp-for="Order.CustomerId" type="text" class="form-control" value=@Model.Order.CustomerId aria-label="Order.CustomerId">
+                            </div>
+                            <span class="text-danger" asp-validation-for="Order.CustomerId"></span>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Изменить заказ</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+        </div>
+    </div>
+</div>

@@ -37,3 +37,23 @@ body {
 .rounded-4 {
     border-radius: 5%;
 }
+
+.newStyle {
+    background-color: #CCFFCC ;
+}
+
+.startStyle {
+    background-color: #66CCFF;
+}
+
+.deletedStyle {
+    background-color: #FF99CC;
+}
+
+.discussStyle {
+    background-color: #FFFFCC;
+}
+
+.canceledStyle {
+    background-color: #FFCC99;
+}

@@ -15,13 +15,15 @@ namespace SiteEngine.Controllers
     {
         private readonly AppDbContext context;
         private readonly IProfileCustomerRepositories profileCustomerRepositories;
+        private readonly IProfilePerformerRepositories profilePerformerRepositories;
         private readonly IOrderRepositories orderRepositories;
         private readonly IOrderPriorityRepositories orderPriorityRepositories;
         private readonly IOrderStatusRepositories orderStatusRepositories;
         private readonly IServiceInterfaceGetCookieData cookieDataService;
 
         public CustomerBoardController(AppDbContext context, 
-                                       IProfileCustomerRepositories profileCustomerRepository,                            
+                                       IProfileCustomerRepositories profileCustomerRepository,                
+                                       IProfilePerformerRepositories profilePerformerRepository,
                                        IOrderRepositories orderRepository,
                                        IOrderPriorityRepositories orderPriorityRepository,
                                        IOrderStatusRepositories orderStatusRepository,
@@ -30,6 +32,7 @@ namespace SiteEngine.Controllers
         {
             this.context = context;
             this.profileCustomerRepositories = profileCustomerRepository;
+            this.profilePerformerRepositories = profilePerformerRepository;
             this.orderRepositories = orderRepository;
             this.orderPriorityRepositories = orderPriorityRepository;
             this.orderStatusRepositories = orderStatusRepository;
@@ -205,15 +208,129 @@ namespace SiteEngine.Controllers
         [Authorize, HttpGet]
         public async Task<IActionResult> OrderAsync(int id)
         {
-            if (id == -1)
+            if (id <= 0)
             {
                 return View("Error");
             }
             else
             {
+                var userId = cookieDataService.GetUserIdFromCookie();
+
+                var order = await orderRepositories.GetOrderById(id);
+                var customerProfile = await profileCustomerRepositories.GetProfileCustomer(userId);
+                var performerProfile = await profilePerformerRepositories.GetProfilePerformer(userId);
+                var listOrdersPriority = await orderPriorityRepositories.GetOrderPrioritiesAsync();
+                var listOrderStatus = await orderStatusRepositories.GetOrderStatusesAsync();
+
+                var model = new DetailOrderViewModel
+                {
+                    Order = order,
+                    CustomerProfile = customerProfile,
+                    PerformerProfile = performerProfile,
+                    OrderPriorities = listOrdersPriority,
+                    OrderStatuses = listOrderStatus,
+                };
+
+                return View(model);
+            }
+        }
+
+        [Authorize, HttpGet]
+        public async Task<IActionResult> UpdateOrderAsync(int id)
+        {
+            if (id <= 0)
+            {
+                return View("Error");
+            }
+            else
+            {
+                var userId = cookieDataService.GetUserIdFromCookie();
+                var customerProfile = await profileCustomerRepositories.GetProfileCustomer(userId);
+                var listOrdersPriority = await orderPriorityRepositories.GetOrderPrioritiesAsync();
                 var order = await orderRepositories.GetOrderById(id);
 
+
+                var model = new UpdateOrderViewModel
+                {
+                    CustomerProfile = customerProfile,
+                    OrderPriorities = listOrdersPriority,
+                    Order = new OrderForUpdateViewModel
+                    {
+                        Id = id,
+                        TitleName = order.TitleName,
+                        Adress = order.Adress,
+                        Description = order.Description,
+                        ActivTime = order.ActivTime,
+                        CustomerId = order.CustomerId,
+                        OrderPriority = order.OrderPriority
+                    }
+                };
+                
+                return View(model);
+            }
+        }
+
+        [Authorize, HttpPost]
+        public async Task<IActionResult> UpdateOrderAsync(int id, OrderForUpdateViewModel order)
+        {
+            if(order is not null)
+            {
+                var orderInDb = await orderRepositories.GetOrderById(id);
+
+                Order orderForUpdate = new Order
+                {
+                    Id = id,
+                    TitleName = order.TitleName,
+                    City = orderInDb.City,
+                    Adress = order.Adress,
+                    Description = order.Description,
+                    ActivTime = order.ActivTime,
+                    CustomerId = orderInDb.CustomerId,
+                    PerformerId = orderInDb.PerformerId,
+                    OrderStatus = orderInDb.OrderStatus,
+                    OrderPriority = order.OrderPriority,
+                    CreatedDate = orderInDb.CreatedDate,
+                    UpdatedDate = DateTime.Now,
+                    DeletedDate = orderInDb.DeletedDate,
+                };
+
+                orderRepositories.UpdateOrder(orderForUpdate);
+
+                return RedirectToAction("Order", new {id = orderForUpdate.Id});
+            }
+            else
+            {
                 return View(order);
+            }
+            
+        }
+
+        [Authorize, HttpPost]
+        public async Task<IActionResult> UpdateOrderPriorityAsync(int id, string orderPriority)
+        {
+            if(id > 0 && orderPriority is not null)
+            {
+                orderRepositories.UpdatePriorityOrder(id, orderPriority);
+
+                return RedirectToAction("Order", new { id = id });
+            }
+            else
+            {
+                return RedirectToAction("Order", new { id = id });
+            }
+        }
+
+        [Authorize, HttpPost]
+        public async Task<IActionResult> DeleteOrderAsync(int id)
+        {
+            if(id > 0)
+            {
+                orderRepositories.DeleteOrderById(id);
+                return RedirectToAction("IndexOrderList");
+            }
+            else
+            {
+                return RedirectToAction("Order", new { id = id });
             }
         }
     }

@@ -16,7 +16,7 @@
                     <form asp-action="CreateOrder" asp-controller="CustomerBoard" method="post">
                         <div class="row mb-3">
                             <div class="justify-content-start">
-                                <label class="form-label" for="TitleName">Титульное название</label>
+                                <label class="form-label" for="TitleName">Заголовок заказа</label>
                                 <input class="form-control" type="text" name="Order.TitleName" id="TitleName" />
                             </div>
                             <span class="text-danger" asp-validation-for="Order.TitleName"></span>

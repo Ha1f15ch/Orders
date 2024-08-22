@@ -51,8 +51,18 @@ namespace SiteEngine.Controllers
         [Authorize, HttpGet]
         public async Task<IActionResult> IndexOrderListAsync()
         {
-            var getAllMyOrders = await orderRepositories.GetOrderByCustomFilter(null, null, null, null, null, null, cookieDataService.GetUserIdFromCookie(), true, false);
-            var customerProfile = await profileCustomerRepositories.GetProfileCustomer(cookieDataService.GetUserIdFromCookie());
+
+            var filterParams = new OrderFilterParams
+            {
+                UserId = cookieDataService.GetUserIdFromCookie(),
+                IsCustomer = true // или другое значение в зависимости от логики
+            };
+
+            var getAllMyOrders = await orderRepositories.GetOrderByCustomFilter(filterParams);
+
+            /*var customerProfile = await profileCustomerRepositories.GetProfileCustomer(cookieDataService.GetUserIdFromCookie());*/
+
+            var customerProfile = await profileCustomerRepositories.GetProfileCustomer(filterParams.UserId);
             var listOrdersPriority = await orderPriorityRepositories.GetOrderPrioritiesAsync();
             var listOrderStatuses = await orderStatusRepositories.GetOrderStatusesAsync();
 
@@ -70,7 +80,21 @@ namespace SiteEngine.Controllers
         {
             var userId = cookieDataService.GetUserIdFromCookie();
 
-            var getAllMyOrders = await orderRepositories.GetOrderByCustomFilter(dateCreateStart, dateCreateEnd, dateCanceledStart, dateCanceledEnd, statusId, priorityId, userId, true, false);
+            var filterParams = new OrderFilterParams
+            {
+                DateCreateStart = dateCreateStart,
+                DateCreateEnd = dateCreateEnd,
+                DateCanceledStart = dateCanceledStart,
+                DateCanceledEnd = dateCanceledEnd,
+                StatusId = statusId,
+                PriorityId = priorityId,
+                UserId = userId,
+                IsCustomer = true
+            };
+
+            
+
+            var getAllMyOrders = await orderRepositories.GetOrderByCustomFilter(filterParams);
 
             var customerProfile = await profileCustomerRepositories.GetProfileCustomer(userId);
             var listOrdersPriority = await orderPriorityRepositories.GetOrderPrioritiesAsync();

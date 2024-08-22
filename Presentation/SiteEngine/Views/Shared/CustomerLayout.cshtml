@@ -18,9 +18,10 @@
                     <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false">Заказы</a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" asp-action="IndexOrderList" asp-controller="CustomerBoard">Все закзы</a></li>
-                        <li><a class="dropdown-item" href="#">Мои Завершенные</a></li>
-                        <li><a class="dropdown-item" href="#">Мои Незавершенные</a></li>
-                        <li><a class="dropdown-item" href="#">Мои Отмененные</a></li>
+                        <li><a class="dropdown-item" asp-action="IndexOrderListByFilter" asp-controller="CustomerBoard" asp-route-statusId="F">Мои Завершенные</a></li>
+                        <li><a class="dropdown-item" asp-action="IndexOrderListByFilter" asp-controller="CustomerBoard" asp-route-statusId="S">В работе</a></li>
+                        <li><a class="dropdown-item" asp-action="IndexOrderListByFilter" asp-controller="CustomerBoard" asp-route-statusId="C">Отмененные</a></li>
+                        <li><a class="dropdown-item" asp-action="IndexOrderListByFilter" asp-controller="CustomerBoard" asp-route-statusId="X">Удаленные</a></li>
                     </ul>
                 </li>
                 <li class="nav-item">

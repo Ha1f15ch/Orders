@@ -19,7 +19,7 @@ namespace ApplicationDbContext.Interfaces
         public Task<List<Order>> GetAllMyCompletedOrders(int userId, bool isCustomer, bool isPerformer);
         public Task<List<Order>> GetAllMyStartedOrders(int userId, bool isCustomer, bool isPerformer);
         public Task<List<Order>> GetAllMyCanceledOrders(int userId, bool isCustomer, bool isPerformer);
-        public Task<List<Order>> GetOrderByCustomFilter(DateOnly? dateCreateStart, DateOnly? dateCreateEnd, DateOnly? dateCancaledStart, DateOnly? dateCanceledEnd, string? statusId, string? priorityId, int userId, bool isCustomer, bool isPerformer);
+        public Task<List<Order>> GetOrderByCustomFilter(OrderFilterParams filterParams);
         public Task<Order> GetOrderById(int orderId);
     }
 }

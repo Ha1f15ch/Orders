@@ -1,10 +1,10 @@
 ﻿using ApplicationDbContext.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using ModelsEntity;
 using OfficeOpenXml.Drawing.Chart;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -114,274 +114,79 @@ namespace ApplicationDbContext.ContextRepositories
             throw new NotImplementedException();
         }
 
-        public async Task<List<Order>> GetOrderByCustomFilter(DateOnly? dateCreateStart = null, DateOnly? dateCreateEnd = null, DateOnly? dateCancaledStart = null, DateOnly? dateCanceledEnd = null, string? statusId = null, string? priorityId = null, int userId = 0, bool isCustomer = false, bool isPerformer = false) // для работы вкладок на view с другими фильтрами, нужно создать состояние фильтров, доработать данный метод/создать для параметров отдельный класс
-         {
-            var customer = isCustomer ? context.Customers.SingleOrDefault(el => el.UserId == userId) : null;
-            var performer = isPerformer ? context.Performers.SingleOrDefault(el => el.UserId == userId) : null;
+        public async Task<List<Order>> GetOrderByCustomFilter(OrderFilterParams filterParams)
+        {
+            Customer customer = null;
+            Performer performer = null;
 
-            if (isCustomer && !isPerformer && customer != null) //Заказчик
+            if (filterParams.IsCustomer)
             {
-                IQueryable<Order> selectedOrders;
-
-                if (dateCreateStart.HasValue && dateCreateEnd.HasValue && (dateCreateStart <= dateCreateEnd))
-                {
-                    selectedOrders = from order in context.Orders
-                                     where order.CustomerId == customer.Id &&
-                                         DateOnly.FromDateTime(order.CreatedDate) >= dateCreateStart &&
-                                         DateOnly.FromDateTime(order.CreatedDate) <= dateCreateEnd
-                                     //Возможно имеет смысл добавить фильтр - "Показывать удаленные"
-                                     select order;
-                }
-                else if(dateCreateStart.HasValue)
-                {
-                    selectedOrders = from order in context.Orders
-                                     where order.CustomerId == customer.Id &&
-                                         DateOnly.FromDateTime(order.CreatedDate) >= dateCreateStart
-                                     select order;
-                }
-                else if (dateCreateEnd.HasValue)
-                {
-                    selectedOrders = from order in context.Orders
-                                     where order.CustomerId == customer.Id &&
-                                         DateOnly.FromDateTime(order.CreatedDate) <= dateCreateEnd
-                                     select order;
-                }
-                else
-                {
-                    selectedOrders = from order in context.Orders select order;
-                }
-                
-                if(dateCancaledStart.HasValue && dateCanceledEnd.HasValue && (dateCancaledStart <= dateCanceledEnd))
-                {
-                    selectedOrders = from orders in selectedOrders
-                                     where orders.CustomerId == customer.Id &&
-                                         DateOnly.FromDateTime((DateTime)orders.DeletedDate) >= dateCancaledStart &&
-                                         DateOnly.FromDateTime((DateTime)orders.DeletedDate) <= dateCanceledEnd &&
-                                         (orders.OrderStatus.Contains("CC") ||
-                                         orders.OrderStatus.Contains("CP") ||
-                                         orders.OrderStatus.Contains("X"))
-                                     select orders;
-                }
-                else if (dateCancaledStart.HasValue)
-                {
-                    selectedOrders = from orders in selectedOrders
-                                     where orders.CustomerId == customer.Id &&
-                                         DateOnly.FromDateTime((DateTime)orders.DeletedDate) >= dateCancaledStart &&
-                                         (orders.OrderStatus.Contains("CC") ||
-                                         orders.OrderStatus.Contains("CP") ||
-                                         orders.OrderStatus.Contains("X"))
-                                     select orders;
-                }
-                else if (dateCanceledEnd.HasValue)
-                {
-                    selectedOrders = from orders in selectedOrders
-                                     where orders.CustomerId == customer.Id &&
-                                         DateOnly.FromDateTime((DateTime)orders.DeletedDate) <= dateCanceledEnd &&
-                                         (orders.OrderStatus.Contains("CC") ||
-                                         orders.OrderStatus.Contains("CP") ||
-                                         orders.OrderStatus.Contains("X"))
-                                     select orders;
-                }
-                else
-                {
-                    selectedOrders = from orders in selectedOrders select orders;
-                }
-
-                if(!statusId.IsNullOrEmpty())
-                { //Нужно исправить, принимаемое знакчение может быть множественным
-                    selectedOrders = from orders in selectedOrders
-                                     where orders.CustomerId == customer.Id &&
-                                           orders.OrderStatus == statusId
-                                     select orders;
-                }
-                else
-                {
-                    selectedOrders = from orders in selectedOrders select orders;
-                }
-
-                if(!priorityId.IsNullOrEmpty())
-                { //Нужно исправить, принимаемое знакчение может быть множественным
-                    selectedOrders = from orders in selectedOrders
-                                     where orders.CustomerId == customer.Id &&
-                                           orders.OrderPriority == priorityId
-                                     select orders;
-                }
-                else
-                {
-                    selectedOrders = from orders in selectedOrders select orders;
-                }
-
-                return selectedOrders.ToList();
+                customer = await context.Customers.SingleOrDefaultAsync(el => el.UserId == filterParams.UserId);
             }
-            else if(!isCustomer && isPerformer && performer != null) //Исполнитель
+
+            if (filterParams.IsPerformer)
             {
-                IQueryable<Order> selectedOrders;
-
-                if (dateCreateStart.HasValue && dateCreateEnd.HasValue && (dateCreateStart <= dateCreateEnd))
-                {
-                    selectedOrders = from order in context.Orders
-                                     where order.PerformerId == performer.Id &&
-                                         DateOnly.FromDateTime(order.CreatedDate) >= dateCreateStart &&
-                                         DateOnly.FromDateTime(order.CreatedDate) <= dateCreateEnd
-                                         //Возможно имеет смысл добавить фильтр - "Показывать удаленные"
-                                     select order;
-                }
-                else if (dateCreateStart.HasValue)
-                {
-                    selectedOrders = from order in context.Orders
-                                     where order.PerformerId == performer.Id &&
-                                         DateOnly.FromDateTime(order.CreatedDate) >= dateCreateStart
-                                     select order;
-                }
-                else if (dateCreateEnd.HasValue)
-                {
-                    selectedOrders = from order in context.Orders
-                                     where order.PerformerId == performer.Id &&
-                                         DateOnly.FromDateTime(order.CreatedDate) <= dateCreateEnd
-                                     select order;
-                }
-                else
-                {
-                    selectedOrders = from order in context.Orders select order;
-                }
-
-                if (dateCancaledStart.HasValue && dateCanceledEnd.HasValue && (dateCancaledStart <= dateCanceledEnd))
-                {
-                    selectedOrders = from orders in selectedOrders
-                                     where orders.PerformerId == performer.Id &&
-                                         DateOnly.FromDateTime((DateTime)orders.DeletedDate) >= dateCancaledStart &&
-                                         DateOnly.FromDateTime((DateTime)orders.DeletedDate) <= dateCanceledEnd &&
-                                         (orders.OrderStatus.Contains("CC") ||
-                                         orders.OrderStatus.Contains("CP"))
-                                     select orders;
-                }
-                else if (dateCancaledStart.HasValue)
-                {
-                    selectedOrders = from orders in selectedOrders
-                                     where orders.PerformerId == performer.Id &&
-                                         DateOnly.FromDateTime((DateTime)orders.DeletedDate) >= dateCancaledStart &&
-                                         (orders.OrderStatus.Contains("CC") ||
-                                         orders.OrderStatus.Contains("CP"))
-                                     select orders;
-                }
-                else if (dateCanceledEnd.HasValue)
-                {
-                    selectedOrders = from orders in selectedOrders
-                                     where orders.PerformerId == performer.Id &&
-                                         DateOnly.FromDateTime((DateTime)orders.DeletedDate) <= dateCanceledEnd &&
-                                         (orders.OrderStatus.Contains("CC") ||
-                                         orders.OrderStatus.Contains("CP"))
-                                     select orders;
-                }
-                else
-                {
-                    selectedOrders = from orders in selectedOrders select orders;
-                }
-
-                if (!statusId.IsNullOrEmpty())
-                {
-                    selectedOrders = from orders in selectedOrders
-                                     where orders.PerformerId == performer.Id &&
-                                           orders.OrderStatus == statusId
-                                     select orders;
-                }
-                else
-                {
-                    selectedOrders = from orders in selectedOrders select orders;
-                }
-
-                if (!priorityId.IsNullOrEmpty())
-                {
-                    selectedOrders = from orders in selectedOrders
-                                     where orders.PerformerId == performer.Id &&
-                                           orders.OrderPriority == priorityId &&
-                                           orders.OrderStatus != "X"
-                                     select orders;
-                }
-                else
-                {
-                    selectedOrders = from orders in selectedOrders select orders;
-                }
-
-                return selectedOrders.ToList();
+                performer = await context.Performers.SingleOrDefaultAsync(el => el.UserId == filterParams.UserId);
             }
-            else //Любой другой (администратор)
+
+            IQueryable<Order> selectedOrders = context.Orders;
+
+            if (filterParams.IsCustomer && customer != null)
             {
-                IQueryable<Order> selectedOrders;
-
-                if (dateCreateStart.HasValue && dateCreateEnd.HasValue && (dateCreateStart <= dateCreateEnd))
-                {
-                    selectedOrders = from order in context.Orders
-                                     where 
-                                         DateOnly.FromDateTime(order.CreatedDate) >= dateCreateStart &&
-                                         DateOnly.FromDateTime(order.CreatedDate) <= dateCreateEnd
-                                     //Возможно имеет смысл добавить фильтр - "Показывать удаленные"
-                                     select order;
-                }
-                else if (dateCreateStart.HasValue)
-                {
-                    selectedOrders = from order in context.Orders
-                                     where 
-                                         DateOnly.FromDateTime(order.CreatedDate) >= dateCreateStart
-                                     select order;
-                }
-                else
-                {
-                    selectedOrders = from order in context.Orders select order;
-                }
-
-                if (dateCancaledStart.HasValue && dateCanceledEnd.HasValue && (dateCancaledStart <= dateCanceledEnd))
-                {
-                    selectedOrders = from orders in selectedOrders
-                                     where 
-                                         DateOnly.FromDateTime((DateTime)orders.DeletedDate) >= dateCancaledStart &&
-                                         DateOnly.FromDateTime((DateTime)orders.DeletedDate) <= dateCanceledEnd &&
-                                         (orders.OrderStatus.Contains("CC") ||
-                                         orders.OrderStatus.Contains("CP") ||
-                                         orders.OrderStatus.Contains("X"))
-                                     select orders;
-                }
-                else if (dateCancaledStart.HasValue)
-                {
-                    selectedOrders = from orders in selectedOrders
-                                     where 
-                                         DateOnly.FromDateTime((DateTime)orders.DeletedDate) >= dateCancaledStart &&
-                                         (orders.OrderStatus.Contains("CC") ||
-                                         orders.OrderStatus.Contains("CP") ||
-                                         orders.OrderStatus.Contains("X"))
-                                     select orders;
-                }
-                else
-                {
-                    selectedOrders = from orders in selectedOrders select orders;
-                }
-
-                if (!statusId.IsNullOrEmpty())
-                {
-                    selectedOrders = from orders in selectedOrders
-                                     where 
-                                           orders.OrderStatus == statusId
-                                     select orders;
-                }
-                else
-                {
-                    selectedOrders = from orders in selectedOrders select orders;
-                }
-
-                if (!priorityId.IsNullOrEmpty())
-                {
-                    selectedOrders = from orders in selectedOrders
-                                     where 
-                                           orders.OrderPriority == priorityId
-                                     select orders;
-                }
-                else
-                {
-                    selectedOrders = from orders in selectedOrders select orders;
-                }
-
-                return selectedOrders.ToList();
+                selectedOrders = selectedOrders.Where(order => order.CustomerId == customer.Id);
             }
+            else if (filterParams.IsPerformer && performer != null)
+            {
+                selectedOrders = selectedOrders.Where(order => order.PerformerId == performer.Id);
+            }
+
+            if (filterParams.DateCreateStart.HasValue && filterParams.DateCreateEnd.HasValue && (filterParams.DateCreateStart <= filterParams.DateCreateEnd))
+            {
+                selectedOrders = selectedOrders.Where(order => DateOnly.FromDateTime(order.CreatedDate) >= filterParams.DateCreateStart &&
+                                                               DateOnly.FromDateTime(order.CreatedDate) <= filterParams.DateCreateEnd);
+            }
+            else if (filterParams.DateCreateStart.HasValue)
+            {
+                selectedOrders = selectedOrders.Where(order => DateOnly.FromDateTime(order.CreatedDate) >= filterParams.DateCreateStart);
+            }
+            else if (filterParams.DateCreateEnd.HasValue)
+            {
+                selectedOrders = selectedOrders.Where(order => DateOnly.FromDateTime(order.CreatedDate) <= filterParams.DateCreateEnd);
+            }
+
+            if (filterParams.DateCanceledStart.HasValue && filterParams.DateCanceledEnd.HasValue && (filterParams.DateCanceledStart <= filterParams.DateCanceledEnd))
+            {
+                selectedOrders = selectedOrders.Where(order => order.DeletedDate.HasValue &&
+                                                               DateOnly.FromDateTime(order.DeletedDate.Value) >= filterParams.DateCanceledStart &&
+                                                               DateOnly.FromDateTime(order.DeletedDate.Value) <= filterParams.DateCanceledEnd &&
+                                                               (order.OrderStatus.Contains("C") || order.OrderStatus.Contains("X")));
+            }
+            else if (filterParams.DateCanceledStart.HasValue)
+            {
+                selectedOrders = selectedOrders.Where(order => order.DeletedDate.HasValue &&
+                                                               DateOnly.FromDateTime(order.DeletedDate.Value) >= filterParams.DateCanceledStart &&
+                                                               (order.OrderStatus.Contains("C") || order.OrderStatus.Contains("X")));
+            }
+            else if (filterParams.DateCanceledEnd.HasValue)
+            {
+                selectedOrders = selectedOrders.Where(order => order.DeletedDate.HasValue &&
+                                                               DateOnly.FromDateTime(order.DeletedDate.Value) <= filterParams.DateCanceledEnd &&
+                                                               (order.OrderStatus.Contains("C") || order.OrderStatus.Contains("X")));
+            }
+
+            if (!string.IsNullOrEmpty(filterParams.StatusId))
+            {
+                var statusIds = filterParams.StatusId.Split(',').ToList();
+                selectedOrders = selectedOrders.Where(order => statusIds.Any(id => order.OrderStatus.Contains(id)));
+            }
+
+            if (!string.IsNullOrEmpty(filterParams.PriorityId))
+            {
+                var priorityIds = filterParams.PriorityId.Split(',').ToList();
+                selectedOrders = selectedOrders.Where(order => priorityIds.Any(id => order.OrderPriority.Contains(id)));
+            }
+
+            return await selectedOrders.ToListAsync();
         }
 
         public async void UpdatePerformer(int orderId, int performerId)

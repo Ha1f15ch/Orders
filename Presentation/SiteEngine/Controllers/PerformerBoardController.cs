@@ -119,11 +119,11 @@ namespace SiteEngine.Controllers
         [Authorize, HttpPost]
         public async Task<IActionResult> CRUDServicePerformerMappingAsync(String selectedServices, int performerId)
         {
-            if (selectedServices is null && performerId == -1) // Получили некорректные данные
+            if (selectedServices is null && performerId <= 0) // Получили некорректные данные
             {
                 return RedirectToAction("MyProfilePerformer");
             }
-            else if (selectedServices is null && performerId != -1) //все маппинги сняты, услуги удаляются
+            else if (selectedServices is null && performerId > 0) //все маппинги сняты, услуги удаляются
             {
                 if (await performerServiceMappingRepositories.DeletePerformerServiceMappingByPerformerId(performerId))
                 {

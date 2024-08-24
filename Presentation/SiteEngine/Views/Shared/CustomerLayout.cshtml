@@ -18,14 +18,14 @@
                     <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false">Заказы</a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" asp-action="IndexOrderList" asp-controller="CustomerBoard">Все закзы</a></li>
-                        <li><a class="dropdown-item" asp-action="IndexOrderListByFilter" asp-controller="CustomerBoard" asp-route-statusId="F">Мои Завершенные</a></li>
-                        <li><a class="dropdown-item" asp-action="IndexOrderListByFilter" asp-controller="CustomerBoard" asp-route-statusId="S">В работе</a></li>
-                        <li><a class="dropdown-item" asp-action="IndexOrderListByFilter" asp-controller="CustomerBoard" asp-route-statusId="C">Отмененные</a></li>
-                        <li><a class="dropdown-item" asp-action="IndexOrderListByFilter" asp-controller="CustomerBoard" asp-route-statusId="X">Удаленные</a></li>
+                        <li><a class="dropdown-item" asp-action="IndexOrderListByFilter" asp-controller="CustomerBoard" asp-route-statusesId="F">Мои Завершенные</a></li>
+                        <li><a class="dropdown-item" asp-action="IndexOrderListByFilter" asp-controller="CustomerBoard" asp-route-statusesId="S">В работе</a></li>
+                        <li><a class="dropdown-item" asp-action="IndexOrderListByFilter" asp-controller="CustomerBoard" asp-route-statusesId="C">Отмененные</a></li>
+                        <li><a class="dropdown-item" asp-action="IndexOrderListByFilter" asp-controller="CustomerBoard" asp-route-statusesId="X">Удаленные</a></li>
                     </ul>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="#">Мой профиль</a>
+                    <a class="nav-link" aria-current="page" asp-action="MyProfileCustomer" asp-controller="CustomerBoard">Мой профиль</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" aria-current="page" href="/MainPage/Index">Выйти из профиля</a>

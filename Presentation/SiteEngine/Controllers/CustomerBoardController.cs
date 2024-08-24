@@ -75,8 +75,8 @@ namespace SiteEngine.Controllers
             DateOnly? dateCreateEnd,
             DateOnly? dateCanceledStart,
             DateOnly? dateCanceledEnd,
-            string? statusId,
-            string? priorityId)
+            string? statusesId,
+            string? prioritiesId)
         {
             var userId = cookieDataService.GetUserIdFromCookie();
 
@@ -86,8 +86,8 @@ namespace SiteEngine.Controllers
                 DateCreateEnd = dateCreateEnd,
                 DateCanceledStart = dateCanceledStart,
                 DateCanceledEnd = dateCanceledEnd,
-                StatusId = statusId,
-                PriorityId = priorityId,
+                StatusId = statusesId,
+                PriorityId = prioritiesId,
                 UserId = userId,
                 IsCustomer = true
             };

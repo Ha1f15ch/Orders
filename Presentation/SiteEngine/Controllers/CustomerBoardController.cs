@@ -59,9 +59,6 @@ namespace SiteEngine.Controllers
             };
 
             var getAllMyOrders = await orderRepositories.GetOrderByCustomFilter(filterParams);
-
-            /*var customerProfile = await profileCustomerRepositories.GetProfileCustomer(cookieDataService.GetUserIdFromCookie());*/
-
             var customerProfile = await profileCustomerRepositories.GetProfileCustomer(filterParams.UserId);
             var listOrdersPriority = await orderPriorityRepositories.GetOrderPrioritiesAsync();
             var listOrderStatuses = await orderStatusRepositories.GetOrderStatusesAsync();

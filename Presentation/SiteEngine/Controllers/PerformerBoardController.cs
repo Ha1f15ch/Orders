@@ -16,18 +16,27 @@ namespace SiteEngine.Controllers
         private readonly IPerformerServiceMappingRepositories performerServiceMappingRepositories;
         private readonly IServiceRepository serviceRepository;
         private readonly IServiceInterfaceGetCookieData cookieDataService;
+        private readonly IOrderRepositories orderRepositories;
+        private readonly IOrderPriorityRepositories orderPriorityRepositories;
+        private readonly IOrderStatusRepositories orderStatusRepositories;
 
         public PerformerBoardController(AppDbContext context, 
                                         IProfilePerformerRepositories profilePerformerRepositories, 
                                         IPerformerServiceMappingRepositories performerServiceMappingRepositories, 
                                         IServiceRepository serviceRepository,
-                                        IServiceInterfaceGetCookieData cookieDataService)
+                                        IServiceInterfaceGetCookieData cookieDataService,
+                                        IOrderRepositories orderRepository,
+                                        IOrderPriorityRepositories orderPriorityRepository,
+                                        IOrderStatusRepositories orderStatusRepository)
         {
             this.context = context;
             this.profilePerformerRepositories = profilePerformerRepositories;
             this.performerServiceMappingRepositories = performerServiceMappingRepositories;
             this.serviceRepository = serviceRepository;
             this.cookieDataService = cookieDataService;
+            this.orderRepositories = orderRepository;
+            this.orderPriorityRepositories = orderPriorityRepository;
+            this.orderStatusRepositories = orderStatusRepository;
         }
 
         // title page performers metods 
@@ -178,6 +187,23 @@ namespace SiteEngine.Controllers
             {
                 return View("MyProfilePerformer");
             }
+        }
+
+        [Authorize, HttpGet]
+        public async Task<IActionResult> IndexOrderListAsync()
+        {
+            var filterParams = new OrderFilterParams
+            {
+                UserId = cookieDataService.GetUserIdFromCookie(),
+                IsPerformer = true
+            };
+
+            var getAllFreeOrder = await orderRepositories.GetOrderByCustomFilter(filterParams);
+            var performerProfile = await profilePerformerRepositories.GetProfilePerformer(filterParams.UserId);
+            var listOrdersPriority = await orderPriorityRepositories.GetOrderPrioritiesAsync();
+            var listOrderStatuses = await orderStatusRepositories.GetOrderStatusesAsync();
+
+            return View((getAllFreeOrder, performerProfile, listOrdersPriority, listOrderStatuses));
         }
     }
 }

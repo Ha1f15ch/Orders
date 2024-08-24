@@ -183,7 +183,7 @@ namespace ApplicationDbContext.ContextRepositories
             if (!string.IsNullOrEmpty(filterParams.PriorityId))
             {
                 var priorityIds = filterParams.PriorityId.Split(',').ToList();
-                selectedOrders = selectedOrders.Where(order => priorityIds.Any(id => order.OrderPriority.Contains(id)));
+                selectedOrders = selectedOrders.Where(order => priorityIds.Any(id => order.OrderPriority.Equals(id)));
             }
 
             return await selectedOrders.ToListAsync();

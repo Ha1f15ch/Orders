@@ -57,3 +57,50 @@ body {
 .canceledStyle {
     background-color: #FFCC99;
 }
+
+.finishedStyle {
+    background-color: #32CD32;
+}
+
+.dropdown-menu-checkboxes {
+    padding: 10px;
+    min-width: 200px;
+}
+
+.scroll-content {
+    max-height: 150px; /* Устанавливает максимальную высоту для прокручиваемого контента */
+    overflow-y: auto; /* Добавляет вертикальную прокрутку */
+}
+
+.status-circle {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+.status-new {
+    background-color: #CCFFCC; /* Цвет для нового заказа */
+}
+
+.status-in-progress {
+    background-color: #66CCFF; /* Цвет для заказа в процессе */
+}
+
+.status-completed {
+    background-color: #32CD32; /* Цвет для завершенного заказа */
+}
+
+.status-canceled {
+    background-color: #FFCC99; /* Цвет для отмененного заказа */
+}
+
+.status-deleted {
+    background-color: #FF99CC; /* Цвет для удаленного заказа */
+}
+
+.status-discuss {
+    background-color: #FFFFCC;
+}

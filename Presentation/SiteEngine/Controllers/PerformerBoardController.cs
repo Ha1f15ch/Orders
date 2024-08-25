@@ -179,5 +179,85 @@ namespace SiteEngine.Controllers
                 return View("MyProfilePerformer");
             }
         }
+
+        [Authorize, HttpGet]
+        public async Task<IActionResult> IndexOrderListAsync()
+        {
+            var filterParams = new OrderFilterParams
+            {
+                UserId = cookieDataService.GetUserIdFromCookie(),
+                IsPerformer = true
+            };
+
+            var getAllFreeOrder = await orderRepositories.GetOrderByCustomFilter(filterParams);
+            var customerProfiles = await profileCustomerRepositories.GetAllCustomers();
+            var listOrdersPriority = await orderPriorityRepositories.GetOrderPrioritiesAsync();
+            var listOrderStatuses = await orderStatusRepositories.GetOrderStatusesAsync();
+
+            return View((getAllFreeOrder, customerProfiles, listOrdersPriority, listOrderStatuses));
+        }
+
+        [Authorize, HttpGet]
+        public async Task<IActionResult> IndexOrderListByFilterAsync(
+            DateOnly? dateCreateStart,
+            DateOnly? dateCreateEnd,
+            DateOnly? dateCanceledStart,
+            DateOnly? dateCanceledEnd,
+            string? statusesId,
+            string? prioritiesId
+        )
+        {
+            var userId = cookieDataService.GetUserIdFromCookie();
+
+            var filterParams = new OrderFilterParams
+            {
+                DateCreateStart = dateCreateStart,
+                DateCreateEnd = dateCreateEnd,
+                DateCanceledStart = dateCanceledStart,
+                DateCanceledEnd = dateCanceledEnd,
+                StatusId = statusesId,
+                PriorityId = prioritiesId,
+                UserId = userId,
+                IsPerformer = true
+            };
+
+            var getAllMyOrders = await orderRepositories.GetOrderByCustomFilter(filterParams);
+
+            var customerProfiles = await profileCustomerRepositories.GetAllCustomers();
+            var listOrdersPriority = await orderPriorityRepositories.GetOrderPrioritiesAsync();
+            var listOrderStatuses = await orderStatusRepositories.GetOrderStatusesAsync();
+
+            return View("IndexOrderList", (getAllMyOrders, customerProfiles, listOrdersPriority, listOrderStatuses));
+        }
+
+        [Authorize, HttpGet]
+        public async Task<IActionResult> OrderAsync(int id)
+        {
+            if (id <= 0)
+            {
+                return View("Error");
+            }
+            else
+            {
+                var userId = cookieDataService.GetUserIdFromCookie();
+
+                var order = await orderRepositories.GetOrderById(id);
+                var customerProfile = await profileCustomerRepositories.GetProfileCustomerByCustomerId(order.CustomerId);
+                var performerProfile = await profilePerformerRepositories.GetProfilePerformer(userId);
+                var listOrdersPriority = await orderPriorityRepositories.GetOrderPrioritiesAsync();
+                var listOrderStatus = await orderStatusRepositories.GetOrderStatusesAsync();
+
+                var model = new DetailOrderViewModel
+                {
+                    Order = order,
+                    CustomerProfile = customerProfile,
+                    PerformerProfile = performerProfile,
+                    OrderPriorities = listOrdersPriority,
+                    OrderStatuses = listOrderStatus,
+                };
+
+                return View(model);
+            }
+        }
     }
 }

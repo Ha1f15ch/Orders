@@ -2,7 +2,7 @@
 @model (List<ModelsEntity.Order>, List<Customer>, List<OrderPriority>, List<OrderStatus>)
 
 @{
-    Layout = "~/Views/Shared/CustomerLayout.cshtml";
+    Layout = "~/Views/Shared/PerformerLayout.cshtml";
 }
 <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
 <div class="container">
@@ -13,7 +13,7 @@
                     <h5>
                         Фильтры
                     </h5>
-                    <form class="" id="CustomFilterForm" method="get" asp-controller="CustomerBoard" asp-action="IndexOrderListByFilter">
+                    <form class="" id="CustomFilterForm" method="get" asp-controller="PerformerBoard" asp-action="IndexOrderListByFilter">
                         <div class="row mb-3">
                             <div class="col mb-3">
                                 <label class="form-label" for="dateCreateStart">Дата создания (с):</label>
@@ -43,36 +43,36 @@
                                 <div class="dropdown-menu dropdown-menu-checkboxes scroll-content" aria-labelledby="dropdownCheckboxMenuButtonStatuses">
                                     @foreach (OrderStatus status in Model.Item4)
                                     {
-                                        var statusColorCode = "";
-
-                                        switch(status.Name)
+                                        if(status.Name != "X")
                                         {
-                                            case "N":
-                                                statusColorCode = "status-new";
-                                                break;
-                                            case "S":
-                                                statusColorCode = "status-in-progress";
-                                                break;
-                                            case "F":
-                                                statusColorCode = "status-completed";
-                                                break;
-                                            case "C":
-                                                statusColorCode = "status-canceled";
-                                                break;
-                                            case "X":
-                                                statusColorCode = "status-deleted";
-                                                break;
-                                            case "D":
-                                                statusColorCode = "status-discuss";
-                                                break;
-                                            default:
-                                                break;
+                                            var statusColorCode = "";
+
+                                            switch (status.Name)
+                                            {
+                                                case "N":
+                                                    statusColorCode = "status-new";
+                                                    break;
+                                                case "S":
+                                                    statusColorCode = "status-in-progress";
+                                                    break;
+                                                case "F":
+                                                    statusColorCode = "status-completed";
+                                                    break;
+                                                case "C":
+                                                    statusColorCode = "status-canceled";
+                                                    break;
+                                                case "D":
+                                                    statusColorCode = "status-discuss";
+                                                    break;
+                                                default:
+                                                    break;
+                                            }
+                                            <div class="form-check">
+                                                <span class="status-circle @statusColorCode"></span>
+                                                <input class="form-check-input" type="checkbox" name="statusId" id="@status.Name" />
+                                                <label class="form-check-label" for="@status.Name">@status.Description</label>
+                                            </div>
                                         }
-                                        <div class="form-check">
-                                            <span class="status-circle @statusColorCode"></span>
-                                            <input class="form-check-input" type="checkbox" name="statusId" id="@status.Name" />
-                                            <label class="form-check-label" for="@status.Name">@status.Description</label>
-                                        </div>
                                     }
                                 </div>
                             </div>
@@ -116,7 +116,7 @@
                         if (order.OrderStatus == "N")
                         {
                             <div class="border rounded-4 mb-3 newStyle">
-                                <div class="p-3 mb-2 bg-light-subtle text-light-emphasis" onclick="window.location = window.origin+'/CustomerBoard/Order/@order.Id'">
+                                <div class="p-3 mb-2 bg-light-subtle text-light-emphasis" onclick="window.location = window.origin+'/PerformerBoard/Order/@order.Id'">
                                     <div class="row">
                                         <div class="col text-start">
                                             <h4 class="card-title">
@@ -124,9 +124,9 @@
                                             </h4>
                                         </div>
                                         <div class="col text-end">
-                                            @foreach (Customer customer in Model.Item2)
+                                            @foreach(Customer customer in Model.Item2)
                                             {
-                                                if (order.CustomerId == customer.Id)
+                                                if(order.CustomerId == customer.Id)
                                                 {
                                                     <h6>
                                                         @customer.FirstName @customer.MiddleName
@@ -168,7 +168,7 @@
                         else if(order.OrderStatus == "S")
                         {
                             <div class="border rounded-4 mb-3 startStyle">
-                                <div class="p-3 mb-2 bg-light-subtle text-light-emphasis" onclick="window.location = window.origin+'/CustomerBoard/Order/@order.Id'">
+                                <div class="p-3 mb-2 bg-light-subtle text-light-emphasis" onclick="window.location = window.origin+'/PerformerBoard/Order/@order.Id'">
                                     <div class="row">
                                         <div class="col text-start">
                                             <h4 class="card-title">
@@ -220,59 +220,7 @@
                         else if(order.OrderStatus == "D")
                         {
                             <div class="border rounded-4 mb-3 discussStyle">
-                                <div class="p-3 mb-2 bg-light-subtle text-light-emphasis" onclick="window.location = window.origin+'/CustomerBoard/Order/@order.Id'">
-                                    <div class="row">
-                                        <div class="col text-start">
-                                            <h4 class="card-title">
-                                                @order.TitleName
-                                            </h4>
-                                        </div>
-                                        <div class="col text-end">
-                                            @foreach (Customer customer in Model.Item2)
-                                            {
-                                                if (order.CustomerId == customer.Id)
-                                                {
-                                                    <h6>
-                                                        @customer.FirstName @customer.MiddleName
-                                                    </h6>
-                                                }
-                                            }
-                                        </div>
-                                    </div>
-                                    <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
-                                    <div class="row">
-                                        <div class="col text-start">
-                                            <h6>
-                                                @order.City
-                                            </h6>
-                                        </div>
-                                        @{
-                                            var orderPriorityItem = Model.Item3.SingleOrDefault(el => el.Name == order.OrderPriority);
-                                        }
-                                        <div class="col text-end">
-                                            <h6>@orderPriorityItem.Description</h6>
-                                        </div>
-                                    </div>
-                                    <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
-                                    <div class="row">
-                                        <div class="col text-start">
-                                            <h10>
-                                                Дата создания заказа
-                                            </h10>
-                                        </div>
-                                        <div class="col text-end">
-                                            <h9>
-                                                @order.CreatedDate
-                                            </h9>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        }
-                        else if(order.OrderStatus == "X")
-                        {
-                            <div class="border rounded-4 mb-3 deletedStyle">
-                                <div class="p-3 mb-2 bg-light-subtle text-light-emphasis" onclick="window.location = window.origin+'/CustomerBoard/Order/@order.Id'">
+                                <div class="p-3 mb-2 bg-light-subtle text-light-emphasis" onclick="window.location = window.origin+'/PerformerBoard/Order/@order.Id'">
                                     <div class="row">
                                         <div class="col text-start">
                                             <h4 class="card-title">
@@ -324,7 +272,7 @@
                         else if (order.OrderStatus == "C")
                         {
                             <div class="border rounded-4 mb-3 canceledStyle">
-                                <div class="p-3 mb-2 bg-light-subtle text-light-emphasis" onclick="window.location = window.origin+'/CustomerBoard/Order/@order.Id'">
+                                <div class="p-3 mb-2 bg-light-subtle text-light-emphasis" onclick="window.location = window.origin+'/PerformerBoard/Order/@order.Id'">
                                     <div class="row">
                                         <div class="col text-start">
                                             <h4 class="card-title">
@@ -376,7 +324,7 @@
                         else if (order.OrderStatus == "F")
                         {
                             <div class="border rounded-4 mb-3 finishedStyle">
-                                <div class="p-3 mb-2 bg-light-subtle text-light-emphasis" onclick="window.location = window.origin+'/CustomerBoard/Order/@order.Id'">
+                                <div class="p-3 mb-2 bg-light-subtle text-light-emphasis" onclick="window.location = window.origin+'/PerformerBoard/Order/@order.Id'">
                                     <div class="row">
                                         <div class="col text-start">
                                             <h4 class="card-title">

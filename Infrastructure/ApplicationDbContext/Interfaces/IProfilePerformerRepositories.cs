@@ -13,6 +13,6 @@ namespace ApplicationDbContext.Interfaces
         public void UpdateProfilePerformer(Performer performer);
         public void DeleteProfilePerformerByPerformerId(int performerId); // by performer Id 
         public Task<Performer> GetProfilePerformer(int userId); //by user userId
-        public Task<Performer> GetProfilePerformerByPerformerId(int performerId); // by performer Id
+        public Task<Performer> GetProfilePerformerByPerformerId(int? performerId); // by performer Id
     }
 }

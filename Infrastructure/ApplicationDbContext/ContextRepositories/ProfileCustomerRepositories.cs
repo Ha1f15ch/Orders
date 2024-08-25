@@ -1,4 +1,5 @@
 ﻿using ApplicationDbContext.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using ModelsEntity;
 using System;
 using System.Collections.Generic;
@@ -76,7 +77,7 @@ namespace ApplicationDbContext.ContextRepositories
                 User uEl = await FindUserById(userId);
                 if (uEl is null || uEl.IsCustomer == false)
                 {
-                    throw new InvalidOperationException("Пользователя с таким id не найдено, либо у него нет профиля Customer !!!");
+                    return null;
                 }
                 else
                 {
@@ -90,15 +91,15 @@ namespace ApplicationDbContext.ContextRepositories
 
         }
 
-        public async Task<Customer> GetProfileCustomerByCustomerId(int customerId)
+        public async Task<Customer?> GetProfileCustomerByCustomerId(int customerId)
         {
             if(customerId != 0)
             {
-                return context.Customers.Single(el => el.Id == customerId);
+                return await context.Customers.SingleOrDefaultAsync(el => el.Id == customerId);
             }
             else
             {
-                throw new InvalidOperationException("Профиль Customer с таким id не найден !!!");
+                return null;
             }
         }
 
@@ -126,7 +127,7 @@ namespace ApplicationDbContext.ContextRepositories
             }
         }
 
-        private async Task<User> FindUserById(int id)
+        public async Task<User> FindUserById(int id)
         {
             if (id != 0)
             {
@@ -137,6 +138,11 @@ namespace ApplicationDbContext.ContextRepositories
                 throw new ArgumentNullException("Error - id = null");
             }
 
+        }
+
+        public async Task<List<Customer>> GetAllCustomers()
+        {
+            return await context.Customers.ToListAsync();
         }
     }
 }

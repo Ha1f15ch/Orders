@@ -1,4 +1,5 @@
 ﻿using ApplicationDbContext.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using ModelsEntity;
 using System;
 using System.Collections.Generic;
@@ -83,17 +84,25 @@ namespace ApplicationDbContext.ContextRepositories
             }
         }
 
-        public async Task<Performer> GetProfilePerformerByPerformerId(int performerId)
+        public async Task<Performer> GetProfilePerformerByPerformerId(int? performerId)
         {
-            Performer performer = context.Performers.Single(el => el.Id == performerId);
 
-            if(performer != null)
+            if (performerId == null)
             {
-                return performer;
+                Performer performer = await context.Performers.SingleOrDefaultAsync(el => el.Id == performerId);
+
+                if (performer != null)
+                {
+                    return performer;
+                }
+                else
+                {
+                    return null;
+                }
             }
             else
             {
-                throw new InvalidOperationException("Ошибка при поиске профиля по id профиля исполнителя");
+                return null;
             }
         }
 

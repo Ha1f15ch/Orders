@@ -203,11 +203,11 @@ namespace SiteEngine.Controllers
             };
 
             var getAllFreeOrder = await orderRepositories.GetOrderByCustomFilter(filterParams);
-            var performerProfile = await profilePerformerRepositories.GetProfilePerformer(filterParams.UserId);
+            var customerProfiles = await profileCustomerRepositories.GetAllCustomers();
             var listOrdersPriority = await orderPriorityRepositories.GetOrderPrioritiesAsync();
             var listOrderStatuses = await orderStatusRepositories.GetOrderStatusesAsync();
 
-            return View((getAllFreeOrder, performerProfile, listOrdersPriority, listOrderStatuses));
+            return View((getAllFreeOrder, customerProfiles, listOrdersPriority, listOrderStatuses));
         }
 
         [Authorize, HttpGet]
@@ -236,11 +236,11 @@ namespace SiteEngine.Controllers
 
             var getAllMyOrders = await orderRepositories.GetOrderByCustomFilter(filterParams);
 
-            var performerProfile = await profilePerformerRepositories.GetProfilePerformer(userId);
+            var customerProfiles = await profileCustomerRepositories.GetAllCustomers();
             var listOrdersPriority = await orderPriorityRepositories.GetOrderPrioritiesAsync();
             var listOrderStatuses = await orderStatusRepositories.GetOrderStatusesAsync();
 
-            return View("IndexOrderList", (getAllMyOrders, performerProfile, listOrdersPriority, listOrderStatuses));
+            return View("IndexOrderList", (getAllMyOrders, customerProfiles, listOrdersPriority, listOrderStatuses));
         }
 
         [Authorize, HttpGet]
@@ -255,7 +255,7 @@ namespace SiteEngine.Controllers
                 var userId = cookieDataService.GetUserIdFromCookie();
 
                 var order = await orderRepositories.GetOrderById(id);
-                var customerProfile = await profileCustomerRepositories.GetProfileCustomer(userId);
+                var customerProfile = await profileCustomerRepositories.GetProfileCustomerByCustomerId(order.CustomerId);
                 var performerProfile = await profilePerformerRepositories.GetProfilePerformer(userId);
                 var listOrdersPriority = await orderPriorityRepositories.GetOrderPrioritiesAsync();
                 var listOrderStatus = await orderStatusRepositories.GetOrderStatusesAsync();

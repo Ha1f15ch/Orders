@@ -14,5 +14,7 @@ namespace ApplicationDbContext.Interfaces
         public void DeleteProfileCustomer(int id);// by userId
         public void DeleteProfileCustomerByCustomerId(int id);// by customerId
         public Task<Customer> GetProfileCustomer(int id);// by userId
+        public Task<List<Customer>> GetAllCustomers();
+        public Task<Customer>? GetProfileCustomerByCustomerId(int id);
     }
 }

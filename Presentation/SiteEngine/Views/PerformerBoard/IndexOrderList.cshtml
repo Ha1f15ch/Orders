@@ -1,5 +1,5 @@
 ﻿@using ModelsEntity
-@model (List<ModelsEntity.Order>, Performer, List<OrderPriority>, List<OrderStatus>)
+@model (List<ModelsEntity.Order>, List<Customer>, List<OrderPriority>, List<OrderStatus>)
 
 @{
     Layout = "~/Views/Shared/PerformerLayout.cshtml";
@@ -124,9 +124,15 @@
                                             </h4>
                                         </div>
                                         <div class="col text-end">
-                                            <h6>
-                                                @Model.Item2.FirstName @Model.Item2.MiddleName
-                                            </h6>
+                                            @foreach(Customer customer in Model.Item2)
+                                            {
+                                                if(order.CustomerId == customer.Id)
+                                                {
+                                                    <h6>
+                                                        @customer.FirstName @customer.MiddleName
+                                                    </h6>
+                                                }
+                                            }
                                         </div>
                                     </div>
                                     <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
@@ -170,9 +176,15 @@
                                             </h4>
                                         </div>
                                         <div class="col text-end">
-                                            <h6>
-                                                @Model.Item2.FirstName @Model.Item2.MiddleName
-                                            </h6>
+                                            @foreach (Customer customer in Model.Item2)
+                                            {
+                                                if (order.CustomerId == customer.Id)
+                                                {
+                                                    <h6>
+                                                        @customer.FirstName @customer.MiddleName
+                                                    </h6>
+                                                }
+                                            }
                                         </div>
                                     </div>
                                     <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
@@ -216,9 +228,15 @@
                                             </h4>
                                         </div>
                                         <div class="col text-end">
-                                            <h6>
-                                                @Model.Item2.FirstName @Model.Item2.MiddleName
-                                            </h6>
+                                            @foreach (Customer customer in Model.Item2)
+                                            {
+                                                if (order.CustomerId == customer.Id)
+                                                {
+                                                    <h6>
+                                                        @customer.FirstName @customer.MiddleName
+                                                    </h6>
+                                                }
+                                            }
                                         </div>
                                     </div>
                                     <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
@@ -262,9 +280,15 @@
                                             </h4>
                                         </div>
                                         <div class="col text-end">
-                                            <h6>
-                                                @Model.Item2.FirstName @Model.Item2.MiddleName
-                                            </h6>
+                                            @foreach (Customer customer in Model.Item2)
+                                            {
+                                                if (order.CustomerId == customer.Id)
+                                                {
+                                                    <h6>
+                                                        @customer.FirstName @customer.MiddleName
+                                                    </h6>
+                                                }
+                                            }
                                         </div>
                                     </div>
                                     <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
@@ -308,9 +332,15 @@
                                             </h4>
                                         </div>
                                         <div class="col text-end">
-                                            <h6>
-                                                @Model.Item2.FirstName @Model.Item2.MiddleName
-                                            </h6>
+                                            @foreach (Customer customer in Model.Item2)
+                                            {
+                                                if (order.CustomerId == customer.Id)
+                                                {
+                                                    <h6>
+                                                        @customer.FirstName @customer.MiddleName
+                                                    </h6>
+                                                }
+                                            }
                                         </div>
                                     </div>
                                     <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>

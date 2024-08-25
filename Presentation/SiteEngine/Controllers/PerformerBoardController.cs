@@ -6,7 +6,6 @@ using ModelsEntity;
 using Microsoft.AspNetCore.Mvc;
 using ApplicationDbContext.ContextRepositories;
 using ApplicationDbContext.Interfaces.ServicesInterfaces;
-using SiteEngine.Models.Order;
 
 namespace SiteEngine.Controllers
 {
@@ -17,30 +16,18 @@ namespace SiteEngine.Controllers
         private readonly IPerformerServiceMappingRepositories performerServiceMappingRepositories;
         private readonly IServiceRepository serviceRepository;
         private readonly IServiceInterfaceGetCookieData cookieDataService;
-        private readonly IOrderRepositories orderRepositories;
-        private readonly IOrderPriorityRepositories orderPriorityRepositories;
-        private readonly IOrderStatusRepositories orderStatusRepositories;
-        private readonly IProfileCustomerRepositories profileCustomerRepositories;
 
         public PerformerBoardController(AppDbContext context, 
-                                        IProfilePerformerRepositories profilePerformerRepositories,
-                                        IPerformerServiceMappingRepositories performerServiceMappingRepositories,
+                                        IProfilePerformerRepositories profilePerformerRepositories, 
+                                        IPerformerServiceMappingRepositories performerServiceMappingRepositories, 
                                         IServiceRepository serviceRepository,
-                                        IServiceInterfaceGetCookieData cookieDataService,
-                                        IOrderRepositories orderRepository,
-                                        IOrderPriorityRepositories orderPriorityRepository,
-                                        IOrderStatusRepositories orderStatusRepository,
-                                        IProfileCustomerRepositories profileCustomerRepository)
+                                        IServiceInterfaceGetCookieData cookieDataService)
         {
             this.context = context;
             this.profilePerformerRepositories = profilePerformerRepositories;
             this.performerServiceMappingRepositories = performerServiceMappingRepositories;
             this.serviceRepository = serviceRepository;
             this.cookieDataService = cookieDataService;
-            this.orderRepositories = orderRepository;
-            this.orderPriorityRepositories = orderPriorityRepository;
-            this.orderStatusRepositories = orderStatusRepository;
-            this.profileCustomerRepositories = profileCustomerRepository;
         }
 
         // title page performers metods 
@@ -190,86 +177,6 @@ namespace SiteEngine.Controllers
             else
             {
                 return View("MyProfilePerformer");
-            }
-        }
-
-        [Authorize, HttpGet]
-        public async Task<IActionResult> IndexOrderListAsync()
-        {
-            var filterParams = new OrderFilterParams
-            {
-                UserId = cookieDataService.GetUserIdFromCookie(),
-                IsPerformer = true
-            };
-
-            var getAllFreeOrder = await orderRepositories.GetOrderByCustomFilter(filterParams);
-            var performerProfile = await profilePerformerRepositories.GetProfilePerformer(filterParams.UserId);
-            var listOrdersPriority = await orderPriorityRepositories.GetOrderPrioritiesAsync();
-            var listOrderStatuses = await orderStatusRepositories.GetOrderStatusesAsync();
-
-            return View((getAllFreeOrder, performerProfile, listOrdersPriority, listOrderStatuses));
-        }
-
-        [Authorize, HttpGet]
-        public async Task<IActionResult> IndexOrderListByFilterAsync(
-            DateOnly? dateCreateStart,
-            DateOnly? dateCreateEnd,
-            DateOnly? dateCanceledStart,
-            DateOnly? dateCanceledEnd,
-            string? statusesId,
-            string? prioritiesId
-        )
-        {
-            var userId = cookieDataService.GetUserIdFromCookie();
-
-            var filterParams = new OrderFilterParams
-            {
-                DateCreateStart = dateCreateStart,
-                DateCreateEnd = dateCreateEnd,
-                DateCanceledStart = dateCanceledStart,
-                DateCanceledEnd = dateCanceledEnd,
-                StatusId = statusesId,
-                PriorityId = prioritiesId,
-                UserId = userId,
-                IsPerformer = true
-            };
-
-            var getAllMyOrders = await orderRepositories.GetOrderByCustomFilter(filterParams);
-
-            var performerProfile = await profilePerformerRepositories.GetProfilePerformer(userId);
-            var listOrdersPriority = await orderPriorityRepositories.GetOrderPrioritiesAsync();
-            var listOrderStatuses = await orderStatusRepositories.GetOrderStatusesAsync();
-
-            return View("IndexOrderList", (getAllMyOrders, performerProfile, listOrdersPriority, listOrderStatuses));
-        }
-
-        [Authorize, HttpGet]
-        public async Task<IActionResult> OrderAsync(int id)
-        {
-            if (id <= 0)
-            {
-                return View("Error");
-            }
-            else
-            {
-                var userId = cookieDataService.GetUserIdFromCookie();
-
-                var order = await orderRepositories.GetOrderById(id);
-                var customerProfile = await profileCustomerRepositories.GetProfileCustomer(userId);
-                var performerProfile = await profilePerformerRepositories.GetProfilePerformer(userId);
-                var listOrdersPriority = await orderPriorityRepositories.GetOrderPrioritiesAsync();
-                var listOrderStatus = await orderStatusRepositories.GetOrderStatusesAsync();
-
-                var model = new DetailOrderViewModel
-                {
-                    Order = order,
-                    CustomerProfile = customerProfile,
-                    PerformerProfile = performerProfile,
-                    OrderPriorities = listOrdersPriority,
-                    OrderStatuses = listOrderStatus,
-                };
-
-                return View(model);
             }
         }
     }

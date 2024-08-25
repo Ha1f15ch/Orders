@@ -137,7 +137,7 @@ namespace ApplicationDbContext.ContextRepositories
             }
             else if (filterParams.IsPerformer && performer != null)
             {
-                selectedOrders = selectedOrders.Where(order => (order.PerformerId == null) || (order.PerformerId == performer.Id));
+                selectedOrders = selectedOrders.Where(order => order.PerformerId == performer.Id);
             }
 
             if (filterParams.DateCreateStart.HasValue && filterParams.DateCreateEnd.HasValue && (filterParams.DateCreateStart <= filterParams.DateCreateEnd))

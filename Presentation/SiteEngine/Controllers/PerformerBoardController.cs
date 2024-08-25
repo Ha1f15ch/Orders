@@ -6,7 +6,6 @@ using ModelsEntity;
 using Microsoft.AspNetCore.Mvc;
 using ApplicationDbContext.ContextRepositories;
 using ApplicationDbContext.Interfaces.ServicesInterfaces;
-using SiteEngine.Models.Order;
 
 namespace SiteEngine.Controllers
 {
@@ -17,30 +16,18 @@ namespace SiteEngine.Controllers
         private readonly IPerformerServiceMappingRepositories performerServiceMappingRepositories;
         private readonly IServiceRepository serviceRepository;
         private readonly IServiceInterfaceGetCookieData cookieDataService;
-        private readonly IOrderRepositories orderRepositories;
-        private readonly IOrderPriorityRepositories orderPriorityRepositories;
-        private readonly IOrderStatusRepositories orderStatusRepositories;
-        private readonly IProfileCustomerRepositories profileCustomerRepositories;
 
         public PerformerBoardController(AppDbContext context, 
-                                        IProfilePerformerRepositories profilePerformerRepositories,
-                                        IPerformerServiceMappingRepositories performerServiceMappingRepositories,
+                                        IProfilePerformerRepositories profilePerformerRepositories, 
+                                        IPerformerServiceMappingRepositories performerServiceMappingRepositories, 
                                         IServiceRepository serviceRepository,
-                                        IServiceInterfaceGetCookieData cookieDataService,
-                                        IOrderRepositories orderRepository,
-                                        IOrderPriorityRepositories orderPriorityRepository,
-                                        IOrderStatusRepositories orderStatusRepository,
-                                        IProfileCustomerRepositories profileCustomerRepository)
+                                        IServiceInterfaceGetCookieData cookieDataService)
         {
             this.context = context;
             this.profilePerformerRepositories = profilePerformerRepositories;
             this.performerServiceMappingRepositories = performerServiceMappingRepositories;
             this.serviceRepository = serviceRepository;
             this.cookieDataService = cookieDataService;
-            this.orderRepositories = orderRepository;
-            this.orderPriorityRepositories = orderPriorityRepository;
-            this.orderStatusRepositories = orderStatusRepository;
-            this.profileCustomerRepositories = profileCustomerRepository;
         }
 
         // title page performers metods 

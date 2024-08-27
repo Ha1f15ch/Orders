@@ -6,6 +6,8 @@ using ModelsEntity;
 using Microsoft.AspNetCore.Mvc;
 using ApplicationDbContext.ContextRepositories;
 using ApplicationDbContext.Interfaces.ServicesInterfaces;
+using SiteEngine.Models.Order;
+using Microsoft.Identity.Client;
 
 namespace SiteEngine.Controllers
 {
@@ -16,18 +18,30 @@ namespace SiteEngine.Controllers
         private readonly IPerformerServiceMappingRepositories performerServiceMappingRepositories;
         private readonly IServiceRepository serviceRepository;
         private readonly IServiceInterfaceGetCookieData cookieDataService;
+        private readonly IOrderStatusRepositories orderStatusRepositories;
+        private readonly IOrderPriorityRepositories orderPriorityRepositories;
+        private readonly IOrderRepositories orderRepositories;
+        private readonly IProfileCustomerRepositories profileCustomerRepositories;
 
         public PerformerBoardController(AppDbContext context, 
                                         IProfilePerformerRepositories profilePerformerRepositories, 
                                         IPerformerServiceMappingRepositories performerServiceMappingRepositories, 
                                         IServiceRepository serviceRepository,
-                                        IServiceInterfaceGetCookieData cookieDataService)
+                                        IServiceInterfaceGetCookieData cookieDataService,
+                                        IOrderRepositories orderRepositories,
+                                        IOrderStatusRepositories orderStatusRepositories,
+                                        IOrderPriorityRepositories orderPriorityRepositories,
+                                        IProfileCustomerRepositories profileCustomerRepositories)
         {
             this.context = context;
             this.profilePerformerRepositories = profilePerformerRepositories;
             this.performerServiceMappingRepositories = performerServiceMappingRepositories;
             this.serviceRepository = serviceRepository;
             this.cookieDataService = cookieDataService;
+            this.orderRepositories = orderRepositories;
+            this.orderStatusRepositories = orderStatusRepositories;
+            this.orderPriorityRepositories = orderPriorityRepositories;
+            this.profileCustomerRepositories = profileCustomerRepositories;
         }
 
         // title page performers metods 
@@ -257,6 +271,27 @@ namespace SiteEngine.Controllers
                 };
 
                 return View(model);
+            }
+        }
+
+        [Authorize, HttpGet]
+        public async Task<IActionResult> CancelOrderAsync(int id)
+        {
+            if(id <= 0)
+            {
+                return View("Error");
+            }
+            else
+            {
+                var userId = cookieDataService.GetUserIdFromCookie();
+
+                var order = await orderRepositories.GetOrderById(id);
+                var customer = await profileCustomerRepositories.GetProfileCustomer(userId);
+                var performer = await profilePerformerRepositories.GetProfilePerformer(userId);
+
+                return View("Error");
+                //?Необходимо реализовать функционал согласован7ия отмены заказа с обеих сторон
+                //При инициализации отмены любым из пользователй (Customer/Performer) должен появляться индикатор 1/2 2/2 если оба пользователя выбрали - отменить
             }
         }
     }

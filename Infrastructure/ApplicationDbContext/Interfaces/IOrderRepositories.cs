@@ -15,6 +15,7 @@ namespace ApplicationDbContext.Interfaces
         public void UpdatePerformer(int orderId, int performerId);
         public void UpdatePriorityOrder(int id, string name);
         public void UpdateOrder(Order order);
+        public void CancelOrder(int orderId, bool? isCustomer, bool? isPerformer);
         public Task<List<Order>> GetAllMyOrders(int userId, bool isCustomer, bool isPerformer);
         public Task<List<Order>> GetAllMyCompletedOrders(int userId, bool isCustomer, bool isPerformer);
         public Task<List<Order>> GetAllMyStartedOrders(int userId, bool isCustomer, bool isPerformer);

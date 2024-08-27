@@ -83,6 +83,16 @@ namespace ApplicationDbContext.ContextRepositories
             }
         }
 
+        public void CancelOrder(int orderId, bool? isCustomer, bool? isPerformer)
+        {
+            if (orderId <= 0)
+            {
+                // нужна таблица с ключами -OrderId(int)-CustomerConfirm(bool)-PerformerConfirm(bool)
+                // Если все true
+                // update order set status = 'C', canceledDate = now()
+            }
+        }
+
         public async Task<Order> GetOrderById(int orderId)
         {
             if (orderId > 0)
@@ -137,7 +147,7 @@ namespace ApplicationDbContext.ContextRepositories
             }
             else if (filterParams.IsPerformer && performer != null)
             {
-                selectedOrders = selectedOrders.Where(order => order.PerformerId == performer.Id);
+                selectedOrders = selectedOrders.Where(order => (order.PerformerId == null) || (order.PerformerId == performer.Id));
             }
 
             if (filterParams.DateCreateStart.HasValue && filterParams.DateCreateEnd.HasValue && (filterParams.DateCreateStart <= filterParams.DateCreateEnd))

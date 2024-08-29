@@ -87,7 +87,7 @@ namespace ApplicationDbContext.ContextRepositories
         public async Task<Performer> GetProfilePerformerByPerformerId(int? performerId)
         {
 
-            if (performerId == null)
+            if (performerId != null)
             {
                 Performer performer = await context.Performers.SingleOrDefaultAsync(el => el.Id == performerId);
 

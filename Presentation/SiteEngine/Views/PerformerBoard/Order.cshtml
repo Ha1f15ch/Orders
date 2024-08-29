@@ -30,14 +30,6 @@
                     }
                 </div>
 
-                @if (Model.Order.PerformerId.HasValue && Model.Order.PerformerId == Model.PerformerProfile.Id && Model.Order.OrderStatus != "S" && Model.Order.OrderStatus != "X" && Model.Order.OrderStatus != "N")
-                {
-                    <div class="row mb-3">
-                        <div class="col d-grid ">
-                            <button class="btn btn-secondary" type="button" data-bs-toggle="modal" data-bs-target="#ModalWindow">Начать выполнение</button>
-                        </div>
-                    </div>
-                }
                 @if (Model.Order.PerformerId.HasValue && Model.Order.PerformerId == Model.PerformerProfile.Id && Model.Order.OrderStatus == "S")
                 {
                     <div class="row mb-3">
@@ -164,7 +156,7 @@
                     <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
                     <div class="row">
                         <div class="col text-start">
-                            Дата последнегор изменения:
+                            Дата последнего изменения:
                         </div>
                         <div class="col text-center">
                             <h9>@Model.Order.UpdatedDate</h9>
@@ -173,7 +165,7 @@
                     <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
                     <div class="row">
                         <div class="col text-start">
-                            Дата отмены:
+                            Дата удаления:
                         </div>
                         <div class="col text-center">
                             <h9>@Model.Order.DeletedDate</h9>
@@ -181,6 +173,9 @@
                     </div>
                     <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
                  </div>
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-secondary" onclick="window.location = window.origin+'/PerformerBoard/IndexOrderList'" type="button">Назад к списку заказов</button>
+                </div>
              </div>
 
             <div class="modal fade" id="ModalWindow3" tabindex="-1" aria-labelledby="ModalWindowLabel" aria-hidden="true">
@@ -192,7 +187,7 @@
                         </div>
                         <div class="modal-body">
                             <div class="col mb-3">
-                                <form asp-action="SetStartOrder" asp-controller="PerformerBoard" method="get">
+                                <form asp-action="SetDoneOrder" asp-controller="PerformerBoard" method="get">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Нет</button>
                                     <button type="submit" class="btn btn-primary">Завершить</button>
                                 </form>
@@ -216,33 +211,11 @@
                                     <div class="justify-content-center">
                                         <div class="hidden">
                                             <input type="number" asp-for="Order.Id" name="Id" value=@Model.Order.Id class="form-control">
-                                            <input type="number" asp-for="CustomerProfile.Id" name="CustomerId" value=@Model.CustomerProfile.Id class="form-control">
+                                            <input type="number" asp-for="PerformerProfile.Id" name="CustomerId" value=@Model.PerformerProfile.Id class="form-control">
                                         </div>
                                     </div>
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
                                     <button type="submit" class="btn btn-primary">Подтвердить отказ</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="modal fade" id="ModalWindow" tabindex="-1" aria-labelledby="ModalWindowLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="ModalWindowLabel">Начать выполнение заказа.</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="col mb-3">
-                                <form asp-action="SetStartOrder" asp-controller="PerformerBoard" method="get">
-                                    <div class="justify-content-center">
-                                        <p><h8>Вы уверены, что хотите начать выполнение заказа ? Отменить данную операцию невозможно.</h8></p>
-                                    </div>
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Нет</button>
-                                    <button type="submit" class="btn btn-primary">Начать</button>
                                 </form>
                             </div>
                         </div>

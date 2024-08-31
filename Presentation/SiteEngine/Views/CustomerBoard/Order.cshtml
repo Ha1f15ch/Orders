@@ -10,24 +10,61 @@
     <div class="row row-gap-3">
          <div class="col">
             <div class="sticky-top">
-                <div class="row mb-3">
-                    <div class="col-12 d-grid ">
-                        <form class="col-12 d-grid" method="get">
-                            <button class="btn btn-warning" asp-action="UpdateOrder" asp-controller="CustomerBoard">Изменить</button>
-                            <input class="hidden" value="@Model.Order.Id" name="Id" />
-                        </form>
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col d-grid ">
-                        <button class="btn btn-secondary" type="button" data-bs-toggle="modal" data-bs-target="#ModalWindow">Изменить приоритет</button>
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col d-grid ">
-                        <button class="btn btn-danger" type="button" data-bs-toggle="modal" data-bs-target="#ModalWindow2">Отменить </button>
-                    </div>
-                </div>
+                @if (Model.Order.OrderStatus != "X")
+                {
+                    @if (Model.Order.OrderStatus != "F")
+                    {
+                        @if (Model.Order.OrderStatus != "C")
+                        {
+                            <div class="row mb-3">
+                                <div class="col d-grid ">
+                                    <button class="btn btn-outline-secondary" type="button" data-bs-toggle="modal" data-bs-target="#ModalWindow">Изменить приоритет</button>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col d-grid ">
+                                    <button class="btn btn-outline-warning" type="button" data-bs-toggle="modal" data-bs-target="#ModalWindow3">Отменить </button>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="row mb-3">
+                                <div class="col d-grid ">
+                                    <button class="btn btn-outline-secondary" type="button" data-bs-toggle="modal" data-bs-target="#ModalWindow">Изменить приоритет</button>
+                                </div>
+                            </div>
+                        }
+
+                    }
+                    else
+                    {
+                        <div class="row mb-3">
+                            <div class="col d-grid ">
+                                <button class="btn btn-outline-success" type="button" data-bs-toggle="modal" data-bs-target="#ModalWindow4">Поставить оценку</button>
+                            </div>
+                        </div>
+                    }
+
+                    @if (!Model.Order.PerformerId.HasValue)
+                    {
+                        <div class="row mb-3">
+                            <div class="col-12 d-grid ">
+                                <form class="col-12 d-grid" method="get">
+                                    <button class="btn btn-outline-info" asp-action="UpdateOrder" asp-controller="CustomerBoard">Изменить</button>
+                                    <input class="hidden" value="@Model.Order.Id" name="Id" />
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col d-grid ">
+                                <button class="btn btn-outline-danger" type="button" data-bs-toggle="modal" data-bs-target="#ModalWindow2">Удалить заказ</button>
+                            </div>
+                        </div>
+                    }
+                }
             </div>
          </div>
          <div class="col-6 p-3">
@@ -35,13 +72,13 @@
                  <div class="justify-content-center">
                     <h5>Заказ № @Model.Order.Id</h5>
                     
-                     <div class="row">
-                        <div class="col text-start">
-                            <h4 class="card-title">
-                                @Model.Order.TitleName
-                            </h4>
-                        </div>
-                     </div>
+                    <div class="row">
+                       <div class="col text-start">
+                           <h4 class="card-title">
+                               @Model.Order.TitleName
+                           </h4>
+                       </div>
+                    </div>
                     <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
                     <div class="row">
                         <div class="col text-start">
@@ -137,7 +174,7 @@
                     <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
                     <div class="row">
                         <div class="col text-start">
-                            Дата последнегор изменения:
+                            Дата последнего изменения:
                         </div>
                         <div class="col text-center">
                             <h9>@Model.Order.UpdatedDate</h9>
@@ -146,7 +183,7 @@
                     <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
                     <div class="row">
                         <div class="col text-start">
-                            Дата отмены:
+                            Дата удаления:
                         </div>
                         <div class="col text-center">
                             <h9>@Model.Order.DeletedDate</h9>
@@ -154,6 +191,9 @@
                     </div>
                     <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
                  </div>
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-secondary" onclick="window.location = window.origin+'/CustomerBoard/IndexOrderList'" type="button">Назад к списку заказов</button>
+                </div>
              </div>
          </div>
          <div class="col">
@@ -215,6 +255,58 @@
                                 </div>
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
                                 <button type="submit" class="btn btn-primary">Подтвердить удаление</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="ModalWindow3" tabindex="-1" aria-labelledby="ModalWindowLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="ModalWindowLabel">Отказ от заказа</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="col mb-3">
+                            <h9>Уверены, что хотите отказаться заказа ?</h9>
+                            <form asp-action="CancelOrder" asp-controller="CustomerBoard" method="get">
+                                <div class="justify-content-center">
+                                    <div class="hidden">
+                                        <input type="number" asp-for="Order.Id" name="Id" value=@Model.Order.Id class="form-control">
+                                        <input type="number" asp-for="CustomerProfile.Id" name="CustomerId" value=@Model.CustomerProfile.Id class="form-control">
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                                <button type="submit" class="btn btn-primary">Подтвердить отказ</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="ModalWindow4" tabindex="-1" aria-labelledby="ModalWindowLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="ModalWindowLabel">Установка оценки для заказа</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="col mb-3">
+                            <h9>Оценка</h9>
+                            <form asp-action="CancelOrder" asp-controller="CustomerBoard" method="get">
+                                <div class="justify-content-center">
+                                    <div class="hidden">
+                                        <input type="number" asp-for="Order.Id" name="Id" value=@Model.Order.Id class="form-control">
+                                        <input type="number" asp-for="Order.PerformerId" name="CustomerId" value=@Model.Order.PerformerId class="form-control">
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                                <button type="submit" class="btn btn-primary">Оценить</button>
                             </form>
                         </div>
                     </div>

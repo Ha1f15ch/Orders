@@ -82,7 +82,10 @@
                             </div>
                             <span class="text-danger" asp-validation-for="Order.CustomerId"></span>
                         </div>
-                        <button type="submit" class="btn btn-primary">Изменить заказ</button>
+                        <div class="d-grid gap-2 col-6 mx-auto">
+                            <button type="submit" class="btn btn-primary">Изменить заказ</button>
+                            <button class="btn btn-secondary" onclick="window.location = window.origin+'/CustomerBoard/Order/@Model.Order.Id'">Назад</button>
+                        </div>
                     </form>
                 </div>
             </div>

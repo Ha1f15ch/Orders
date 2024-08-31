@@ -240,7 +240,6 @@ namespace SiteEngine.Controllers
                 var order = await orderRepositories.GetOrderById(id);
                 var customerProfile = await profileCustomerRepositories.GetProfileCustomer(userId);
                 var performerProfile = await profilePerformerRepositories.GetProfilePerformerByPerformerId(order.PerformerId);
-                // должен быть list<Performer>
                 var listOrdersPriority = await orderPriorityRepositories.GetOrderPrioritiesAsync();
                 var listOrderStatus = await orderStatusRepositories.GetOrderStatusesAsync();
 

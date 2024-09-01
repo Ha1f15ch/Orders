@@ -354,7 +354,9 @@ namespace SiteEngine.Controllers
         {
             if (id > 0)
             {
+                await orderPerformerMappingRepositories.RemoveRequests(id);
                 await orderRepositories.DeleteOrderById(id);
+                
                 return RedirectToAction("IndexOrderList");
             }
             else

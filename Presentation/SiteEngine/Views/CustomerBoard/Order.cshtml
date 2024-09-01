@@ -30,11 +30,14 @@
                         {
                             @if (Model.Order.OrderStatus != "N")
                             {
-                                <div class="row mb-3">
-                                    <div class="col d-grid ">
-                                        <button class="btn btn-outline-warning" type="button" data-bs-toggle="modal" data-bs-target="#ModalWindow3">Отменить </button>
+                                if (Model.Order.OrderStatus != "D")
+                                {
+                                    <div class="row mb-3">
+                                        <div class="col d-grid ">
+                                            <button class="btn btn-outline-warning" type="button" data-bs-toggle="modal" data-bs-target="#ModalWindow3">Отменить </button>
+                                        </div>
                                     </div>
-                                </div>
+                                }
                             }
 
                             <div class="row mb-3">

@@ -9,10 +9,11 @@ namespace ApplicationDbContext.Interfaces
 {
     public interface IProfilePerformerRepositories
     {
-        public void CreateProfilePerformer(Performer performer, int id);
-        public void UpdateProfilePerformer(Performer performer);
-        public void DeleteProfilePerformerByPerformerId(int performerId); // by performer Id 
+        public Task CreateProfilePerformer(Performer performer, int id);
+        public Task UpdateProfilePerformer(Performer performer);
+        public Task DeleteProfilePerformerByPerformerId(int performerId); // by performer Id 
         public Task<Performer> GetProfilePerformer(int userId); //by user userId
         public Task<Performer> GetProfilePerformerByPerformerId(int? performerId); // by performer Id
+        public Task<List<Performer>> GetPerformers();
     }
 }

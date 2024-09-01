@@ -19,7 +19,7 @@ namespace ApplicationDbContext.ContextRepositories
         {
             this.context = context;
         }
-        public async void CreateNewOrder(Order order)
+        public async Task CreateNewOrder(Order order)
         {
             if (order == null)
             {
@@ -28,11 +28,11 @@ namespace ApplicationDbContext.ContextRepositories
             else
             {
                 context.Orders.Add(order);
-                context.SaveChanges();
+                await context.SaveChangesAsync();
             }
         }
 
-        public async void DeleteOrderById(int orderId)
+        public async Task DeleteOrderById(int orderId)
         {
             Order order = await GetOrderById(orderId);
 
@@ -43,7 +43,7 @@ namespace ApplicationDbContext.ContextRepositories
                     order.OrderStatus = "X";
                     order.DeletedDate = DateTime.Now;
                     order.UpdatedDate = DateTime.Now;
-                    context.SaveChanges();
+                    await context.SaveChangesAsync();
                 }
                 else
                 {
@@ -56,7 +56,7 @@ namespace ApplicationDbContext.ContextRepositories
             }
         }
 
-        public async void UpdateOrder(Order order)
+        public async Task UpdateOrder(Order order)
         {
             if(order is not null)
             {
@@ -75,7 +75,7 @@ namespace ApplicationDbContext.ContextRepositories
                 updatedModel.UpdatedDate = DateTime.Now;
                 updatedModel.DeletedDate = order.DeletedDate;
 
-                context.SaveChanges();
+                await context.SaveChangesAsync();
             }
             else
             {
@@ -83,7 +83,7 @@ namespace ApplicationDbContext.ContextRepositories
             }
         }
 
-        public void CancelOrder(int orderId, bool? isCustomer, bool? isPerformer)
+        public async Task CancelOrder(int orderId, bool? isCustomer, bool? isPerformer)
         {
             if (orderId <= 0)
             {
@@ -97,31 +97,12 @@ namespace ApplicationDbContext.ContextRepositories
         {
             if (orderId > 0)
             {
-                return context.Orders.Single(el => el.Id == orderId);
+                return await context.Orders.SingleAsync(el => el.Id == orderId);
             }
             else
             {
                 throw new InvalidOperationException("Ошибка при поиске Заказа, передан 0");
             }
-        }
-
-        public Task<List<Order>> GetAllMyOrders(int userId, bool isCustomer, bool isPerformer)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<Order>> GetAllMyCompletedOrders(int userId, bool isCustomer, bool isPerformer)
-        {
-            throw new NotImplementedException();
-        }
-        public Task<List<Order>> GetAllMyStartedOrders(int userId, bool isCustomer, bool isPerformer)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<Order>> GetAllMyCanceledOrders(int userId, bool isCustomer, bool isPerformer)
-        {
-            throw new NotImplementedException();
         }
 
         public async Task<List<Order>> GetOrderByCustomFilter(OrderFilterParams filterParams)
@@ -199,19 +180,16 @@ namespace ApplicationDbContext.ContextRepositories
             return await selectedOrders.ToListAsync();
         }
 
-        public async void UpdatePerformer(int orderId, int performerId)
+        public async Task UpdatePerformer(int orderId, int performerId)
         {
-            throw new NotImplementedException();
-        }
+            var order = await context.Orders.FirstOrDefaultAsync(el => el.Id == orderId);
+            var performer = await context.Performers.FirstOrDefaultAsync(el => el.Id == performerId);
 
-        public async void UpdatePriorityOrder(int id, string name)
-        {
-            var order = await GetOrderById(id);
-
-            if(order is not null)
+            if (order is not null || performer is not null)
             {
-                order.OrderPriority = name;
-                context.SaveChanges();
+                order.PerformerId = performerId;
+                order.OrderStatus = "S";
+                await context.SaveChangesAsync();
             }
             else
             {
@@ -219,7 +197,22 @@ namespace ApplicationDbContext.ContextRepositories
             }
         }
 
-        public async void UpdateStatusOrder(int orderId, string statusId, int userId, bool isCustomer, bool isPerformer)
+        public async Task UpdatePriorityOrder(int id, string name)
+        {
+            var order = await GetOrderById(id);
+
+            if(order is not null)
+            {
+                order.OrderPriority = name;
+                await context.SaveChangesAsync();
+            }
+            else
+            {
+                throw new InvalidOperationException("Ошибка при изменении, не найдена запись изменения");
+            }
+        }
+
+        public async Task UpdateStatusOrder(int orderId, string statusId, int userId, bool isCustomer, bool isPerformer)
         {
             throw new NotImplementedException();
         }

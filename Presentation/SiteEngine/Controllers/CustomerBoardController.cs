@@ -20,14 +20,16 @@ namespace SiteEngine.Controllers
         private readonly IOrderPriorityRepositories orderPriorityRepositories;
         private readonly IOrderStatusRepositories orderStatusRepositories;
         private readonly IServiceInterfaceGetCookieData cookieDataService;
+        private readonly IOrderPerformerMappingRepositories orderPerformerMappingRepositories;
 
-        public CustomerBoardController(AppDbContext context, 
-                                       IProfileCustomerRepositories profileCustomerRepository,                
+        public CustomerBoardController(AppDbContext context,
+                                       IProfileCustomerRepositories profileCustomerRepository,
                                        IProfilePerformerRepositories profilePerformerRepository,
                                        IOrderRepositories orderRepository,
                                        IOrderPriorityRepositories orderPriorityRepository,
                                        IOrderStatusRepositories orderStatusRepository,
-                                       IServiceInterfaceGetCookieData cookieDataService
+                                       IServiceInterfaceGetCookieData cookieDataService,
+                                       IOrderPerformerMappingRepositories orderPerformerMappingRepositories
         )
         {
             this.context = context;
@@ -37,6 +39,7 @@ namespace SiteEngine.Controllers
             this.orderPriorityRepositories = orderPriorityRepository;
             this.orderStatusRepositories = orderStatusRepository;
             this.cookieDataService = cookieDataService;
+            this.orderPerformerMappingRepositories = orderPerformerMappingRepositories;
         }
 
         // title page customers metods 
@@ -89,7 +92,7 @@ namespace SiteEngine.Controllers
                 IsCustomer = true
             };
 
-            
+
 
             var getAllMyOrders = await orderRepositories.GetOrderByCustomFilter(filterParams);
 
@@ -148,7 +151,7 @@ namespace SiteEngine.Controllers
                     UserId = customerProfileFullViewModel.UserId,
                 }; //переписать на перебор циклом
 
-                profileCustomerRepositories.UpdateProfileCustomer(entityCustomerProfileFullViewModel);
+                await profileCustomerRepositories.UpdateProfileCustomer(entityCustomerProfileFullViewModel);
                 return RedirectToAction("MyProfileCustomer");
             }
 
@@ -190,7 +193,7 @@ namespace SiteEngine.Controllers
         [Authorize, HttpPost]
         public async Task<IActionResult> CreateOrderAsync(CreateOrderViewModel model)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 var userId = cookieDataService.GetUserIdFromCookie();
 
@@ -213,7 +216,7 @@ namespace SiteEngine.Controllers
                     DeletedDate = null,
                 };
 
-                orderRepositories.CreateNewOrder(orderEntity);
+                await orderRepositories.CreateNewOrder(orderEntity);
                 return RedirectToAction("IndexOrderList");
             }
             else
@@ -243,13 +246,18 @@ namespace SiteEngine.Controllers
                 var listOrdersPriority = await orderPriorityRepositories.GetOrderPrioritiesAsync();
                 var listOrderStatus = await orderStatusRepositories.GetOrderStatusesAsync();
 
-                var model = new DetailOrderViewModel
+                var listQueuePerformerRequests = await orderPerformerMappingRepositories.GetListOrderPerformersRequests(order.Id, null);
+                var listPerformers = await profilePerformerRepositories.GetPerformers();
+
+                var model = new DetailOrderViewModelForCustomer
                 {
                     Order = order,
                     CustomerProfile = customerProfile,
                     PerformerProfile = performerProfile,
                     OrderPriorities = listOrdersPriority,
                     OrderStatuses = listOrderStatus,
+                    OrderPerformerMappings = listQueuePerformerRequests,
+                    Performers = listPerformers
                 };
 
                 return View(model);
@@ -286,7 +294,7 @@ namespace SiteEngine.Controllers
                         OrderPriority = order.OrderPriority
                     }
                 };
-                
+
                 return View(model);
             }
         }
@@ -294,7 +302,7 @@ namespace SiteEngine.Controllers
         [Authorize, HttpPost]
         public async Task<IActionResult> UpdateOrderAsync(int id, OrderForUpdateViewModel order)
         {
-            if(order is not null)
+            if (order is not null)
             {
                 var orderInDb = await orderRepositories.GetOrderById(id);
 
@@ -315,23 +323,23 @@ namespace SiteEngine.Controllers
                     DeletedDate = orderInDb.DeletedDate,
                 };
 
-                orderRepositories.UpdateOrder(orderForUpdate);
+                await orderRepositories.UpdateOrder(orderForUpdate);
 
-                return RedirectToAction("Order", new {id = orderForUpdate.Id});
+                return RedirectToAction("Order", new { id = orderForUpdate.Id });
             }
             else
             {
                 return View(order);
             }
-            
+
         }
 
         [Authorize, HttpPost]
         public async Task<IActionResult> UpdateOrderPriorityAsync(int id, string orderPriority)
         {
-            if(id > 0 && orderPriority is not null)
+            if (id > 0 && orderPriority is not null)
             {
-                orderRepositories.UpdatePriorityOrder(id, orderPriority);
+                await orderRepositories.UpdatePriorityOrder(id, orderPriority);
 
                 return RedirectToAction("Order", new { id = id });
             }
@@ -344,14 +352,52 @@ namespace SiteEngine.Controllers
         [Authorize, HttpPost]
         public async Task<IActionResult> DeleteOrderAsync(int id)
         {
-            if(id > 0)
+            if (id > 0)
             {
-                orderRepositories.DeleteOrderById(id);
+                await orderRepositories.DeleteOrderById(id);
                 return RedirectToAction("IndexOrderList");
             }
             else
             {
                 return RedirectToAction("Order", new { id = id });
+            }
+        }
+
+        [Authorize, HttpGet]
+        public async Task<IActionResult> CancelOrderAsync(int id /*OrderId*/, int customerId)
+        {
+            if(id <= 0 || customerId <= 0)
+            {
+                return RedirectToAction("Order", new { id = id });
+            }
+            else
+            {
+                var order = await orderRepositories.GetOrderById(id);
+                var customer = await profileCustomerRepositories.GetProfileCustomerByCustomerId(customerId);
+
+                if (order is null || customer is null)
+                {
+                    return RedirectToAction("IndexOrderList");
+                }
+
+                //Здесь должна быть описана работа с очередь. в которой могут находиться отклиk
+                return RedirectToAction("Order", new { id = id });
+            }
+        }
+
+        [Authorize, HttpGet]
+        public async Task<IActionResult> ApprovePerformerForOrderAsync(int orderId, int performerId)
+        {
+            if (orderId <= 0 || performerId <= 0)
+            {
+                return RedirectToAction("Order", new { id = orderId });
+            }
+            else
+            {
+                await orderRepositories.UpdatePerformer(orderId, performerId);
+                await orderPerformerMappingRepositories.RemoveRequests(orderId);
+
+                return RedirectToAction("Order", new { id = orderId });
             }
         }
     }

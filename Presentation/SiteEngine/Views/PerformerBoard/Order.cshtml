@@ -1,6 +1,6 @@
 ﻿@using ModelsEntity
 @using SiteEngine.Models.Order
-@model DetailOrderViewModel
+@model DetailOrderViewModelForPerformer
 
 @{
     Layout = "~/Views/Shared/PerformerLayout.cshtml";
@@ -13,20 +13,40 @@
                 <div class="row mb-3">
                     @if (!Model.Order.PerformerId.HasValue)
                     {
-                        <div class="col-12 d-grid acceptClass">
-                            <form class="col-12 d-grid" method="get">
-                                <button class="btn btn-warning" asp-action="AcceptOrder" asp-controller="PerformerBoard">Откликнуться</button>
-                                <input class="hidden" value="@Model.Order.Id" name="Id" />
-                                <input class="hidden" value="@Model.PerformerProfile.Id" name="Id" />
-                            </form>
-                        </div>
-                        <div class="col-12 d-grid cancelAcceptClass hidden">
-                            <form class="col-12 d-grid" method="get">
-                                <button class="btn btn-warning" asp-action="CancelAcceptOrder" asp-controller="PerformerBoard">Отменить отклик</button>
-                                <input class="hidden" value="@Model.Order.Id" name="Id" />
-                                <input class="hidden" value="@Model.PerformerProfile.Id" name="Id" />
-                            </form>
-                        </div>
+                        if(Model.HasRequestInQueue)
+                        {
+                            <div class="col-12 d-grid">
+                                <form class="col-12 d-grid" method="get">
+                                    <button class="btn btn-warning acceptClass hidden" asp-action="AcceptOrder" asp-controller="PerformerBoard">Откликнуться</button>
+                                    <input class="hidden" value="@Model.Order.Id" name="orderId" />
+                                    <input class="hidden" value="@Model.PerformerProfile.Id" name="performerId" />
+                                </form>
+                            </div>
+                            <div class="col-12 d-grid">
+                                <form class="col-12 d-grid" method="get">
+                                    <button class="btn btn-warning cancelAcceptClass" asp-action="CancelAcceptOrder" asp-controller="PerformerBoard">Отменить отклик</button>
+                                    <input class="hidden" value="@Model.Order.Id" name="orderId" />
+                                    <input class="hidden" value="@Model.PerformerProfile.Id" name="performerId" />
+                                </form>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="col-12 d-grid">
+                                <form class="col-12 d-grid" method="get">
+                                    <button class="btn btn-warning acceptClass" asp-action="AcceptOrder" asp-controller="PerformerBoard">Откликнуться</button>
+                                    <input class="hidden" value="@Model.Order.Id" name="orderId" />
+                                    <input class="hidden" value="@Model.PerformerProfile.Id" name="performerId" />
+                                </form>
+                            </div>
+                            <div class="col-12 d-grid">
+                                <form class="col-12 d-grid" method="get">
+                                    <button class="btn btn-warning cancelAcceptClass hidden" asp-action="CancelAcceptOrder" asp-controller="PerformerBoard">Отменить отклик</button>
+                                    <input class="hidden" value="@Model.Order.Id" name="orderId" />
+                                    <input class="hidden" value="@Model.PerformerProfile.Id" name="performerId" />
+                                </form>
+                            </div>
+                        }
                     }
                 </div>
 
@@ -228,3 +248,5 @@
          </div>
     </div>
 </div>
+
+<script src="~/js/performerOrderScript.js"></script>

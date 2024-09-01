@@ -175,6 +175,25 @@ namespace ApplicationDbContext.Migrations
                     b.ToTable("Order", "dbo");
                 });
 
+            modelBuilder.Entity("ModelsEntity.OrderPerformerMapping", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PerformerId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OrderPerformerMapping", "dbo");
+                });
+
             modelBuilder.Entity("ModelsEntity.OrderPriority", b =>
                 {
                     b.Property<string>("Name")

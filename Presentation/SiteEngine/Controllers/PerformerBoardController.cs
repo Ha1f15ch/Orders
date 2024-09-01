@@ -22,6 +22,7 @@ namespace SiteEngine.Controllers
         private readonly IOrderPriorityRepositories orderPriorityRepositories;
         private readonly IOrderRepositories orderRepositories;
         private readonly IProfileCustomerRepositories profileCustomerRepositories;
+        private readonly IOrderPerformerMappingRepositories orderPerformerMappingRepositories;
 
         public PerformerBoardController(AppDbContext context, 
                                         IProfilePerformerRepositories profilePerformerRepositories, 
@@ -31,7 +32,8 @@ namespace SiteEngine.Controllers
                                         IOrderRepositories orderRepositories,
                                         IOrderStatusRepositories orderStatusRepositories,
                                         IOrderPriorityRepositories orderPriorityRepositories,
-                                        IProfileCustomerRepositories profileCustomerRepositories)
+                                        IProfileCustomerRepositories profileCustomerRepositories,
+                                        IOrderPerformerMappingRepositories orderPerformerMappingRepositories)
         {
             this.context = context;
             this.profilePerformerRepositories = profilePerformerRepositories;
@@ -42,6 +44,7 @@ namespace SiteEngine.Controllers
             this.orderStatusRepositories = orderStatusRepositories;
             this.orderPriorityRepositories = orderPriorityRepositories;
             this.profileCustomerRepositories = profileCustomerRepositories;
+            this.orderPerformerMappingRepositories = orderPerformerMappingRepositories;
         }
 
         // title page performers metods 
@@ -121,7 +124,7 @@ namespace SiteEngine.Controllers
                     UserId = performerModelFromTabble.UserId,
                 };
 
-                profilePerformerRepositories.UpdateProfilePerformer(performermodel);
+                await profilePerformerRepositories.UpdateProfilePerformer(performermodel);
                 return RedirectToAction("MyProfilePerformer");
             }
             else
@@ -185,7 +188,7 @@ namespace SiteEngine.Controllers
         {
             if (id != 0)
             {
-                profilePerformerRepositories.DeleteProfilePerformerByPerformerId(id);
+                await profilePerformerRepositories.DeleteProfilePerformerByPerformerId(id);
                 return RedirectToAction("Index");
             }
             else
@@ -260,14 +263,16 @@ namespace SiteEngine.Controllers
                 var performerProfile = await profilePerformerRepositories.GetProfilePerformer(userId);
                 var listOrdersPriority = await orderPriorityRepositories.GetOrderPrioritiesAsync();
                 var listOrderStatus = await orderStatusRepositories.GetOrderStatusesAsync();
+                var queueRequests = await orderPerformerMappingRepositories.GetListOrderPerformersRequests(order.Id, performerProfile.Id);
 
-                var model = new DetailOrderViewModel
+                var model = new DetailOrderViewModelForPerformer
                 {
                     Order = order,
                     CustomerProfile = customerProfile,
                     PerformerProfile = performerProfile,
                     OrderPriorities = listOrdersPriority,
                     OrderStatuses = listOrderStatus,
+                    HasRequestInQueue = queueRequests.ToArray().Length == 0 ? false : true,
                 };
 
                 return View(model);
@@ -292,6 +297,34 @@ namespace SiteEngine.Controllers
                 return View("Error");
                 //?Необходимо реализовать функционал согласован7ия отмены заказа с обеих сторон
                 //При инициализации отмены любым из пользователй (Customer/Performer) должен появляться индикатор 1/2 2/2 если оба пользователя выбрали - отменить
+            }
+        }
+
+        [Authorize, HttpGet]
+        public async Task<IActionResult> AcceptOrderAsync(int orderId, int performerId)
+        {
+            if(orderId <= 0 || performerId <= 0)
+            {
+                return View("Error");
+            }
+            else
+            {
+                await orderPerformerMappingRepositories.AddNewRequestPerformer(orderId, performerId);
+                return RedirectToAction("Order", new { id = orderId });
+            }
+        }
+
+        [Authorize, HttpGet]
+        public async Task<IActionResult> CancelAcceptOrderAsync(int orderId, int performerId)
+        {
+            if (orderId <= 0 || performerId <= 0)
+            {
+                return View("Error");
+            }
+            else
+            {
+                await orderPerformerMappingRepositories.RemoveRequestByPerformer(orderId, performerId);
+                return RedirectToAction("Order", new { id = orderId });
             }
         }
     }

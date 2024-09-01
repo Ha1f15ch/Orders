@@ -295,8 +295,7 @@ namespace SiteEngine.Controllers
                 var performer = await profilePerformerRepositories.GetProfilePerformer(userId);
 
                 return View("Error");
-                //?Необходимо реализовать функционал согласован7ия отмены заказа с обеих сторон
-                //При инициализации отмены любым из пользователй (Customer/Performer) должен появляться индикатор 1/2 2/2 если оба пользователя выбрали - отменить
+                
             }
         }
 

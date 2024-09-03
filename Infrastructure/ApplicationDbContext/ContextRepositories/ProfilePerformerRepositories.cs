@@ -22,7 +22,7 @@ namespace ApplicationDbContext.ContextRepositories
         {
             if (id != 0)
             {
-                return context.Users.Single(el => el.Id == id);
+                return await context.Users.SingleOrDefaultAsync(el => el.Id == id);
             }
             else
             {
@@ -31,7 +31,7 @@ namespace ApplicationDbContext.ContextRepositories
 
         }
 
-        public async void CreateProfilePerformer(Performer performer, int userId)
+        public async Task CreateProfilePerformer(Performer performer, int userId)
         {
             User user = await FindUserById(userId);
 
@@ -39,7 +39,7 @@ namespace ApplicationDbContext.ContextRepositories
             {
                 context.Performers.Add(performer);
                 user.IsPerformer = true;
-                context.SaveChanges();
+                await context.SaveChangesAsync();
             }
             else
             {
@@ -47,7 +47,7 @@ namespace ApplicationDbContext.ContextRepositories
             }
         }
 
-        public async void DeleteProfilePerformerByPerformerId(int performerId)
+        public async Task DeleteProfilePerformerByPerformerId(int performerId)
         {
             Performer performer = await GetProfilePerformerByPerformerId(performerId);
             if (performer != null)
@@ -58,7 +58,7 @@ namespace ApplicationDbContext.ContextRepositories
                 {
                     user.IsPerformer = false;
                     context.Performers.Remove(performer);
-                    context.SaveChanges();
+                    await context.SaveChangesAsync();
                 }
                 else
                 {
@@ -80,7 +80,7 @@ namespace ApplicationDbContext.ContextRepositories
             }
             else
             {
-                return context.Performers.Single(el => el.UserId == userId);
+                return await context.Performers.SingleOrDefaultAsync(el => el.UserId == userId);
             }
         }
 
@@ -106,7 +106,7 @@ namespace ApplicationDbContext.ContextRepositories
             }
         }
 
-        public async void UpdateProfilePerformer(Performer performer)
+        public async Task UpdateProfilePerformer(Performer performer)
         {
             var updatedItem = await GetProfilePerformerByPerformerId(performer.Id);
 
@@ -125,12 +125,17 @@ namespace ApplicationDbContext.ContextRepositories
                 updatedItem.CreatedDate = performer.CreatedDate;
                 updatedItem.UserId = performer.UserId;
 
-                context.SaveChanges();
+                await context.SaveChangesAsync();
             }
             else
             {
                 throw new InvalidOperationException("Профиля исполнителя с указанным id не найдено !");
             }
+        }
+
+        public async Task<List<Performer>> GetPerformers()
+        {
+            return await context.Performers.ToListAsync();
         }
     }
 }

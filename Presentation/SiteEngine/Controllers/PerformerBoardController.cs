@@ -22,6 +22,8 @@ namespace SiteEngine.Controllers
         private readonly IOrderPriorityRepositories orderPriorityRepositories;
         private readonly IOrderRepositories orderRepositories;
         private readonly IProfileCustomerRepositories profileCustomerRepositories;
+        private readonly IOrderPerformerMappingRepositories orderPerformerMappingRepositories;
+        private readonly IQueueOrderCancellationsRepositories queueOrderCancellationsRepositories;
 
         public PerformerBoardController(AppDbContext context, 
                                         IProfilePerformerRepositories profilePerformerRepositories, 
@@ -31,7 +33,9 @@ namespace SiteEngine.Controllers
                                         IOrderRepositories orderRepositories,
                                         IOrderStatusRepositories orderStatusRepositories,
                                         IOrderPriorityRepositories orderPriorityRepositories,
-                                        IProfileCustomerRepositories profileCustomerRepositories)
+                                        IProfileCustomerRepositories profileCustomerRepositories,
+                                        IOrderPerformerMappingRepositories orderPerformerMappingRepositories,
+                                        IQueueOrderCancellationsRepositories queueOrderCancellationsRepositories)
         {
             this.context = context;
             this.profilePerformerRepositories = profilePerformerRepositories;
@@ -42,6 +46,8 @@ namespace SiteEngine.Controllers
             this.orderStatusRepositories = orderStatusRepositories;
             this.orderPriorityRepositories = orderPriorityRepositories;
             this.profileCustomerRepositories = profileCustomerRepositories;
+            this.orderPerformerMappingRepositories = orderPerformerMappingRepositories;
+            this.queueOrderCancellationsRepositories = queueOrderCancellationsRepositories;
         }
 
         // title page performers metods 
@@ -121,7 +127,7 @@ namespace SiteEngine.Controllers
                     UserId = performerModelFromTabble.UserId,
                 };
 
-                profilePerformerRepositories.UpdateProfilePerformer(performermodel);
+                await profilePerformerRepositories.UpdateProfilePerformer(performermodel);
                 return RedirectToAction("MyProfilePerformer");
             }
             else
@@ -185,7 +191,7 @@ namespace SiteEngine.Controllers
         {
             if (id != 0)
             {
-                profilePerformerRepositories.DeleteProfilePerformerByPerformerId(id);
+                await profilePerformerRepositories.DeleteProfilePerformerByPerformerId(id);
                 return RedirectToAction("Index");
             }
             else
@@ -260,14 +266,18 @@ namespace SiteEngine.Controllers
                 var performerProfile = await profilePerformerRepositories.GetProfilePerformer(userId);
                 var listOrdersPriority = await orderPriorityRepositories.GetOrderPrioritiesAsync();
                 var listOrderStatus = await orderStatusRepositories.GetOrderStatusesAsync();
+                var queueRequests = await orderPerformerMappingRepositories.GetListOrderPerformersRequests(order.Id, performerProfile.Id);
+                var cancelRequest = await queueOrderCancellationsRepositories.GetCancelRequest(order.Id);
 
-                var model = new DetailOrderViewModel
+                var model = new DetailOrderViewModelForPerformer
                 {
                     Order = order,
                     CustomerProfile = customerProfile,
                     PerformerProfile = performerProfile,
                     OrderPriorities = listOrdersPriority,
                     OrderStatuses = listOrderStatus,
+                    HasRequestInQueue = queueRequests.ToArray().Length == 0 ? false : true,
+                    HasInitiatorCancelRequest = cancelRequest is not null && cancelRequest.IsConfirmedByPerformer && !cancelRequest.IsConfirmedByCustomer ? true : false,
                 };
 
                 return View(model);
@@ -275,23 +285,76 @@ namespace SiteEngine.Controllers
         }
 
         [Authorize, HttpGet]
-        public async Task<IActionResult> CancelOrderAsync(int id)
+        public async Task<IActionResult> CancelOrderAsync(int orderId, int performerId)
         {
-            if(id <= 0)
+            if (orderId <= 0 || performerId <= 0)
+            {
+                return RedirectToAction("Order", new { id = orderId });
+            }
+            else
+            {
+                var order = await orderRepositories.GetOrderById(orderId);
+                var performer = await profilePerformerRepositories.GetProfilePerformerByPerformerId(performerId);
+
+                if (order is null || performer is null)
+                {
+                    return RedirectToAction("IndexOrderList");
+                }
+
+                await queueOrderCancellationsRepositories.AddCancelRequest(orderId, null, performerId);
+                return RedirectToAction("Order", new { id = orderId });
+            }
+        }
+
+        [Authorize, HttpGet]
+        public async Task<IActionResult> RemoveRequestCancelOrderAsync(int orderId, int performerId)
+        {
+            if (orderId <= 0 || performerId <= 0)
+            {
+                return RedirectToAction("Order", new { id = orderId });
+            }
+            else
+            {
+                var order = await orderRepositories.GetOrderById(orderId);
+                var performer = await profilePerformerRepositories.GetProfilePerformerByPerformerId(performerId);
+                var itemFromQueue = queueOrderCancellationsRepositories.GetCancelRequest(orderId);
+
+                if (order is null || performer is null || itemFromQueue is null)
+                {
+                    return RedirectToAction("IndexOrderList");
+                }
+
+                await queueOrderCancellationsRepositories.DeleteCancelRequest(orderId, null, performerId);
+
+                return RedirectToAction("Order", new { id = orderId });
+            }
+        }
+
+        [Authorize, HttpGet]
+        public async Task<IActionResult> AcceptOrderAsync(int orderId, int performerId)
+        {
+            if(orderId <= 0 || performerId <= 0)
             {
                 return View("Error");
             }
             else
             {
-                var userId = cookieDataService.GetUserIdFromCookie();
+                await orderPerformerMappingRepositories.AddNewRequestPerformer(orderId, performerId);
+                return RedirectToAction("Order", new { id = orderId });
+            }
+        }
 
-                var order = await orderRepositories.GetOrderById(id);
-                var customer = await profileCustomerRepositories.GetProfileCustomer(userId);
-                var performer = await profilePerformerRepositories.GetProfilePerformer(userId);
-
+        [Authorize, HttpGet]
+        public async Task<IActionResult> CancelAcceptOrderAsync(int orderId, int performerId)
+        {
+            if (orderId <= 0 || performerId <= 0)
+            {
                 return View("Error");
-                //?Необходимо реализовать функционал согласован7ия отмены заказа с обеих сторон
-                //При инициализации отмены любым из пользователй (Customer/Performer) должен появляться индикатор 1/2 2/2 если оба пользователя выбрали - отменить
+            }
+            else
+            {
+                await orderPerformerMappingRepositories.RemoveRequestByPerformer(orderId, performerId);
+                return RedirectToAction("Order", new { id = orderId });
             }
         }
     }

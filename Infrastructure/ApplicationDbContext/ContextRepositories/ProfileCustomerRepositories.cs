@@ -19,7 +19,7 @@ namespace ApplicationDbContext.ContextRepositories
             this.context = context;
         }
 
-        public async void CreateProfileCustomer(Customer customer, int id)
+        public async Task CreateProfileCustomer(Customer customer, int id)
         {
             User uItem = await FindUserById(id);
 
@@ -27,7 +27,7 @@ namespace ApplicationDbContext.ContextRepositories
             {
                 context.Customers.Add(customer);
                 uItem.IsCustomer = true;
-                context.SaveChanges();
+                await context.SaveChangesAsync();
             }
             else
             {
@@ -35,17 +35,17 @@ namespace ApplicationDbContext.ContextRepositories
             }
         }
 
-        public async void DeleteProfileCustomer(int id)//by userId
+        public async Task DeleteProfileCustomer(int id)//by userId
         {
             User user = await FindUserById(id);
 
             context.Customers.Remove(await GetProfileCustomer(id));
             user.IsCustomer = false;
-            context.SaveChanges();
+            await context.SaveChangesAsync();
             //После появления заказов, нужно подумать над тем, чтобы оставить заказ с пометкой о том, что автор удалил свой лпрофиль
         }
 
-        public async void DeleteProfileCustomerByCustomerId(int customerId)
+        public async Task DeleteProfileCustomerByCustomerId(int customerId)
         {
             Customer customerEntity = await GetProfileCustomerByCustomerId(customerId);
             
@@ -57,7 +57,7 @@ namespace ApplicationDbContext.ContextRepositories
                 {
                     context.Customers.Remove(customerEntity);
                     user.IsCustomer = false;
-                    context.SaveChanges();
+                    await context.SaveChangesAsync();
                 }
                 else
                 {
@@ -81,7 +81,7 @@ namespace ApplicationDbContext.ContextRepositories
                 }
                 else
                 {
-                    return context.Customers.Single(el => el.UserId == uEl.Id);
+                    return await context.Customers.SingleOrDefaultAsync(el => el.UserId == uEl.Id);
                 }
             }
             else
@@ -103,7 +103,7 @@ namespace ApplicationDbContext.ContextRepositories
             }
         }
 
-        public async void UpdateProfileCustomer(Customer customer)
+        public async Task UpdateProfileCustomer(Customer customer)
         {
             var updatedItem = await GetProfileCustomerByCustomerId(customer.Id);
 
@@ -119,7 +119,7 @@ namespace ApplicationDbContext.ContextRepositories
                 updatedItem.UserId = customer.UserId;
                 //попробовать переписать через forEach
 
-                context.SaveChanges();
+                await context.SaveChangesAsync();
             }
             else
             {
@@ -129,9 +129,9 @@ namespace ApplicationDbContext.ContextRepositories
 
         public async Task<User> FindUserById(int id)
         {
-            if (id != 0)
+            if (id != 0 || id != null)
             {
-                return context.Users.Single(el => el.Id == id);
+                return await context.Users.SingleOrDefaultAsync(el => el.Id == id);
             }
             else
             {

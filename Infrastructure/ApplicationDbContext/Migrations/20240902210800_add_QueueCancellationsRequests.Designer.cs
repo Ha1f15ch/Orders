@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ApplicationDbContext.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240722183948_edit_table_orderPriority_create_string_primaryKey")]
-    partial class edit_table_orderPriority_create_string_primaryKey
+    [Migration("20240902210800_add_QueueCancellationsRequests")]
+    partial class add_QueueCancellationsRequests
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -178,6 +178,25 @@ namespace ApplicationDbContext.Migrations
                     b.ToTable("Order", "dbo");
                 });
 
+            modelBuilder.Entity("ModelsEntity.OrderPerformerMapping", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PerformerId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OrderPerformerMapping", "dbo");
+                });
+
             modelBuilder.Entity("ModelsEntity.OrderPriority", b =>
                 {
                     b.Property<string>("Name")
@@ -318,6 +337,37 @@ namespace ApplicationDbContext.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ProfessionServiceMapping", "dbo");
+                });
+
+            modelBuilder.Entity("ModelsEntity.QueueOrderCancellations", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsConfirmedByCustomer")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsConfirmedByPerformer")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("PerformerId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("RequestDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("QueueOrderCancellations", "dbo");
                 });
 
             modelBuilder.Entity("ModelsEntity.Role", b =>

@@ -221,5 +221,7 @@ namespace ApplicationDbContext
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderStatus> OrderStatuses { get; set; }
         public DbSet<OrderPriority> OrderPriority { get; set; }
+        public DbSet<OrderPerformerMapping> OrderPerformerMappings { get; set; }
+        public DbSet<QueueOrderCancellations> QueueOrderCancellations { get; set; }
     }
 }

@@ -1,41 +1,53 @@
 ﻿@using ModelsEntity
 @using SiteEngine.Models.Order
-@model DetailOrderViewModel
+@model DetailOrderViewModelForCustomer
 
 @{
     Layout = "~/Views/Shared/CustomerLayout.cshtml";
+
+    var performersDictionary = Model.Performers.ToDictionary(p => p.Id, p => p);
 }
 
 <div class="container">
     <div class="row row-gap-3">
          <div class="col">
             <div class="sticky-top">
+
+                @if (Model.Order.OrderStatus == "D")
+                {
+                    <div class="row mb-3">
+                        <div class="col d-grid ">
+                            <button class="btn btn-outline-success" type="button" data-bs-toggle="modal" data-bs-target="#ModalWindow5">Утвердить исполнителя </button>
+                        </div>
+                    </div>
+                }
+
                 @if (Model.Order.OrderStatus != "X")
                 {
                     @if (Model.Order.OrderStatus != "F")
                     {
-                        @if (Model.Order.OrderStatus != "C")
+                        if(Model.HasInitiatorCancelRequest && Model.Order.OrderStatus == "S")
                         {
                             <div class="row mb-3">
                                 <div class="col d-grid ">
-                                    <button class="btn btn-outline-secondary" type="button" data-bs-toggle="modal" data-bs-target="#ModalWindow">Изменить приоритет</button>
+                                    <button class="btn btn-warning" type="button" data-bs-toggle="modal" data-bs-target="#ModalWindow6">Удалить запрос отмены</button>
                                 </div>
                             </div>
+                        }
+                        else if (!Model.HasInitiatorCancelRequest && Model.Order.OrderStatus == "S")
+                        {
+                            <div class="row mb-3">
+                                <div class="col d-grid ">
+                                    <button class="btn btn-outline-warning" type="button" data-bs-toggle="modal" data-bs-target="#ModalWindow3">Отменить</button>
+                                </div>
+                            </div>
+                        }
 
-                            <div class="row mb-3">
-                                <div class="col d-grid ">
-                                    <button class="btn btn-outline-warning" type="button" data-bs-toggle="modal" data-bs-target="#ModalWindow3">Отменить </button>
-                                </div>
+                        <div class="row mb-3">
+                            <div class="col d-grid ">
+                                <button class="btn btn-outline-secondary" type="button" data-bs-toggle="modal"databstarget="#ModalWindow">Изменить приоритет</button>
                             </div>
-                        }
-                        else
-                        {
-                            <div class="row mb-3">
-                                <div class="col d-grid ">
-                                    <button class="btn btn-outline-secondary" type="button" data-bs-toggle="modal" data-bs-target="#ModalWindow">Изменить приоритет</button>
-                                </div>
-                            </div>
-                        }
+                        </div>
 
                     }
                     else
@@ -271,12 +283,13 @@
                     </div>
                     <div class="modal-body">
                         <div class="col mb-3">
-                            <h9>Уверены, что хотите отказаться заказа ?</h9>
+                            <h9>Уверены, что хотите отказаться от заказа ?</h9>
+
                             <form asp-action="CancelOrder" asp-controller="CustomerBoard" method="get">
                                 <div class="justify-content-center">
                                     <div class="hidden">
-                                        <input type="number" asp-for="Order.Id" name="Id" value=@Model.Order.Id class="form-control">
-                                        <input type="number" asp-for="CustomerProfile.Id" name="CustomerId" value=@Model.CustomerProfile.Id class="form-control">
+                                        <input type="number" asp-for="Order.Id" name="orderId" value=@Model.Order.Id class="form-control">
+                                        <input type="number" asp-for="CustomerProfile.Id" name="customerId" value=@Model.CustomerProfile.Id class="form-control">
                                     </div>
                                 </div>
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
@@ -297,7 +310,7 @@
                     </div>
                     <div class="modal-body">
                         <div class="col mb-3">
-                            <h9>Оценка</h9>
+                            <h9>Рейтинг</h9>
                             <form asp-action="CancelOrder" asp-controller="CustomerBoard" method="get">
                                 <div class="justify-content-center">
                                     <div class="hidden">
@@ -313,5 +326,69 @@
                 </div>
             </div>
         </div>
+
+        <div class="modal fade" id="ModalWindow5" tabindex="-1" aria-labelledby="ModalWindowLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="ModalWindowLabel">Список откликнувшихся исоплнителей</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="col mb-4">
+                            <form asp-action="ApprovePerformerForOrder" asp-controller="CustomerBoard" method="get">
+                                <div class="justify-content-center">
+                                    <div class="hidden">
+                                        <input type="number" asp-for="Order.Id" name="orderId" value=@Model.Order.Id class="form-control">
+                                    </div>
+                                    <select class="form-select" id="performerId" name="performerId">
+                                        @foreach(var mapping in Model.OrderPerformerMappings)
+                                        {
+                                            var performer = performersDictionary.GetValueOrDefault(mapping.PerformerId);
+                                            
+                                            if(performer is not null)
+                                            {
+                                                <option value="@performer.Id">@performer.LastName @performer.FirstName @performer.MiddleName &#9733;@performer.AverageRating</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                                <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
+                                <div class="justify-content-center mb-3">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                                    <button type="submit" class="btn btn-primary">Утвердить</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="ModalWindow6" tabindex="-1" aria-labelledby="ModalWindowLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="ModalWindowLabel">Удалить заявку на отказ от заказа ?</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="col mb-3">
+                            <form asp-action="RemoveRequestCancelOrder" asp-controller="CustomerBoard" method="get">
+                                <div class="justify-content-center">
+                                    <div class="hidden">
+                                        <input type="number" asp-for="Order.Id" name="orderId" value=@Model.Order.Id class="form-control">
+                                        <input type="number" asp-for="CustomerProfile.Id" name="customerId" value=@Model.CustomerProfile.Id class="form-control">
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена дейсвия</button>
+                                <button type="submit" class="btn btn-primary">Да, удалить заявку на отках от заказа</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>

@@ -185,10 +185,12 @@ namespace ApplicationDbContext.ContextRepositories
             var order = await context.Orders.FirstOrDefaultAsync(el => el.Id == orderId);
             var performer = await context.Performers.FirstOrDefaultAsync(el => el.Id == performerId);
 
-            if (order is not null || performer is not null)
+            if (order is not null && performer is not null)
             {
                 order.PerformerId = performerId;
                 order.OrderStatus = "S";
+                order.UpdatedDate = DateTime.Now;
+
                 await context.SaveChangesAsync();
             }
             else

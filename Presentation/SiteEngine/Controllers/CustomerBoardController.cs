@@ -21,6 +21,7 @@ namespace SiteEngine.Controllers
         private readonly IOrderStatusRepositories orderStatusRepositories;
         private readonly IServiceInterfaceGetCookieData cookieDataService;
         private readonly IOrderPerformerMappingRepositories orderPerformerMappingRepositories;
+        private readonly IQueueOrderCancellationsRepositories queueOrderCancellationsRepositories;
 
         public CustomerBoardController(AppDbContext context,
                                        IProfileCustomerRepositories profileCustomerRepository,
@@ -29,7 +30,8 @@ namespace SiteEngine.Controllers
                                        IOrderPriorityRepositories orderPriorityRepository,
                                        IOrderStatusRepositories orderStatusRepository,
                                        IServiceInterfaceGetCookieData cookieDataService,
-                                       IOrderPerformerMappingRepositories orderPerformerMappingRepositories
+                                       IOrderPerformerMappingRepositories orderPerformerMappingRepositories,
+                                       IQueueOrderCancellationsRepositories queueOrderCancellationsRepositories
         )
         {
             this.context = context;
@@ -40,6 +42,7 @@ namespace SiteEngine.Controllers
             this.orderStatusRepositories = orderStatusRepository;
             this.cookieDataService = cookieDataService;
             this.orderPerformerMappingRepositories = orderPerformerMappingRepositories;
+            this.queueOrderCancellationsRepositories = queueOrderCancellationsRepositories;
         }
 
         // title page customers metods 
@@ -245,9 +248,9 @@ namespace SiteEngine.Controllers
                 var performerProfile = await profilePerformerRepositories.GetProfilePerformerByPerformerId(order.PerformerId);
                 var listOrdersPriority = await orderPriorityRepositories.GetOrderPrioritiesAsync();
                 var listOrderStatus = await orderStatusRepositories.GetOrderStatusesAsync();
-
                 var listQueuePerformerRequests = await orderPerformerMappingRepositories.GetListOrderPerformersRequests(order.Id, null);
                 var listPerformers = await profilePerformerRepositories.GetPerformers();
+                var cancelRequest = await queueOrderCancellationsRepositories.GetCancelRequest(order.Id);
 
                 var model = new DetailOrderViewModelForCustomer
                 {
@@ -257,7 +260,8 @@ namespace SiteEngine.Controllers
                     OrderPriorities = listOrdersPriority,
                     OrderStatuses = listOrderStatus,
                     OrderPerformerMappings = listQueuePerformerRequests,
-                    Performers = listPerformers
+                    Performers = listPerformers,
+                    HasInitiatorCancelRequest = cancelRequest is not null && cancelRequest.IsConfirmedByCustomer && !cancelRequest.IsConfirmedByPerformer ? true : false,
                 };
 
                 return View(model);
@@ -366,15 +370,15 @@ namespace SiteEngine.Controllers
         }
 
         [Authorize, HttpGet]
-        public async Task<IActionResult> CancelOrderAsync(int id /*OrderId*/, int customerId)
+        public async Task<IActionResult> CancelOrderAsync(int orderId, int customerId)
         {
-            if(id <= 0 || customerId <= 0)
+            if(orderId <= 0 || customerId <= 0)
             {
-                return RedirectToAction("Order", new { id = id });
+                return RedirectToAction("Order", new { id = orderId });
             }
             else
             {
-                var order = await orderRepositories.GetOrderById(id);
+                var order = await orderRepositories.GetOrderById(orderId);
                 var customer = await profileCustomerRepositories.GetProfileCustomerByCustomerId(customerId);
 
                 if (order is null || customer is null)
@@ -382,8 +386,32 @@ namespace SiteEngine.Controllers
                     return RedirectToAction("IndexOrderList");
                 }
 
-                //Здесь должна быть описана работа с очередь. в которой могут находиться отклиk
-                return RedirectToAction("Order", new { id = id });
+                await queueOrderCancellationsRepositories.AddCancelRequest(orderId, customerId, null);
+                return RedirectToAction("Order", new { id = orderId });
+            }
+        }
+
+        [Authorize, HttpGet]
+        public async Task<IActionResult> RemoveRequestCancelOrderAsync(int orderId, int customerId)
+        {
+            if (orderId <= 0 || customerId <= 0)
+            {
+                return RedirectToAction("Order", new { id = customerId });
+            }
+            else
+            {
+                var order = await orderRepositories.GetOrderById(orderId);
+                var customer = await profileCustomerRepositories.GetProfileCustomerByCustomerId(customerId);
+                var itemFromQueue = queueOrderCancellationsRepositories.GetCancelRequest(orderId);
+
+                if (order is null || customer is null || itemFromQueue is null)
+                {
+                    return RedirectToAction("IndexOrderList");
+                }
+
+                await queueOrderCancellationsRepositories.DeleteCancelRequest(orderId, customerId, null);
+
+                return RedirectToAction("Order", new { id = orderId });
             }
         }
 

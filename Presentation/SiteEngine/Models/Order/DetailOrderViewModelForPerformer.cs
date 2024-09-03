@@ -10,5 +10,6 @@ namespace SiteEngine.Models.Order
         public List<OrderPriority> OrderPriorities { get; set; }
         public List<OrderStatus> OrderStatuses { get; set; }
         public bool HasRequestInQueue { get; set; }
+        public bool HasInitiatorCancelRequest { get; set; }
     }
 }

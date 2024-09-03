@@ -1,9 +1,10 @@
 ﻿using ApplicationDbContext.Interfaces;
-using Azure.Core;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using ModelsEntity;
+using OfficeOpenXml.Drawing.Chart;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -76,13 +77,37 @@ namespace ApplicationDbContext.ContextRepositories
                     var order = await context.Orders.FindAsync(orderId);
                     if(order is not null)
                     {
+                        order.PerformerId = null;
                         order.OrderStatus = "C";
                         order.UpdatedDate = DateTime.Now;
+                        
                         context.QueueOrderCancellations.Remove(request);
                     }
                 }
                 await context.SaveChangesAsync();
             }
+        }
+
+        public async Task DeleteCancelRequest(int orderId, int? customerId, int? performerId)
+        {
+            if(orderId > 0)
+            {
+                var request = await GetCancelRequest(orderId);
+
+                if(customerId > 0 && request.IsConfirmedByCustomer && !request.IsConfirmedByPerformer)
+                {
+                    context.QueueOrderCancellations.Remove(request);
+                }
+
+                if(performerId > 0 && request.IsConfirmedByPerformer && !request.IsConfirmedByCustomer)
+                {
+                    context.QueueOrderCancellations.Remove(request);
+                }
+
+                await context.SaveChangesAsync();
+            }
+
+            await context.SaveChangesAsync();
         }
 
         public async Task<QueueOrderCancellations> GetCancelRequest(int orderId)

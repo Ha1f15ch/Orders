@@ -87,9 +87,6 @@ namespace ApplicationDbContext.ContextRepositories
                 var listRequestsForRemove = await GetListOrderPerformersRequests(orderId, null);
                 context.OrderPerformerMappings.RemoveRange(listRequestsForRemove);
 
-                var order = await context.Orders.Where(el => el.Id == orderId).FirstOrDefaultAsync();
-                order.OrderStatus = "S";
-
                 await context.SaveChangesAsync();
             }
         }

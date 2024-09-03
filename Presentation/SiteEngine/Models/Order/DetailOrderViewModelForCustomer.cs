@@ -11,5 +11,6 @@ namespace SiteEngine.Models.Order
         public List<OrderStatus> OrderStatuses { get; set; }
         public List<OrderPerformerMapping> OrderPerformerMappings { get; set; }
         public List<Performer> Performers { get; set; }
+        public bool HasInitiatorCancelRequest { get; set; }
     }
 }

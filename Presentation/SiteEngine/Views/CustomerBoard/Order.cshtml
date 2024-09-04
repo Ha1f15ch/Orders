@@ -309,17 +309,24 @@
                     </div>
                     <div class="modal-body">
                         <div class="col mb-3">
-                            <form asp-action="CancelOrder" asp-controller="CustomerBoard" method="get">
+                            <form asp-action="SetOrderScore" asp-controller="CustomerBoard" method="post">
                                 <div class="justify-content-center">
                                     <div class="hidden">
-                                        <input type="number" asp-for="Order.Id" name="Id" value=@Model.Order.Id class="form-control">
-                                        <input type="number" asp-for="Order.PerformerId" name="CustomerId" value=@Model.Order.PerformerId class="form-control">
+                                        <input type="number" asp-for="Order.Id" name="orderId" value=@Model.Order.Id class="form-control">
+                                        <input type="number" name="rating" id="rating" value="0" class="form-control" />
                                     </div>
                                     <div class="justify-content-center">
-                                        <h7>место ввода текста отзыва</h7>
-                                        <h9>Место установки рейтинга по заказу</h9>
+                                        <div class="star-rating">
+                                            <span class="star" data-value="1">&#9733;</span>
+                                            <span class="star" data-value="2">&#9733;</span>
+                                            <span class="star" data-value="3">&#9733;</span>
+                                            <span class="star" data-value="4">&#9733;</span>
+                                            <span class="star" data-value="5">&#9733;</span>
+                                        </div>
+                                        <textarea name="comment" class="form-control mt-2" rows="5" placeholder="Ваш отзыв..."></textarea>
                                     </div>
                                 </div>
+                                <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
                                 <button type="submit" class="btn btn-primary">Оценить</button>
                             </form>
@@ -394,3 +401,5 @@
 
     </div>
 </div>
+
+<script src="/js/customerOrderScript.js"></script>

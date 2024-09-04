@@ -430,5 +430,14 @@ namespace SiteEngine.Controllers
                 return RedirectToAction("Order", new { id = orderId });
             }
         }
+
+        [Authorize, HttpPost]
+        public async Task<IActionResult> SetOrderScoreAsync(int orderId, int rating, string comment)
+        {
+            var customerFromCookie = await profileCustomerRepositories.GetProfileCustomer(cookieDataService.GetUserIdFromCookie());
+            var order = await orderRepositories.GetOrderById(orderId);
+
+            //нужны запросы в таблицу, предположительное название dbo.OrderScore
+        }
     }
 }

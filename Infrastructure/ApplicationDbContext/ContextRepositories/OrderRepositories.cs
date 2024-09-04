@@ -83,16 +83,6 @@ namespace ApplicationDbContext.ContextRepositories
             }
         }
 
-        public async Task CancelOrder(int orderId, bool? isCustomer, bool? isPerformer)
-        {
-            if (orderId <= 0)
-            {
-                // нужна таблица с ключами -OrderId(int)-CustomerConfirm(bool)-PerformerConfirm(bool)
-                // Если все true
-                // update order set status = 'C', canceledDate = now()
-            }
-        }
-
         public async Task<Order> GetOrderById(int orderId)
         {
             if (orderId > 0)
@@ -214,9 +204,31 @@ namespace ApplicationDbContext.ContextRepositories
             }
         }
 
-        public async Task UpdateStatusOrder(int orderId, string statusId, int userId, bool isCustomer, bool isPerformer)
+        public async Task FinishOrder(int orderId, int performerId)
         {
-            throw new NotImplementedException();
+            if(orderId > 0 && performerId > 0)
+            {
+                var order = await GetOrderById(orderId);
+                var performer = await context.Performers.FindAsync(performerId);
+
+                try
+                {
+                    if (order.PerformerId == performer.Id)
+                    {
+                        order.OrderStatus = "F";
+                        order.UpdatedDate = DateTime.Now;
+                        await context.SaveChangesAsync();
+                    }
+                }
+                catch(Exception e)
+                {
+                    throw new InvalidOperationException("Ошибка не удалось найти хначение", e);
+                }
+            }
+            else
+            {
+                throw new InvalidOperationException("Ошибка при завершении, переданы некорректные данные");
+            }
         }
     }
 }

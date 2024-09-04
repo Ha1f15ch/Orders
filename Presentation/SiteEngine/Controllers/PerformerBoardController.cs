@@ -321,7 +321,7 @@ namespace SiteEngine.Controllers
 
                 if (order is null || performer is null || itemFromQueue is null)
                 {
-                    return RedirectToAction("IndexOrderList");
+                    return RedirectToAction("Order", new { id = orderId });
                 }
 
                 await queueOrderCancellationsRepositories.DeleteCancelRequest(orderId, null, performerId);
@@ -354,6 +354,21 @@ namespace SiteEngine.Controllers
             else
             {
                 await orderPerformerMappingRepositories.RemoveRequestByPerformer(orderId, performerId);
+                return RedirectToAction("Order", new { id = orderId });
+            }
+        }
+
+        [Authorize, HttpGet]
+        public async Task<IActionResult> SetDoneOrderAsync(int orderId, int performerId)
+        {
+            if (orderId <= 0 || performerId <= 0)
+            {
+                return View("Error");
+            }
+            else
+            {
+                await orderRepositories.FinishOrder(orderId, performerId);
+
                 return RedirectToAction("Order", new { id = orderId });
             }
         }

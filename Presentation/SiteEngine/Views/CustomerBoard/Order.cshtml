@@ -24,9 +24,17 @@
 
                 @if (Model.Order.OrderStatus != "X")
                 {
-                    @if (Model.Order.OrderStatus != "F")
+                    @if (Model.Order.OrderStatus == "F")
                     {
-                        if(Model.HasInitiatorCancelRequest && Model.Order.OrderStatus == "S")
+                        <div class="row mb-3">
+                            <div class="col d-grid ">
+                                <button class="btn btn-outline-success" type="button" data-bs-toggle="modal" data-bs-target="#ModalWindow4">Оставить отзыв</button>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        if (Model.HasInitiatorCancelRequest && Model.Order.OrderStatus == "S")
                         {
                             <div class="row mb-3">
                                 <div class="col d-grid ">
@@ -46,15 +54,6 @@
                         <div class="row mb-3">
                             <div class="col d-grid ">
                                 <button class="btn btn-outline-secondary" type="button" data-bs-toggle="modal" data-bs-target="#ModalWindow">Изменить приоритет</button>
-                            </div>
-                        </div>
-
-                    }
-                    else
-                    {
-                        <div class="row mb-3">
-                            <div class="col d-grid ">
-                                <button class="btn btn-outline-success" type="button" data-bs-toggle="modal" data-bs-target="#ModalWindow4">Поставить оценку</button>
                             </div>
                         </div>
                     }
@@ -305,17 +304,20 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="ModalWindowLabel">Установка оценки для заказа</h1>
+                        <h1 class="modal-title fs-5" id="ModalWindowLabel">Оставить отзыв о выполненном заказе</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
                     </div>
                     <div class="modal-body">
                         <div class="col mb-3">
-                            <h9>Рейтинг</h9>
                             <form asp-action="CancelOrder" asp-controller="CustomerBoard" method="get">
                                 <div class="justify-content-center">
                                     <div class="hidden">
                                         <input type="number" asp-for="Order.Id" name="Id" value=@Model.Order.Id class="form-control">
                                         <input type="number" asp-for="Order.PerformerId" name="CustomerId" value=@Model.Order.PerformerId class="form-control">
+                                    </div>
+                                    <div class="justify-content-center">
+                                        <h7>место ввода текста отзыва</h7>
+                                        <h9>Место установки рейтинга по заказу</h9>
                                     </div>
                                 </div>
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>

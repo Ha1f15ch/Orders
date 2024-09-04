@@ -54,7 +54,7 @@
                 {
                     <div class="row mb-3">
                         <div class="col d-grid ">
-                            <button class="btn btn-secondary" type="button" data-bs-toggle="modal" data-bs-target="#ModalWindow3">Завершить</button>
+                            <button class="btn btn-success" type="button" data-bs-toggle="modal" data-bs-target="#ModalWindow3">Завершить</button>
                         </div>
                     </div>
                 }
@@ -213,12 +213,16 @@
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="ModalWindowLabel">Завершить выполнение заказа.</h1>
+                            <h1 class="modal-title fs-5" id="ModalWindowLabel">Завершить выполнение заказа ?</h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
                         </div>
                         <div class="modal-body">
                             <div class="col mb-3">
                                 <form asp-action="SetDoneOrder" asp-controller="PerformerBoard" method="get">
+                                    <div class="hidden">
+                                        <input type="number" asp-for="Order.Id" name="orderId" value=@Model.Order.Id class="form-control">
+                                        <input type="number" asp-for="PerformerProfile.Id" name="performerId" value=@Model.PerformerProfile.Id class="form-control">
+                                    </div>
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Нет</button>
                                     <button type="submit" class="btn btn-primary">Завершить</button>
                                 </form>

@@ -42,6 +42,7 @@ namespace SiteEngine
             builder.Services.AddTransient<IServiceInterfaceGetCookieData, ServiceGetCookieData>();
             builder.Services.AddTransient<IOrderPerformerMappingRepositories, OrderPerformerMappingRepositories>();
             builder.Services.AddTransient<IQueueOrderCancellationsRepositories, QueueOrderCancellationsRepositories>();
+            builder.Services.AddTransient<IOrderScoreRepositories, OrderScoreRepositories>();
             builder.Services.AddHttpContextAccessor();
 
             /*builder.Services.Configure<RazorViewEngineOptions>(options =>

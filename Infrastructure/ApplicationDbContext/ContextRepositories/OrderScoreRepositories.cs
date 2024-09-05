@@ -21,9 +21,40 @@ namespace ApplicationDbContext.ContextRepositories
             this.context = context;
         }
 
-        public Task CreateComment(int orderId, int customerId, int performerId, int rating, string comment)
+        public async Task CreateComment(int orderId, int customerId, int performerId, int rating, string comment)
         {
-            throw new NotImplementedException();
+            if(orderId > 0 && customerId > 0 && performerId > 0)
+            {
+                var order = await context.Orders.FindAsync(orderId);
+                var customerProfile = await context.Customers.FindAsync(customerId);
+                var performerProfile = await context.Performers.FindAsync(customerId);
+
+                if(order is not null && customerProfile is not null && performerProfile is not null)
+                {
+                    var createdModel = new OrderScore
+                    {
+                        OrderId = order.Id,
+                        CustomerId = customerProfile.Id,
+                        PerformerId = performerProfile.Id,
+                        Rating = rating is int ? (int)rating : 0,
+                        Comment = comment,
+                        CreatedDate = DateTime.Now,
+                        UpdatedDate = DateTime.Now,
+                        DeletedDate = null,
+                    };
+
+                    context.OrderScores.Add(createdModel);
+                    await context.SaveChangesAsync();
+                }
+                else
+                {
+                    throw new ArgumentNullException("Ошибка при выполнении поиска данных !!!");
+                }
+            }
+            else
+            {
+                throw new InvalidOperationException("В параметр метода передано некорректное значение !!!");
+            }
         }
 
         public async Task<List<OrderScore>> GelCommentsByPerformerId(int performerId)

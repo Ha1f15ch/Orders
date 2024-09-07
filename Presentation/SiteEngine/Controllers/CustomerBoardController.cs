@@ -22,6 +22,7 @@ namespace SiteEngine.Controllers
         private readonly IServiceInterfaceGetCookieData cookieDataService;
         private readonly IOrderPerformerMappingRepositories orderPerformerMappingRepositories;
         private readonly IQueueOrderCancellationsRepositories queueOrderCancellationsRepositories;
+        private readonly IOrderScoreRepositories orderScoreRepositories;
 
         public CustomerBoardController(AppDbContext context,
                                        IProfileCustomerRepositories profileCustomerRepository,
@@ -31,7 +32,8 @@ namespace SiteEngine.Controllers
                                        IOrderStatusRepositories orderStatusRepository,
                                        IServiceInterfaceGetCookieData cookieDataService,
                                        IOrderPerformerMappingRepositories orderPerformerMappingRepositories,
-                                       IQueueOrderCancellationsRepositories queueOrderCancellationsRepositories
+                                       IQueueOrderCancellationsRepositories queueOrderCancellationsRepositories,
+                                       IOrderScoreRepositories orderScoreRepositories
         )
         {
             this.context = context;
@@ -43,6 +45,7 @@ namespace SiteEngine.Controllers
             this.cookieDataService = cookieDataService;
             this.orderPerformerMappingRepositories = orderPerformerMappingRepositories;
             this.queueOrderCancellationsRepositories = queueOrderCancellationsRepositories;
+            this.orderScoreRepositories = orderScoreRepositories;
         }
 
         // title page customers metods 
@@ -437,7 +440,27 @@ namespace SiteEngine.Controllers
             var customerFromCookie = await profileCustomerRepositories.GetProfileCustomer(cookieDataService.GetUserIdFromCookie());
             var order = await orderRepositories.GetOrderById(orderId);
 
-            //нужны запросы в таблицу, предположительное название dbo.OrderScore
+            if (order is not null)
+            {
+                var performer = await profilePerformerRepositories.GetProfilePerformerByPerformerId(order.PerformerId);
+                var customer = await profileCustomerRepositories.GetProfileCustomerByCustomerId(order.CustomerId);
+
+                if (customer is not null && performer is not null)
+                {
+                    await orderScoreRepositories.CreateComment(order.Id, customer.Id, performer.Id, rating, comment);
+                    await orderScoreRepositories.GetNewRatingForPerformer(performer.Id);
+
+                    return RedirectToAction("Order", new { id = orderId });
+                }
+                else
+                {
+                    return RedirectToAction("Order", new { id = orderId });
+                }
+            }
+            else
+            {
+                return RedirectToAction("Order", new { id = orderId });
+            }
         }
     }
 }

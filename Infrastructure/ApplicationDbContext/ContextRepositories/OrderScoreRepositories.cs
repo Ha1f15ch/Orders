@@ -57,7 +57,7 @@ namespace ApplicationDbContext.ContextRepositories
             }
         }
 
-        public async Task<List<OrderScore>> GelCommentsByPerformerId(int performerId)
+        public async Task<List<OrderScore>> GetCommentsByPerformerId(int performerId)
         {
             if(performerId > 0)
             {
@@ -133,14 +133,63 @@ namespace ApplicationDbContext.ContextRepositories
             }
         }
 
-        public Task<int> GetNewRatingForPerformer(int performerId)
+        public async Task<double> GetNewRatingForPerformer(int performerId)
         {
-            throw new NotImplementedException();
+            if (performerId > 0)
+            {
+                var performerProfile = await context.Performers.FindAsync(performerId);
+                var arrRating = (await GetCommentsByPerformerId(performerId)).Select(comment => comment.Rating).ToArray();
+
+                if (arrRating.Length > 0)
+                {
+                    double sum = 0;
+                    foreach (var number in arrRating)
+                    {
+                        sum += number;
+                    }
+
+                    return (double)sum / arrRating.Length;
+                }
+                else
+                {
+                    return (int)performerProfile.AverageRating;
+                }
+            }
+            else
+            {
+                throw new InvalidOperationException("В параметр метода передано некорректное значение !!!");
+            }
         }
 
-        public Task RemoveComment(int? commentId, int? orderId)
+        public async Task RemoveComment(int orderId)
         {
-            throw new NotImplementedException();
+            if (orderId > 0)
+            {
+                var comment = await context.OrderScores.SingleOrDefaultAsync(el => el.OrderId == orderId);
+
+                if (comment is not null)
+                {
+                    var performer = await context.Performers.FindAsync(comment.PerformerId);
+
+                    if (performer is not null)
+                    {
+                        context.OrderScores.Remove(comment);
+
+                        performer.AverageRating = await GetNewRatingForPerformer(performer.Id);
+
+                        await context.SaveChangesAsync();
+                    }
+
+                }
+                else
+                {
+                    throw new ArgumentNullException("Ошибка при выполнении поиска отзыва и профиля исполнителя !!!");
+                }
+            }
+            else
+            {
+                throw new InvalidOperationException("В параметр метода передано некорректное значение !!!");
+            }
         }
     }
 }

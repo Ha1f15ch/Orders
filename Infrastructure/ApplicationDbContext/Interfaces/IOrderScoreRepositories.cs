@@ -10,7 +10,7 @@ namespace ApplicationDbContext.Interfaces
     public interface IOrderScoreRepositories
     {
         public Task CreateComment(int orderId, int customerId, int performerId, int rating, string comment);
-        public Task<double> GetNewRatingForPerformer(int performerId);
+        public Task SetNewRatingForPerformer(int performerId);
         public Task<OrderScore> GetCommentByCommentId(int commentId);
         public Task<OrderScore> GetCommentByOrderId(int orderId);
         public Task<List<OrderScore>> GetCommentsByPerformerId(int performerId);

@@ -31,20 +31,25 @@ namespace ApplicationDbContext.ContextRepositories
 
                 if(order is not null && customerProfile is not null && performerProfile is not null)
                 {
-                    var createdModel = new OrderScore
-                    {
-                        OrderId = order.Id,
-                        CustomerId = customerProfile.Id,
-                        PerformerId = performerProfile.Id,
-                        Rating = rating is int ? (int)rating : 0,
-                        Comment = comment,
-                        CreatedDate = DateTime.Now,
-                        UpdatedDate = DateTime.Now,
-                        DeletedDate = null,
-                    };
+                    var commentValue = await GetCommentByOrderId(order.Id);
 
-                    context.OrderScores.Add(createdModel);
-                    await context.SaveChangesAsync();
+                    if(commentValue is null)
+                    {
+                        var createdModel = new OrderScore
+                        {
+                            OrderId = order.Id,
+                            CustomerId = customerProfile.Id,
+                            PerformerId = performerProfile.Id,
+                            Rating = rating is int ? (int)rating : 0,
+                            Comment = comment,
+                            CreatedDate = DateTime.Now,
+                            UpdatedDate = DateTime.Now,
+                            DeletedDate = null,
+                        };
+
+                        context.OrderScores.Add(createdModel);
+                        await context.SaveChangesAsync();
+                    }
                 }
                 else
                 {
@@ -133,26 +138,32 @@ namespace ApplicationDbContext.ContextRepositories
             }
         }
 
-        public async Task<double> GetNewRatingForPerformer(int performerId)
+        public async Task SetNewRatingForPerformer(int performerId)
         {
             if (performerId > 0)
             {
                 var performerProfile = await context.Performers.FindAsync(performerId);
-                var arrRating = (await GetCommentsByPerformerId(performerId)).Select(comment => comment.Rating).ToArray();
 
-                if (arrRating.Length > 0)
+                if (performerProfile != null)
                 {
-                    double sum = 0;
-                    foreach (var number in arrRating)
+                    var arrRating = (await GetCommentsByPerformerId(performerId)).Select(comment => comment.Rating).ToArray();
+
+                    if (arrRating.Length > 0)
                     {
-                        sum += number;
-                    }
+                        double sum = 0;
+                        foreach (var number in arrRating)
+                        {
+                            sum += number;
+                        }
 
-                    return (double)sum / arrRating.Length;
-                }
-                else
-                {
-                    return (int)performerProfile.AverageRating;
+                        performerProfile.AverageRating = (double)sum / arrRating.Length;
+                        await context.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        performerProfile.AverageRating = performerProfile.AverageRating;
+                        await context.SaveChangesAsync();
+                    }
                 }
             }
             else
@@ -175,7 +186,7 @@ namespace ApplicationDbContext.ContextRepositories
                     {
                         context.OrderScores.Remove(comment);
 
-                        performer.AverageRating = await GetNewRatingForPerformer(performer.Id);
+                        await SetNewRatingForPerformer(performer.Id);
 
                         await context.SaveChangesAsync();
                     }

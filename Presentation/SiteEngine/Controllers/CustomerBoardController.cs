@@ -254,6 +254,7 @@ namespace SiteEngine.Controllers
                 var listQueuePerformerRequests = await orderPerformerMappingRepositories.GetListOrderPerformersRequests(order.Id, null);
                 var listPerformers = await profilePerformerRepositories.GetPerformers();
                 var cancelRequest = await queueOrderCancellationsRepositories.GetCancelRequest(order.Id);
+                var comment = await orderScoreRepositories.GetCommentByOrderId(order.Id);
 
                 var model = new DetailOrderViewModelForCustomer
                 {
@@ -265,6 +266,7 @@ namespace SiteEngine.Controllers
                     OrderPerformerMappings = listQueuePerformerRequests,
                     Performers = listPerformers,
                     HasInitiatorCancelRequest = cancelRequest is not null && cancelRequest.IsConfirmedByCustomer && !cancelRequest.IsConfirmedByPerformer ? true : false,
+                    HasComment = comment is not null && comment.CustomerId == customerProfile.Id ? true : false,
                 };
 
                 return View(model);
@@ -448,9 +450,39 @@ namespace SiteEngine.Controllers
                 if (customer is not null && performer is not null)
                 {
                     await orderScoreRepositories.CreateComment(order.Id, customer.Id, performer.Id, rating, comment);
-                    await orderScoreRepositories.GetNewRatingForPerformer(performer.Id);
+                    await orderScoreRepositories.SetNewRatingForPerformer(performer.Id);
 
                     return RedirectToAction("Order", new { id = orderId });
+                }
+                else
+                {
+                    return RedirectToAction("Order", new { id = orderId });
+                }
+            }
+            else
+            {
+                return RedirectToAction("Order", new { id = orderId });
+            }
+        }
+
+        [Authorize, HttpGet]
+        public async Task<IActionResult> DeleteOrderScoreAsync(int orderId)
+        {
+            if(orderId > 0)
+            {
+                var order = await orderRepositories.GetOrderById(orderId);
+                if(order is not null)
+                {
+                    try
+                    {
+                        await orderScoreRepositories.RemoveComment(order.Id);
+
+                        return RedirectToAction("Order", new { id = orderId });
+                    }
+                    catch(Exception ex)
+                    {
+                        throw new Exception("Ошибка при выполнении удаления закакза", ex);
+                    }
                 }
                 else
                 {

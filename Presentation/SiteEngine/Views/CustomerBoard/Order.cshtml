@@ -26,11 +26,23 @@
                 {
                     @if (Model.Order.OrderStatus == "F")
                     {
-                        <div class="row mb-3">
-                            <div class="col d-grid ">
-                                <button class="btn btn-outline-success" type="button" data-bs-toggle="modal" data-bs-target="#ModalWindow4">Оставить отзыв</button>
+                        if(!Model.HasComment)
+                        {
+                            <div class="row mb-3">
+                                <div class="col d-grid ">
+                                    <button class="btn btn-outline-success" type="button" data-bs-toggle="modal" data-bs-target="#ModalWindow4">Оставить отзыв</button>
+                                </div>
                             </div>
-                        </div>
+                        }
+                        else
+                        {
+                            <div class="row mb-3">
+                                <div class="col d-grid ">
+                                    <button class="btn btn-outline-danger" type="button" data-bs-toggle="modal" data-bs-target="#ModalWindow7">Удалить отзыв</button>
+                                </div>
+                            </div>
+                        }
+
                     }
                     else
                     {
@@ -399,6 +411,33 @@
             </div>
         </div>
 
+        <div class="modal fade" id="ModalWindow7" tabindex="-1" aria-labelledby="ModalWindowLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="ModalWindowLabel">Удаление отзыва</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="col mb-3">
+                            <form asp-action="DeleteOrderScore" asp-controller="CustomerBoard" method="get">
+                                <div class="justify-content-center">
+                                    <div class="hidden">
+                                        <input type="number" asp-for="Order.Id" name="orderId" value=@Model.Order.Id class="form-control">
+                                    </div>
+                                    <div class="justify-content-center">
+                                        <h7>Вы уверены, что хотите удалить отзыв ?</h7>
+                                    </div>
+                                </div>
+                                <div class="h4 pb-2 mb-4 text-danger border-bottom border-danger"></div>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                                <button type="submit" class="btn btn-primary">Да, удалить</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 

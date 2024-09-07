@@ -118,7 +118,37 @@ body {
     color: gray;
 }
 
-    .star:hover,
-    .star.selected {
-        color: gold;
-    }
+.star:hover,
+.star.selected {
+    color: gold;
+}
+
+.priority-major {
+    width: 20px;
+    height: 20px;
+    background-color: #8B4513;
+}
+
+.priority-minimal {
+    width: 20px;
+    height: 20px;
+    background-color: #20B2AA;
+}
+
+.priority-normal {
+    width: 20px;
+    height: 20px;
+    background-color: #7CFC00;
+}
+
+.priority-middle {
+    width: 20px;
+    height: 20px;
+    background-color: #FFFF00;
+}
+
+.priority-show-stopper {
+    width: 20px;
+    height: 20px;
+    background-color: #800000;
+}

@@ -113,10 +113,38 @@
                 {
                     @foreach(Order order in Model.Item1)
                     {
+                        var priorityClass = "";
+
+                        switch(order.OrderPriority)
+                        {
+                            case "H":
+                                priorityClass = "priority-major";
+                                break;
+                            case "L":
+                                priorityClass = "priority-minimal";
+                                break;
+                            case "LM":
+                                priorityClass = "priority-normal";
+                                break;
+                            case "M":
+                                priorityClass = "priority-middle";
+                                break;
+                            case "MH":
+                                priorityClass = "priority-show-stopper";
+                                break;
+                            default:
+                                break;
+                        }
+
                         if (order.OrderStatus == "N")
                         {
                             <div class="border rounded-4 mb-3 newStyle">
                                 <div class="p-3 mb-2 bg-light-subtle text-light-emphasis" onclick="window.location = window.origin+'/CustomerBoard/Order/@order.Id'">
+                                    <div class="row">
+                                        <div class="justify-content-end d-flex">
+                                            <div class="priority-square @priorityClass"></div>
+                                        </div>
+                                    </div>
                                     <div class="row">
                                         <div class="col text-start">
                                             <h4 class="card-title">
@@ -170,6 +198,11 @@
                             <div class="border rounded-4 mb-3 startStyle">
                                 <div class="p-3 mb-2 bg-light-subtle text-light-emphasis" onclick="window.location = window.origin+'/CustomerBoard/Order/@order.Id'">
                                     <div class="row">
+                                        <div class="justify-content-end d-flex">
+                                            <div class="priority-square @priorityClass"></div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
                                         <div class="col text-start">
                                             <h4 class="card-title">
                                                 @order.TitleName
@@ -221,6 +254,11 @@
                         {
                             <div class="border rounded-4 mb-3 discussStyle">
                                 <div class="p-3 mb-2 bg-light-subtle text-light-emphasis" onclick="window.location = window.origin+'/CustomerBoard/Order/@order.Id'">
+                                    <div class="row">
+                                        <div class="justify-content-end d-flex">
+                                            <div class="priority-square @priorityClass"></div>
+                                        </div>
+                                    </div>
                                     <div class="row">
                                         <div class="col text-start">
                                             <h4 class="card-title">
@@ -274,6 +312,11 @@
                             <div class="border rounded-4 mb-3 deletedStyle">
                                 <div class="p-3 mb-2 bg-light-subtle text-light-emphasis" onclick="window.location = window.origin+'/CustomerBoard/Order/@order.Id'">
                                     <div class="row">
+                                        <div class="justify-content-end d-flex">
+                                            <div class="priority-square @priorityClass"></div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
                                         <div class="col text-start">
                                             <h4 class="card-title">
                                                 @order.TitleName
@@ -326,6 +369,11 @@
                             <div class="border rounded-4 mb-3 canceledStyle">
                                 <div class="p-3 mb-2 bg-light-subtle text-light-emphasis" onclick="window.location = window.origin+'/CustomerBoard/Order/@order.Id'">
                                     <div class="row">
+                                        <div class="justify-content-end d-flex">
+                                            <div class="priority-square @priorityClass"></div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
                                         <div class="col text-start">
                                             <h4 class="card-title">
                                                 @order.TitleName
@@ -377,6 +425,11 @@
                         {
                             <div class="border rounded-4 mb-3 finishedStyle">
                                 <div class="p-3 mb-2 bg-light-subtle text-light-emphasis" onclick="window.location = window.origin+'/CustomerBoard/Order/@order.Id'">
+                                    <div class="row">
+                                        <div class="justify-content-end d-flex">
+                                            <div class="priority-square @priorityClass"></div>
+                                        </div>
+                                    </div>
                                     <div class="row">
                                         <div class="col text-start">
                                             <h4 class="card-title">

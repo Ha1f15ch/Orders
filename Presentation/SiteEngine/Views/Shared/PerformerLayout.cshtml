@@ -22,14 +22,17 @@
                     </ul>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Профиль</a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" asp-action="MyProfilePerformer" asp-controller="PerformerBoard">Мой профиль</a></li>
-                        <li><a class="dropdown-item" href="#">Моя анкета</a></li>
-                    </ul>
+                    <il class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Профиль исполнителя</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" asp-action="MyProfilePerformer" asp-controller="PerformerBoard">Мой профиль</a></li>
+                            <li><a class="dropdown-item" href="#">Моя анкета</a></li>
+                            <li><a class="dropdown-item" aria-current="page" href="/MainPage/Index">Выйти из профиля</a></li>
+                        </ul>
+                    </il>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="/MainPage/Index">Выйти из профиля</a>
+                    
                 </li>
             </ul>
         </div>

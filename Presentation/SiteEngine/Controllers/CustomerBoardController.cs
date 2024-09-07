@@ -22,6 +22,7 @@ namespace SiteEngine.Controllers
         private readonly IServiceInterfaceGetCookieData cookieDataService;
         private readonly IOrderPerformerMappingRepositories orderPerformerMappingRepositories;
         private readonly IQueueOrderCancellationsRepositories queueOrderCancellationsRepositories;
+        private readonly IOrderScoreRepositories orderScoreRepositories;
 
         public CustomerBoardController(AppDbContext context,
                                        IProfileCustomerRepositories profileCustomerRepository,
@@ -31,7 +32,8 @@ namespace SiteEngine.Controllers
                                        IOrderStatusRepositories orderStatusRepository,
                                        IServiceInterfaceGetCookieData cookieDataService,
                                        IOrderPerformerMappingRepositories orderPerformerMappingRepositories,
-                                       IQueueOrderCancellationsRepositories queueOrderCancellationsRepositories
+                                       IQueueOrderCancellationsRepositories queueOrderCancellationsRepositories,
+                                       IOrderScoreRepositories orderScoreRepositories
         )
         {
             this.context = context;
@@ -43,6 +45,7 @@ namespace SiteEngine.Controllers
             this.cookieDataService = cookieDataService;
             this.orderPerformerMappingRepositories = orderPerformerMappingRepositories;
             this.queueOrderCancellationsRepositories = queueOrderCancellationsRepositories;
+            this.orderScoreRepositories = orderScoreRepositories;
         }
 
         // title page customers metods 
@@ -251,6 +254,7 @@ namespace SiteEngine.Controllers
                 var listQueuePerformerRequests = await orderPerformerMappingRepositories.GetListOrderPerformersRequests(order.Id, null);
                 var listPerformers = await profilePerformerRepositories.GetPerformers();
                 var cancelRequest = await queueOrderCancellationsRepositories.GetCancelRequest(order.Id);
+                var comment = await orderScoreRepositories.GetCommentByOrderId(order.Id);
 
                 var model = new DetailOrderViewModelForCustomer
                 {
@@ -262,6 +266,7 @@ namespace SiteEngine.Controllers
                     OrderPerformerMappings = listQueuePerformerRequests,
                     Performers = listPerformers,
                     HasInitiatorCancelRequest = cancelRequest is not null && cancelRequest.IsConfirmedByCustomer && !cancelRequest.IsConfirmedByPerformer ? true : false,
+                    HasComment = comment is not null && comment.CustomerId == customerProfile.Id ? true : false,
                 };
 
                 return View(model);
@@ -427,6 +432,65 @@ namespace SiteEngine.Controllers
                 await orderRepositories.UpdatePerformer(orderId, performerId);
                 await orderPerformerMappingRepositories.RemoveRequests(orderId);
 
+                return RedirectToAction("Order", new { id = orderId });
+            }
+        }
+
+        [Authorize, HttpPost]
+        public async Task<IActionResult> SetOrderScoreAsync(int orderId, int rating, string comment)
+        {
+            var customerFromCookie = await profileCustomerRepositories.GetProfileCustomer(cookieDataService.GetUserIdFromCookie());
+            var order = await orderRepositories.GetOrderById(orderId);
+
+            if (order is not null)
+            {
+                var performer = await profilePerformerRepositories.GetProfilePerformerByPerformerId(order.PerformerId);
+                var customer = await profileCustomerRepositories.GetProfileCustomerByCustomerId(order.CustomerId);
+
+                if (customer is not null && performer is not null)
+                {
+                    await orderScoreRepositories.CreateComment(order.Id, customer.Id, performer.Id, rating, comment);
+                    await orderScoreRepositories.SetNewRatingForPerformer(performer.Id);
+
+                    return RedirectToAction("Order", new { id = orderId });
+                }
+                else
+                {
+                    return RedirectToAction("Order", new { id = orderId });
+                }
+            }
+            else
+            {
+                return RedirectToAction("Order", new { id = orderId });
+            }
+        }
+
+        [Authorize, HttpGet]
+        public async Task<IActionResult> DeleteOrderScoreAsync(int orderId)
+        {
+            if(orderId > 0)
+            {
+                var order = await orderRepositories.GetOrderById(orderId);
+                if(order is not null)
+                {
+                    try
+                    {
+                        await orderScoreRepositories.RemoveComment(order.Id);
+
+                        return RedirectToAction("Order", new { id = orderId });
+                    }
+                    catch(Exception ex)
+                    {
+                        throw new Exception("Ошибка при выполнении удаления закакза", ex);
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("Order", new { id = orderId });
+                }
+            }
+            else
+            {
                 return RedirectToAction("Order", new { id = orderId });
             }
         }

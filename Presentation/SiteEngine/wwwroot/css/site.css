@@ -104,3 +104,21 @@ body {
 .status-discuss {
     background-color: #FFFFCC;
 }
+
+.star-rating {
+    display: flex;
+    direction: row-reverse;
+    justify-content: flex-end;
+    padding: 10px;
+}
+
+.star {
+    font-size: 2rem;
+    cursor: pointer;
+    color: gray;
+}
+
+    .star:hover,
+    .star.selected {
+        color: gold;
+    }

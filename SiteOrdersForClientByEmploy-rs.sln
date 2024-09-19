@@ -15,7 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentatio
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApplicationDbContext", "Infrastructure\ApplicationDbContext\ApplicationDbContext.csproj", "{B8697486-1088-4A6C-B9FE-7897A3D2E367}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SiteEngine", "Presentation\SiteEngine\SiteEngine.csproj", "{F9CF371C-6BB2-455E-92C0-230D187B7F18}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SiteEngine", "Presentation\SiteEngine\SiteEngine.csproj", "{F9CF371C-6BB2-455E-92C0-230D187B7F18}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

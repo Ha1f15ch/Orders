@@ -224,5 +224,7 @@ namespace ApplicationDbContext
         public DbSet<OrderPerformerMapping> OrderPerformerMappings { get; set; }
         public DbSet<QueueOrderCancellations> QueueOrderCancellations { get; set; }
         public DbSet<OrderScore> OrderScores { get; set; }
+        public DbSet<Chat> Chats { get; set; }
+        public DbSet<Message> Messages { get; set; }
     }
 }

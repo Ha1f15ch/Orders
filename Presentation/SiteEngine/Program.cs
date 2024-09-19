@@ -44,11 +44,7 @@ namespace SiteEngine
             builder.Services.AddTransient<IQueueOrderCancellationsRepositories, QueueOrderCancellationsRepositories>();
             builder.Services.AddTransient<IOrderScoreRepositories, OrderScoreRepositories>();
             builder.Services.AddHttpContextAccessor();
-
-            /*builder.Services.Configure<RazorViewEngineOptions>(options =>
-            {
-                options.ViewLocationExpanders.Add(new CustomViewLocationExpander());
-            });*/
+            builder.Services.AddSignalR();
 
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                     .AddCookie(options => options.LoginPath = "/account");
@@ -106,6 +102,16 @@ namespace SiteEngine
             app.MapControllerRoute(
                 name: "PerformerBoard",
                 pattern: "{controller=PerformerBoard}/{action=Index}"
+            );
+
+            app.MapControllerRoute(
+                name: "CustomerBoard/OrderChats",
+                pattern: "{controller=CustomerChat}/{action=Index}/{id?}"
+            );
+
+            app.MapControllerRoute(
+                name: "PerformerBoard/OrderChats",
+                pattern: "{controller=PerformerChat}/{action=Index}/{id?}"
             );
 
             app.Map("/users/list", () => "LIST with Users");

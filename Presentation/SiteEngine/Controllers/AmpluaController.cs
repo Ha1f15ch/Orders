@@ -103,7 +103,7 @@ namespace SiteEngine.Controllers
                     AverageRating = 0
                 };
 
-                profilePerformerRepositories.CreateProfilePerformer(newPerformer, cookieDataService.GetUserIdFromCookie());
+                await profilePerformerRepositories.CreateProfilePerformer(newPerformer, cookieDataService.GetUserIdFromCookie());
 
                 return RedirectToAction("MyProfilePerformer", "PerformerBoard");
             }

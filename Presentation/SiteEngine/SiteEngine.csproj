@@ -38,4 +38,8 @@
     <ProjectReference Include="..\..\Models\ModelsEntity\ModelsEntity.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\lib\signalr\" />
+  </ItemGroup>
+
 </Project>

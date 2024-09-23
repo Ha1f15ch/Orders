@@ -1,9 +1,77 @@
-﻿@{
+﻿@using SiteEngine.Models.Chats
+@model ListChatsForPerformer
+ 
+@{
     Layout = "~/Views/Shared/PerformerLayout.cshtml";
 }
 
 <div class="container">
     <div class="justify-content-center">
-        <p>Hello there, this place for chat messages</p>
+        <div class="row">
+            <div class="col-3">
+                <div class="justify-content-center">
+                    <form class="col-12 d-grid" method="post" asp-action="CreateChat" asp-controller="PerformerChat">
+                        <div class="hidden">
+                            <div class="mb-3">
+                                <input type="number" asp-for="PerformerProfile.UserId" name="userId" value=@Model.PerformerProfile.UserId class="form-control">
+                            </div>
+                        </div>
+                        <div class="col mb-3">
+                            <div class="justify-content-center">
+                                <label class="form-label" for="orderId">Выбрать задачу для создания обсуждения:</label>
+                                <select id="orderId" name="orderId" class="form-select">
+                                    @if (Model.ListOrders != null && Model.ListOrders.Any() && Model.ListCustomers != null && Model.ListCustomers.Any())
+                                    {
+                                        <option value="null"></option>
+                                        @foreach (var order in Model.ListOrders)
+                                        {
+                                            <option value="@order.Id">
+                                                @order.TitleName
+                                                |
+                                                @foreach (var customerProfile in Model.ListCustomers)
+                                                {
+                                                    @if (order.CustomerId == customerProfile.Id)
+                                                    {
+                                                        @customerProfile.LastName @customerProfile.FirstName @customerProfile.MiddleName
+                                                    }
+                                                    else
+                                                    {
+                                                        <p> - </p>
+                                                    }
+                                                }
+                                            </option>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <div class="">
+                                            <h7>не найдено заказов</h7>
+                                        </div>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit">Создать чат по задаче</button>
+                    </form>
+                </div>
+            </div>
+            <div class="col">
+                <div class="row">
+                    <div class="justify-content-center">
+                        <div class="col md-3">
+                            <h6>Название чата</h6>
+                        </div>
+                        <div class="col">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                void 
+            </div>
+        </div>
     </div>
 </div>
+<script src="~/lib/microsoft/signalr/dist/browser/signalr.js"></script>
+<script src="/js/performerChatIndex.js"></script>

@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ModelsEntity;
 using SiteEngine.Controllers;
+using SiteEngine.Controllers.ChatComponents;
 using SiteEngine.Helpers;
 
 namespace SiteEngine
@@ -43,6 +44,21 @@ namespace SiteEngine
             builder.Services.AddTransient<IOrderPerformerMappingRepositories, OrderPerformerMappingRepositories>();
             builder.Services.AddTransient<IQueueOrderCancellationsRepositories, QueueOrderCancellationsRepositories>();
             builder.Services.AddTransient<IOrderScoreRepositories, OrderScoreRepositories>();
+            builder.Services.AddTransient<IChatRepositories, ChatRepositories>();
+            builder.Services.AddTransient<IMessageRepositories, MessageRepositories>();
+            builder.Services.AddTransient<IRedisChatService, RedisChatService>();
+            builder.Services.AddTransient<IChatService, ChatService>();
+            builder.Services.AddTransient<ChatHub>();
+            builder.Services.AddSignalR();
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAllOrigins", builder =>
+                {
+                    builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                });
+            });
+
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddSignalR();
 
@@ -55,7 +71,7 @@ namespace SiteEngine
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("Home/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
@@ -72,12 +88,14 @@ namespace SiteEngine
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
+            app.UseCors("AllowAllOrigins");
             app.UseRouting();
-
             app.UseCookiePolicy();
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.MapHub<ChatHub>("/chatHub");
+
 
             app.MapControllerRoute(
                 name: "/",
@@ -105,12 +123,12 @@ namespace SiteEngine
             );
 
             app.MapControllerRoute(
-                name: "CustomerBoard/OrderChats",
+                name: "CustomerChat",
                 pattern: "{controller=CustomerChat}/{action=Index}/{id?}"
             );
 
             app.MapControllerRoute(
-                name: "PerformerBoard/OrderChats",
+                name: "PerformerChat",
                 pattern: "{controller=PerformerChat}/{action=Index}/{id?}"
             );
 

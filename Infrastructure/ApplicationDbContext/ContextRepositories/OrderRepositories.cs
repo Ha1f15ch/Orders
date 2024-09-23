@@ -230,5 +230,58 @@ namespace ApplicationDbContext.ContextRepositories
                 throw new InvalidOperationException("Ошибка при завершении, переданы некорректные данные");
             }
         }
+
+        public async Task<List<Order>> GetAllOrder()
+        {
+            try
+            {
+                return await context.Orders.ToListAsync();
+            } 
+            catch(Exception e)
+            {
+                Console.WriteLine("Ошибка при поиске всех заказов", e);
+                return null;
+            }
+        }
+
+        public async Task<List<Order>> GetAllOrderByCustomerId(int customerId)
+        {
+            try
+            {
+                if(customerId > 0)
+                {
+                    return await context.Orders.Where(el => el.CustomerId == customerId).ToListAsync();
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Не удалось найти заказы", e);
+                return null;
+            }
+        }
+
+        public async Task<List<Order>> GetAllOrderByPerformerId(int performerId)
+        {
+            try
+            {
+                if (performerId > 0)
+                {
+                    return await context.Orders.Where(el => el.PerformerId == performerId).ToListAsync();
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Не удалось найти заказы", e);
+                return null;
+            }
+        }
     }
 }

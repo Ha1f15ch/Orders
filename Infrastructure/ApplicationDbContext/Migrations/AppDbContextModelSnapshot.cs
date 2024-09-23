@@ -58,6 +58,31 @@ namespace ApplicationDbContext.Migrations
                     b.ToTable("CategoryProfessionMapping", "dict");
                 });
 
+            modelBuilder.Entity("ModelsEntity.Chat", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PerformerId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Chats", "dbo");
+                });
+
             modelBuilder.Entity("ModelsEntity.Customer", b =>
                 {
                     b.Property<int>("Id")
@@ -119,6 +144,38 @@ namespace ApplicationDbContext.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Gender", "dict");
+                });
+
+            modelBuilder.Entity("ModelsEntity.Message", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ChatId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("PerformerId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("SendAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Messages", "dbo");
                 });
 
             modelBuilder.Entity("ModelsEntity.Order", b =>
@@ -205,6 +262,43 @@ namespace ApplicationDbContext.Migrations
                     b.HasKey("Name");
 
                     b.ToTable("OrderPriority", "meta");
+                });
+
+            modelBuilder.Entity("ModelsEntity.OrderScore", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Comment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PerformerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OrderScore", "dbo");
                 });
 
             modelBuilder.Entity("ModelsEntity.OrderStatus", b =>

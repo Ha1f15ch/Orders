@@ -1,8 +1,10 @@
 ﻿using ApplicationDbContext.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using ModelsEntity;
+using OfficeOpenXml.Drawing.Chart;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,9 +31,18 @@ namespace ApplicationDbContext.ContextRepositories
                     CreatedAt = DateTime.Now
                 };
 
-                context.Chats.Add(chat);
-                await context.SaveChangesAsync();
+                var oldChat = await context.Chats.Where(el => el.OrderId == orderId).ToListAsync();
+
+                if(oldChat.ToArray().Length == 0)
+                {
+                    context.Chats.Add(chat);
+                    await context.SaveChangesAsync();
                     return chat;
+                }
+                else
+                {
+                    return oldChat[0];
+                }
             }
             catch(Exception e)
             {

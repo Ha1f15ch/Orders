@@ -8,14 +8,17 @@ using System.Threading.Tasks;
 
 namespace ModelsEntity
 {
-    [Table("ListAboutItem", Schema = "dbo")]
-    public class ListAboutItem
+    [Table("TypeListData", Schema = "meta")]
+    public class TypeListData
     {   
-        public ListAboutItem() { }
+        public TypeListData() { }
 
         [Key]
+        
         public int Id { get; set; }
-        [ForeignKey("Id")]
-        public string Type { get; set; }
+        [ForeignKey("Name")]
+        public string Name { get; set; }
+        [ForeignKey("Description")]
+        public string Description { get; set; }
     }
 }

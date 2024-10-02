@@ -15,7 +15,7 @@ namespace ModelsEntity
 
         [Key]
         public int Id { get; set; }
-        [ForeignKey("Id")]
+    
         public string Type { get; set; }
     }
 }

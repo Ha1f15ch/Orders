@@ -14,8 +14,9 @@ namespace ModelsEntity
         public TypeListData() { }
 
         [Key]
-        public string Name { get; set; }
-      
+        public string NameType { get; set; }
         public string Description { get; set; }
+
+        public ICollection<ListAboutItem> ListAboutItems { get; set; }
     }
 }

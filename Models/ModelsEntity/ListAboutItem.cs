@@ -15,6 +15,11 @@ namespace ModelsEntity
 
         [Key]
         public int Id { get; set; }
-        public string Type { get; set; }
+        [ForeignKey("ListAbout")]
+        public int ListAboutid { get; set; }
+        [ForeignKey("TypeListData")]
+        public string NameType { get; set; }
+        public string Value {  get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 }

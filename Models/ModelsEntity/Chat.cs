@@ -26,5 +26,8 @@ namespace ModelsEntity
         public int PerformerId { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+        public virtual ICollection<ChatRoom> ChatRooms { get; set; }
+        public virtual ICollection<Message> Messages { get; set; }
     }
 }

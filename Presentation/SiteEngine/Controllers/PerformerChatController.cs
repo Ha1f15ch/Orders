@@ -20,6 +20,8 @@ namespace SiteEngine.Controllers
         private readonly IProfilePerformerRepositories profilePerformerRepositories;
         private readonly IProfileCustomerRepositories profileCustomerRepositories;
         private readonly IServiceInterfaceGetCookieData serviceInterfaceGetCookieData;
+        private readonly IUserRepositories userRepositories;
+        private readonly IMessageRepositories messageRepositories; // Пока что без использования Redis
 
         public PerformerChatController(AppDbContext context,
                                        IChatService chatService, 
@@ -27,7 +29,9 @@ namespace SiteEngine.Controllers
                                        IOrderRepositories orderRepositories,
                                        IProfileCustomerRepositories profileCustomerRepositories,
                                        IProfilePerformerRepositories profilePerformerRepositories,
-                                       IServiceInterfaceGetCookieData serviceInterfaceGetCookieData)
+                                       IServiceInterfaceGetCookieData serviceInterfaceGetCookieData,
+                                       IUserRepositories userRepositories,
+                                       IMessageRepositories messageRepositories) // Пока что без использования Redis
         {
             this.context = context;
             this.chatService = chatService;
@@ -36,6 +40,8 @@ namespace SiteEngine.Controllers
             this.profileCustomerRepositories = profileCustomerRepositories;
             this.profilePerformerRepositories = profilePerformerRepositories;
             this.serviceInterfaceGetCookieData = serviceInterfaceGetCookieData;
+            this.userRepositories = userRepositories;
+            this.messageRepositories = messageRepositories; // Пока что без использования Redis
             
         }
 
@@ -123,14 +129,34 @@ namespace SiteEngine.Controllers
 
                     if(performerProfile is not null && order is not null)
                     {
+                        // Подготавливаем данные для передачи в модель для рендера и создания групп в SignalR
                         var newChat = await chatRepositories.CreateChat(order.Id, order.CustomerId, performerProfile.Id);
+                        var customerProfile = await profileCustomerRepositories.GetProfileCustomerByCustomerId(newChat.CustomerId);
+                        var messages = await messageRepositories.GetMessagesByChatId(newChat.Id);
 
+                        // Создаем соединение и группы в SignalR, отправляем уведомления участникам чата/группы
                         await chatService.JoinChatGroup(connectionId, newChat.Id, newChat.CustomerId);
                         await chatService.JoinChatGroup(connectionId, newChat.Id, newChat.PerformerId);
-
                         await chatService.NotifyChatCreated(newChat);
 
-                        return RedirectToAction("Index");
+                        // Создаем модель для рендера страницы
+                        var model = new ListChatsForPerformer
+                        {
+                            ListChats = await chatRepositories.GetChatsByUserId(userId, true),
+                            ListOrders = await orderRepositories.GetAllOrderByPerformerId(newChat.PerformerId),
+                            PerformerProfile = performerProfile,
+                            CurrentChat = new ChatViewModel
+                            {
+                                ChatId = newChat.Id,
+                                ChatTitle = $"обсуждение по задаче {order.TitleName}",
+                                Messages = messages,
+                                User = await userRepositories.GetUserByUserId(userId),
+                                Performer = performerProfile,
+                                Customer = customerProfile 
+                            }
+                        };
+
+                        return RedirectToAction("Index", model);
                     } 
                     else
                     {

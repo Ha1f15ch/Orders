@@ -4,6 +4,7 @@ using ApplicationDbContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ApplicationDbContext.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240925210854_Create_Chat_Tabble")]
+    partial class Create_Chat_Tabble
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -98,8 +101,6 @@ namespace ApplicationDbContext.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ChatId");
 
                     b.ToTable("ChatRooms", "dbo");
                 });
@@ -629,15 +630,6 @@ namespace ApplicationDbContext.Migrations
                     b.ToTable("UserRoleMapping", "dbo");
                 });
 
-            modelBuilder.Entity("ModelsEntity.ChatRoom", b =>
-                {
-                    b.HasOne("ModelsEntity.Chat", null)
-                        .WithMany("ChatRooms")
-                        .HasForeignKey("ChatId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("ModelsEntity.ChatRoomMembers", b =>
                 {
                     b.HasOne("ModelsEntity.ChatRoom", "ChatRoom")
@@ -724,8 +716,6 @@ namespace ApplicationDbContext.Migrations
 
             modelBuilder.Entity("ModelsEntity.Chat", b =>
                 {
-                    b.Navigation("ChatRooms");
-
                     b.Navigation("Messages");
                 });
 

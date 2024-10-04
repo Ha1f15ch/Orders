@@ -226,5 +226,7 @@ namespace ApplicationDbContext
         public DbSet<OrderScore> OrderScores { get; set; }
         public DbSet<Chat> Chats { get; set; }
         public DbSet<Message> Messages { get; set; }
+        public DbSet<ChatRoom> ChatRooms { get; set; }
+        public DbSet<ChatRoomMembers> ChatRoomMembers { get; set; }
     }
 }

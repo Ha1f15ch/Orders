@@ -67,7 +67,7 @@ namespace ModelsEntity
         public int GenderId { get; set; }
         [AllowNull, MaybeNull] 
         public bool? TwoFactorEnabled { get; set; }
-        public bool IsActiv { get; set; } = true;
+        public bool IsActive { get; set; } = true;
         public bool IsCustomer { get; set; } = false;
         public bool IsPerformer { get; set; } = false;
         public DateTime CreatedDate { get; set; } = DateTime.Now;

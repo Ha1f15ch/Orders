@@ -60,9 +60,10 @@
                     <div class="justify-content-center">
                         <div class="col md-3">
                             <h6>Название чата</h6>
-                        </div>
-                        <div class="col">
-
+                            @if(Model.CurrentChat != null)
+                            {
+                                @Html.Partial("ChatComponent", Model.CurrentChat)
+                            }
                         </div>
                     </div>
                 </div>

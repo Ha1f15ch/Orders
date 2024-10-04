@@ -1,0 +1,56 @@
+﻿@using SiteEngine.Models.Chats
+@model ChatViewModel
+
+<div class="container">
+    <div class="chat-window">
+        <h6>@Model.ChatTitle</h6>
+        <div class="messages">
+            @foreach (var message in Model.Messages)
+            {
+                if(message.PerformerId is not null)
+                {
+                    <div class="message">
+                        <strong>@Model.Performer.FirstName @Model.Performer.FirstName @Model.Performer.MiddleName</strong>: @message.Content
+                    </div>
+                }
+                else if(message.CustomerId is not null)
+                {
+                    <div class="message">
+                        <strong>@Model.Customer.FirstName @Model.Customer.FirstName @Model.Customer.MiddleName</strong>: @message.Content
+                    </div>
+                }
+            }
+        </div>
+        <form action="/" method="post">
+            <input class="form-control" type="text" id="messageInput" placeholder="Напишите сообщение . . ." />
+            <button class="btn btn-primary" type="submit">Отправить</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+
+        connection.start().then(function () {
+            console.log("Connected to SignalR hub");
+        }).catch(function (err) {
+            return console.error(err.toString());
+        });
+
+        document.getElementById("chatMessageForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+            const messageContent = document.getElementById("messageInput").value;
+            // Отправка сообщения через Hub
+            connection.invoke("SendMessage", @Model.ChatId, @Model.Performer.Id, messageContent)
+                .catch(err => console.error(err.toString()));
+            document.getElementById("messageInput").value = '';
+        });
+
+        connection.on("Новое сообщение", function (messageContent) {
+            // Обновление UI для новых сообщений
+            const messagesDiv = document.querySelector(".messages");
+            messagesDiv.innerHTML += `<div class="message">${messageContent}</div>`;
+        });
+    </script>
+}

@@ -9,5 +9,6 @@ namespace ApplicationDbContext.Interfaces
 {
     public interface ITypeListDataRepositories
     {
+
     }
 }

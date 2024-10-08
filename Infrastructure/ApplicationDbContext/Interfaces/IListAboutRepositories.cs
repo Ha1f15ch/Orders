@@ -9,9 +9,11 @@ namespace ApplicationDbContext.Interfaces
 {
     public interface IListAboutRepositories
     {
-        public Task CreateNewListAbout(ListAbout listAbout);
+        public Task CreateNewListAbout(string);
         public Task UpdateLisAbouttById(ListAbout listAbout);
-        public Task GetListAboutById(string id);
+        public Task<ListAbout> GetListAboutById(int id);
         public Task DeleteListAboutById(int id);
+        //public Task GetAllById
+
     }
 }
